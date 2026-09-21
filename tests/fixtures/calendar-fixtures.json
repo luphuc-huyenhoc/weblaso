@@ -1,0 +1,26 @@
+[
+  {
+    "id": "CAL-TET-2024",
+    "source": "Vietnam Astronomical Lunar Calendar (Ho Ngoc Duc)",
+    "solar": { "year": 2024, "month": 2, "day": 10 },
+    "expected": { "lunarYear": 2024, "lunarMonth": 1, "lunarDay": 1, "isLeap": false, "canChiYear": "Giáp Thìn" }
+  },
+  {
+    "id": "CAL-TET-2020-LEAP",
+    "source": "Vietnam Astronomical Lunar Calendar (Ho Ngoc Duc)",
+    "solar": { "year": 2020, "month": 5, "day": 23 },
+    "expected": { "lunarYear": 2020, "lunarMonth": 4, "lunarDay": 1, "isLeap": true, "canChiYear": "Canh Tý" }
+  },
+  {
+    "id": "CAL-HISTORIC-1990",
+    "source": "Vietnam Astronomical Lunar Calendar (Ho Ngoc Duc)",
+    "solar": { "year": 1990, "month": 8, "day": 15 },
+    "expected": { "lunarYear": 1990, "lunarMonth": 6, "lunarDay": 25, "isLeap": false, "canChiYear": "Canh Ngọ" }
+  },
+  {
+    "id": "CAL-TET-1975",
+    "source": "Vietnam Astronomical Lunar Calendar (Ho Ngoc Duc)",
+    "solar": { "year": 1975, "month": 2, "day": 11 },
+    "expected": { "lunarYear": 1975, "lunarMonth": 1, "lunarDay": 1, "isLeap": false, "canChiYear": "Ất Mão" }
+  }
+]

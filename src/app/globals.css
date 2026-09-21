@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #27303f;
+  --accent-gold: #c8860a;
+}
+
+body {
+  color: #333333;
+  background-color: #f4f6f9;
+  font-family: 'PT Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ngũ Hành Five Element Color Tokens matching reference stylesheet */
+.nguhanh1, .text-nguhanh-kim { color: #708090 !important; }
+.bg-nguhanh1, .bg-nguhanh-kim { background-color: #708090 !important; color: white !important; }
+
+.nguhanh2, .text-nguhanh-moc { color: #28a745 !important; }
+.bg-nguhanh2, .bg-nguhanh-moc { background-color: #28a745 !important; color: white !important; }
+
+.nguhanh3, .text-nguhanh-thuy { color: #007bff !important; }
+.bg-nguhanh3, .bg-nguhanh-thuy { background-color: #007bff !important; color: white !important; }
+
+.nguhanh4, .text-nguhanh-hoa { color: #dc3545 !important; }
+.bg-nguhanh4, .bg-nguhanh-hoa { background-color: #dc3545 !important; color: white !important; }
+
+.nguhanh5, .text-nguhanh-tho { color: #856404 !important; }
+.bg-nguhanh5, .bg-nguhanh-tho { background-color: #856404 !important; color: white !important; }
+
+/* Table styling matching reference lasotutru.css */
+.table-lasotutru {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 14px;
+}
+
+.table-lasotutru th, .table-lasotutru td {
+  border: 1px solid #dee2e6;
+  padding: 6px 8px;
+}
+
+.table-lasotutru .th-dark {
+  background-color: #2b3036;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.focus-year-cell {
+  background-color: #fff3cd !important;
+  border: 2px solid #c8860a !important;
+}
+
+/* Print Mode Styling */
+@media print {
+  body {
+    background-color: #ffffff !important;
+  }
+  header, nav, footer, .no-print {
+    display: none !important;
+  }
+  .print-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}

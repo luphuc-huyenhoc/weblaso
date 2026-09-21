@@ -1,0 +1,86 @@
+[
+  {
+    "id": "BAZI-19900815-1030",
+    "source": "https://nguhanh.net public calculation & Tử Bình Chân Thuyên cross-reference",
+    "methodology": "tu-binh-manh-phai-v1",
+    "verifiedBy": "Astronomical solar longitude & Zi Ping calculation rules",
+    "input": {
+      "fullName": "Nguyễn Văn A",
+      "gender": true,
+      "year": 1990,
+      "month": 8,
+      "day": 15,
+      "hour": 10,
+      "minute": 30,
+      "focusYear": 2026
+    },
+    "expected": {
+      "pillars": {
+        "year": { "stem": "Canh", "branch": "Ngọ", "tenGod": "Kiêu" },
+        "month": { "stem": "Giáp", "branch": "Thân", "tenGod": "Thực" },
+        "day": { "stem": "Nhâm", "branch": "Tý", "tenGod": "NHẬT CHỦ" },
+        "hour": { "stem": "Ất", "branch": "Tỵ", "tenGod": "Thương" }
+      },
+      "lunarDate": {
+        "day": 25,
+        "month": 6,
+        "year": 1990,
+        "isLeap": false
+      },
+      "majorLuck": {
+        "direction": "Thuận",
+        "firstPillar": { "stem": "Ất", "branch": "Dậu", "tenGod": "Thương", "startAge": 8 }
+      }
+    },
+    "notes": "Verified against baseline nguhanh.net and confirmed via astronomical solar longitude."
+  },
+  {
+    "id": "BAZI-20030202-1200-LAP-XUAN-BOUNDARY",
+    "source": "Lịch Vạn Niên & Zi Ping Lap Xuan Invariant",
+    "methodology": "tu-binh-manh-phai-v1",
+    "verifiedBy": "Solar Longitude (sunLong < 315° before Lap Xuan on 04/02/2003)",
+    "input": {
+      "fullName": "Trần Thị B",
+      "gender": false,
+      "year": 2003,
+      "month": 2,
+      "day": 2,
+      "hour": 12,
+      "minute": 0,
+      "focusYear": 2026
+    },
+    "expected": {
+      "pillars": {
+        "year": { "stem": "Nhâm", "branch": "Ngọ" },
+        "month": { "branch": "Sửu" }
+      },
+      "lunarDate": {
+        "day": 2,
+        "month": 1,
+        "year": 2003
+      }
+    },
+    "notes": "Born on 2nd day of Lunar Year 2003 (Quý Mùi), but before Lập Xuân (04/02/2003), so Bazi Year is still Nhâm Ngọ (2002)."
+  },
+  {
+    "id": "BAZI-19840510-2315-MIDNIGHT-BOUNDARY",
+    "source": "Dạ Tý Zi Ping Standard",
+    "methodology": "tu-binh-manh-phai-v1",
+    "verifiedBy": "Day change at 23:00 rule",
+    "input": {
+      "fullName": "Lê Văn C",
+      "gender": true,
+      "year": 1984,
+      "month": 5,
+      "day": 10,
+      "hour": 23,
+      "minute": 15,
+      "focusYear": 2026
+    },
+    "expected": {
+      "dayBranch": "Tý",
+      "hourBranch": "Tý"
+    },
+    "notes": "Birth at 23:15 belongs to Early Rat (Giờ Tý), advancing Day Pillar to the incoming day."
+  }
+]
