@@ -58,14 +58,19 @@ body {
 @media print {
   body {
     background-color: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   header, nav, footer, .no-print {
     display: none !important;
   }
-  .print-container {
+  .print-container, #bazi-printable-chart {
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
+    border: 2px solid #2b78c5 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
   }
 }

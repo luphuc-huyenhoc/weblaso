@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { Mail, Clock, Send, CheckCircle2 } from 'lucide-react';
 
 export default function LienHePage() {
   const [name, setName] = useState('');
@@ -39,21 +39,6 @@ export default function LienHePage() {
           </h3>
 
           <div className="space-y-4 text-xs text-gray-700">
-            <div className="flex items-start space-x-3">
-              <MapPin className="w-5 h-5 text-[#c8860a] shrink-0 mt-0.5" />
-              <div>
-                <strong className="block text-gray-900 mb-0.5">Địa chỉ văn phòng:</strong>
-                <span>Tòa nhà Phong Thủy Lữ Phúc, Quận 1, TP. Hồ Chí Minh</span>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-3">
-              <Phone className="w-5 h-5 text-[#c8860a] shrink-0 mt-0.5" />
-              <div>
-                <strong className="block text-gray-900 mb-0.5">Hotline hỗ trợ:</strong>
-                <span className="font-mono font-bold text-[#c8860a]">1900 6868 — 0912 345 678</span>
-              </div>
-            </div>
 
             <div className="flex items-start space-x-3">
               <Mail className="w-5 h-5 text-[#c8860a] shrink-0 mt-0.5" />

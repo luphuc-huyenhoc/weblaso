@@ -21,7 +21,7 @@ async function main() {
       username: 'admin',
       email: 'admin@luphuc.vn',
       fullName: 'Quản Trị Viên Lữ Phúc',
-      phoneNumber: '0916889131',
+      phoneNumber: '0900000000',
       passwordHash: adminPasswordHash,
       role: Role.ADMIN,
       isActive: true,
@@ -42,7 +42,7 @@ async function main() {
       username: 'nguyenvana',
       email: 'user@luphuc.vn',
       fullName: 'Nguyễn Văn A',
-      phoneNumber: '0901234567',
+      phoneNumber: '0900000001',
       passwordHash: userPasswordHash,
       role: Role.USER,
       isActive: true,
@@ -61,7 +61,6 @@ async function main() {
   // 3. Create Default Site Settings
   const defaultSettings = [
     { key: 'site_title', value: 'Lữ Phúc | Bát Tự Manh Phái & Dịch Học Cổ Truyền', description: 'Tiêu đề trang web' },
-    { key: 'hotline', value: '091.688.9131', description: 'Số điện thoại hỗ trợ tư vấn' },
     { key: 'notice_banner', value: 'Lữ Phúc — Khóa luận giải Bát Tự & Dịch Học thực chiến cùng chuyên gia', description: 'Thông báo trên banner' },
     { key: 'maintenance_mode', value: 'false', description: 'Bật/tắt chế độ bảo trì' },
   ];

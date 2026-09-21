@@ -141,9 +141,10 @@ export function BaziForm({ initialValues, autoSubmit }: BaziFormProps) {
 
           {/* Họ tên */}
           <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-2">
-            <label className="font-semibold text-gray-700 md:text-right pr-2">Họ tên</label>
+            <label htmlFor="fullName" className="font-semibold text-gray-700 md:text-right pr-2">Họ tên</label>
             <div className="md:col-span-3">
               <input
+                id="fullName"
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
@@ -187,6 +188,7 @@ export function BaziForm({ initialValues, autoSubmit }: BaziFormProps) {
             <label className="font-semibold text-gray-700 md:text-right pr-2">Ngày sinh</label>
             <div className="md:col-span-3 grid grid-cols-3 gap-2">
               <select
+                id="day"
                 value={day}
                 onChange={(e) => setDay(parseInt(e.target.value, 10))}
                 className="w-full px-3 py-2 border border-gray-300 rounded bg-white focus:border-[#c8860a]"
@@ -198,6 +200,7 @@ export function BaziForm({ initialValues, autoSubmit }: BaziFormProps) {
                 ))}
               </select>
               <select
+                id="month"
                 value={month}
                 onChange={(e) => setMonth(parseInt(e.target.value, 10))}
                 className="w-full px-3 py-2 border border-gray-300 rounded bg-white focus:border-[#c8860a]"
@@ -209,6 +212,7 @@ export function BaziForm({ initialValues, autoSubmit }: BaziFormProps) {
                 ))}
               </select>
               <select
+                id="year"
                 value={year}
                 onChange={(e) => setYear(parseInt(e.target.value, 10))}
                 className="w-full px-3 py-2 border border-gray-300 rounded bg-white focus:border-[#c8860a]"
@@ -227,6 +231,7 @@ export function BaziForm({ initialValues, autoSubmit }: BaziFormProps) {
             <label className="font-semibold text-gray-700 md:text-right pr-2">Giờ sinh</label>
             <div className="md:col-span-3 grid grid-cols-3 gap-2">
               <select
+                id="hour"
                 value={hour}
                 onChange={(e) => setHour(parseInt(e.target.value, 10))}
                 className="w-full px-3 py-2 border border-gray-300 rounded bg-white focus:border-[#c8860a]"
@@ -238,30 +243,32 @@ export function BaziForm({ initialValues, autoSubmit }: BaziFormProps) {
                 ))}
               </select>
               <select
+                id="minute"
                 value={minute}
                 onChange={(e) => setMinute(parseInt(e.target.value, 10))}
                 className="w-full px-3 py-2 border border-gray-300 rounded bg-white focus:border-[#c8860a]"
               >
-                {Array.from({ length: 60 }, (_, i) => i).map((m) => (
-                  <option key={m} value={m}>
-                    {m < 10 ? `0${m}` : m} phút
+                {Array.from({ length: 60 }, (_, i) => i).map((min) => (
+                  <option key={min} value={min}>
+                    {min < 10 ? `0${min}` : min} phút
                   </option>
                 ))}
               </select>
-              <div className="text-[11px] text-gray-500 flex items-center pl-1">
-                Giờ Tý bắt đầu từ 23:00
+              <div className="flex items-center text-xs text-gray-500 italic pl-1">
+                (Âm hoặc Dương lịch)
               </div>
             </div>
           </div>
 
-          {/* Năm tính (FocusYear) */}
+          {/* Năm tính (Focus Year) */}
           <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-2">
-            <label className="font-semibold text-gray-700 md:text-right pr-2">Năm tính</label>
+            <label htmlFor="focusYear" className="font-semibold text-gray-700 md:text-right pr-2">Năm tính</label>
             <div className="md:col-span-3">
               <select
+                id="focusYear"
                 value={focusYear}
                 onChange={(e) => setFocusYear(parseInt(e.target.value, 10))}
-                className="w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded bg-white focus:border-[#c8860a]"
+                className="w-full md:w-1/2 px-3 py-2 border border-gray-300 rounded bg-white focus:border-[#c8860a]"
               >
                 {focusYearsRange.map((y) => (
                   <option key={y} value={y}>

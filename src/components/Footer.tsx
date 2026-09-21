@@ -16,14 +16,6 @@ export function Footer() {
               được đúc kết qua hàng nghìn năm lịch sử. Hệ thống lý luận Bát Tự Manh Phái & Dịch Học
               hỗ trợ phân tích điểm vượng suy, ngũ hành khuyết thiếu để ứng dụng phong thủy cải vận bổ khuyết.
             </p>
-            <div className="text-gray-400">
-              <strong className="text-white">Cố vấn chuyên môn:</strong> Thầy Đoàn Gia
-              <br />
-              <strong className="text-white">Hotline tư vấn:</strong>{' '}
-              <a href="tel:0916889131" className="text-[#c8860a] font-bold hover:underline">
-                091.688.9131
-              </a>
-            </div>
           </div>
 
           {/* Quick links */}

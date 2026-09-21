@@ -133,7 +133,7 @@ export interface BaziEnvelope {
 }
 
 // Five Element mapping for Stems
-const STEM_ELEMENTS: Record<ThienCan, NguhanhType> = {
+export const STEM_ELEMENTS: Record<ThienCan, NguhanhType> = {
   Giáp: 'Mộc',
   Ất: 'Mộc',
   Bính: 'Hỏa',
@@ -147,7 +147,7 @@ const STEM_ELEMENTS: Record<ThienCan, NguhanhType> = {
 };
 
 // Polarity for Stems (true = Yang, false = Yin)
-const STEM_YANG: Record<ThienCan, boolean> = {
+export const STEM_YANG: Record<ThienCan, boolean> = {
   Giáp: true,
   Ất: false,
   Bính: true,
@@ -161,7 +161,7 @@ const STEM_YANG: Record<ThienCan, boolean> = {
 };
 
 // Five Element mapping for Branches
-const BRANCH_ELEMENTS: Record<DiaChi, NguhanhType> = {
+export const BRANCH_ELEMENTS: Record<DiaChi, NguhanhType> = {
   Tý: 'Thủy',
   Sửu: 'Thổ',
   Dần: 'Mộc',
@@ -243,6 +243,21 @@ const JIE_ANGLES = [
   225, // Lập đông -> Hợi
   255, // Đại tuyết -> Tý
   285, // Tiểu hàn -> Sửu
+];
+
+const JIE_NAMES = [
+  'Lập xuân',
+  'Kinh trập',
+  'Thanh minh',
+  'Lập hạ',
+  'Mang chủng',
+  'Tiểu thử',
+  'Lập thu',
+  'Bạch lộ',
+  'Hàn lộ',
+  'Lập đông',
+  'Đại tuyết',
+  'Tiểu hàn',
 ];
 
 const MONTH_BRANCH_NAMES: DiaChi[] = [
@@ -550,8 +565,15 @@ export function calculateBazi(input: BaziInput): BaziEnvelope {
   const curJieAngle = JIE_ANGLES[monthOrderIndex];
   const nextJieAngle = JIE_ANGLES[(monthOrderIndex + 1) % 12];
 
-  const prevJieJdn = findSolarTermInstant(year, curJieAngle);
-  const nextJieJdn = findSolarTermInstant(year, nextJieAngle);
+  let prevJieJdn = findSolarTermInstant(year, curJieAngle);
+  if (prevJieJdn > birthJdn) {
+    prevJieJdn = findSolarTermInstant(year - 1, curJieAngle);
+  }
+
+  let nextJieJdn = findSolarTermInstant(year, nextJieAngle);
+  if (nextJieJdn < birthJdn) {
+    nextJieJdn = findSolarTermInstant(year + 1, nextJieAngle);
+  }
 
   const diffDays = isForward
     ? Math.max(0, nextJieJdn - birthJdn)
@@ -677,7 +699,14 @@ export function calculateBazi(input: BaziInput): BaziEnvelope {
   const curJDate = new Date((prevJieJdn - 2440587.5 + 7 / 24) * 86400000);
   const nextJDate = new Date((nextJieJdn - 2440587.5 + 7 / 24) * 86400000);
 
-  const formatIso = (d: Date) => d.toISOString().replace('Z', '+07:00');
+  const formatTermDate = (d: Date) => {
+    const dd = pad(d.getDate());
+    const mm = pad(d.getMonth() + 1);
+    const yyyy = d.getFullYear();
+    const hh = pad(d.getHours());
+    const min = pad(d.getMinutes());
+    return `${dd}-${mm}-${yyyy} ${hh}:${min}`;
+  };
 
   const calculationResult: BaziCalculationResult = {
     personal: {
@@ -695,10 +724,10 @@ export function calculateBazi(input: BaziInput): BaziEnvelope {
       percentage: dmPercent,
     },
     solarTerms: {
-      currentTerm: `Tiết ${MONTH_BRANCH_NAMES[monthOrderIndex] === 'Thân' ? 'Lập thu' : 'Tiết khí'}`,
-      currentStart: formatIso(curJDate),
-      nextTerm: 'Tiết kế',
-      nextStart: formatIso(nextJDate),
+      currentTerm: JIE_NAMES[monthOrderIndex],
+      currentStart: formatTermDate(curJDate),
+      nextTerm: JIE_NAMES[(monthOrderIndex + 1) % 12],
+      nextStart: formatTermDate(nextJDate),
     },
     majorLuck: {
       direction: isForward ? 'Thuận' : 'Nghịch',
