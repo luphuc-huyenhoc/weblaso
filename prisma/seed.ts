@@ -9,12 +9,18 @@ async function main() {
   // 1. Create Default Admin
   const adminPasswordHash = await bcrypt.hash('Admin@123456', 10);
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@nguhanh.net' },
-    update: {},
+    where: { username: 'admin' },
+    update: {
+      email: 'admin@luphuc.vn',
+      fullName: 'Quản Trị Viên Lữ Phúc',
+      passwordHash: adminPasswordHash,
+      role: Role.ADMIN,
+      isActive: true,
+    },
     create: {
       username: 'admin',
-      email: 'admin@nguhanh.net',
-      fullName: 'Quản Trị Viên',
+      email: 'admin@luphuc.vn',
+      fullName: 'Quản Trị Viên Lữ Phúc',
       phoneNumber: '0916889131',
       passwordHash: adminPasswordHash,
       role: Role.ADMIN,
@@ -26,11 +32,15 @@ async function main() {
   // 2. Create Sample Test User with Active Subscription
   const userPasswordHash = await bcrypt.hash('User@123456', 10);
   const user = await prisma.user.upsert({
-    where: { email: 'user@nguhanh.net' },
-    update: {},
+    where: { username: 'nguyenvana' },
+    update: {
+      email: 'user@luphuc.vn',
+      fullName: 'Nguyễn Văn A',
+      passwordHash: userPasswordHash,
+    },
     create: {
       username: 'nguyenvana',
-      email: 'user@nguhanh.net',
+      email: 'user@luphuc.vn',
       fullName: 'Nguyễn Văn A',
       phoneNumber: '0901234567',
       passwordHash: userPasswordHash,
@@ -50,9 +60,9 @@ async function main() {
 
   // 3. Create Default Site Settings
   const defaultSettings = [
-    { key: 'site_title', value: 'Ngũ Hành | Bát Tự Manh Phái & Dịch Học', description: 'Tiêu đề trang web' },
+    { key: 'site_title', value: 'Lữ Phúc | Bát Tự Manh Phái & Dịch Học Cổ Truyền', description: 'Tiêu đề trang web' },
     { key: 'hotline', value: '091.688.9131', description: 'Số điện thoại hỗ trợ tư vấn' },
-    { key: 'notice_banner', value: 'Giải mã vận mệnh từ ngày sinh — Khóa học Bát Tự & Dịch Học chuẩn xác', description: 'Thông báo trên banner' },
+    { key: 'notice_banner', value: 'Lữ Phúc — Khóa luận giải Bát Tự & Dịch Học thực chiến cùng chuyên gia', description: 'Thông báo trên banner' },
     { key: 'maintenance_mode', value: 'false', description: 'Bật/tắt chế độ bảo trì' },
   ];
 

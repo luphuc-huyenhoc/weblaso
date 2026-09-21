@@ -138,10 +138,10 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
         <div className="border border-gray-300 bg-gray-50 p-4 rounded-t flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-[#27303f] rounded border-2 border-[#c8860a] flex items-center justify-center text-[#c8860a] font-bold text-lg">
-              NH
+              LP
             </div>
             <div>
-              <div className="text-xl font-bold text-[#27303f]">Nguhanh.net</div>
+              <div className="text-xl font-bold text-[#27303f]">LỮ PHÚC</div>
               <div className="text-xs text-gray-500 uppercase tracking-widest font-semibold">
                 Lá Số Bát Tự — Cải Vận Bổ Khuyết
               </div>
@@ -445,7 +445,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
 
         {/* Footer Cultural Notice */}
         <div className="mt-4 pt-3 border-t border-gray-200 text-center text-gray-500 text-[11px]">
-          Lá số lập tại: <strong className="text-[#27303f]">https://nguhanh.net/</strong>. Cố vấn học thuật: Thầy Đoàn Gia (091.688.9131).
+          Lá số lập tại: <strong className="text-[#27303f]">LỮ PHÚC (luphuc.vn)</strong>. Cố vấn học thuật: Thầy Đoàn Gia (091.688.9131).
         </div>
       </div>
     </div>

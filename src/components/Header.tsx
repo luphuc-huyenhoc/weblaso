@@ -164,11 +164,11 @@ export function Header({ user }: { user?: { fullName: string; role: string } | n
       <div className="max-w-site mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <Link href="/" className="flex items-center space-x-3">
           <div className="w-12 h-12 bg-[#27303f] rounded-full border-2 border-[#c8860a] flex items-center justify-center text-[#c8860a] font-bold text-xl shadow-sm">
-            NH
+            LP
           </div>
           <div>
             <div className="text-2xl font-bold tracking-tight text-[#27303f]">
-              NGŨ HÀNH<span className="text-[#c8860a]">.NET</span>
+              LỮ PHÚC
             </div>
             <div className="text-xs text-gray-500 tracking-wider uppercase font-medium">
               Bát Tự Manh Phái & Dịch Học Cổ Truyền

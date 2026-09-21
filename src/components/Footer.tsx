@@ -9,7 +9,7 @@ export function Footer() {
           {/* Brand & Introduction */}
           <div className="md:col-span-2 space-y-3">
             <div className="text-lg font-bold text-white tracking-wide">
-              NGŨ HÀNH<span className="text-[#c8860a]">.NET</span>
+              LỮ PHÚC
             </div>
             <p className="text-gray-400 leading-relaxed">
               Bát Tự (Tứ Trụ) là một trong những phát minh quan trọng trong mệnh lý học truyền thống,
@@ -96,7 +96,7 @@ export function Footer() {
         </div>
 
         <div className="mt-4 pt-4 text-center text-gray-500 text-[11px]">
-          © {new Date().getFullYear()} NGUHANH.NET — Bảo lưu mọi quyền. Độc lập phát triển.
+          © {new Date().getFullYear()} LỮ PHÚC — Bảo lưu mọi quyền. Độc lập phát triển.
         </div>
       </div>
     </footer>

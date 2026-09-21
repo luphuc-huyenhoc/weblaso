@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Nguhanh.net Full-Stack End-to-End User Journeys', () => {
+test.describe('Lữ Phúc Full-Stack End-to-End User Journeys', () => {
   test('1. Home page renders brand header, calculation form, and navigation', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle(/Nguhanh\.net/i);
+    await expect(page).toHaveTitle(/Lữ Phúc/i);
     await expect(page.locator('h2').first()).toContainText('Phong Thủy Cải Vận Bổ Khuyết');
     await expect(page.getByRole('button', { name: 'MỞ LÁ SỐ' })).toBeVisible();
   });

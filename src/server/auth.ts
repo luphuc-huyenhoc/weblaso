@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import { cookies } from 'next/headers';
 import { User, Role, Subscription, SubscriptionStatus, PlanType } from '@prisma/client';
 
-const SESSION_COOKIE_NAME = 'nguhanh_session';
+const SESSION_COOKIE_NAME = 'luphuc_session';
 const SESSION_MAX_AGE = 30 * 24 * 60 * 60; // 30 days in seconds
 
 /** Hash plaintext using SHA-256 for tokens and sessions */

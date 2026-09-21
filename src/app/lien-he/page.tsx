@@ -43,7 +43,7 @@ export default function LienHePage() {
               <MapPin className="w-5 h-5 text-[#c8860a] shrink-0 mt-0.5" />
               <div>
                 <strong className="block text-gray-900 mb-0.5">Địa chỉ văn phòng:</strong>
-                <span>Tòa nhà Phong Thủy Ngũ Hành, Quận 1, TP. Hồ Chí Minh</span>
+                <span>Tòa nhà Phong Thủy Lữ Phúc, Quận 1, TP. Hồ Chí Minh</span>
               </div>
             </div>
 
@@ -59,7 +59,7 @@ export default function LienHePage() {
               <Mail className="w-5 h-5 text-[#c8860a] shrink-0 mt-0.5" />
               <div>
                 <strong className="block text-gray-900 mb-0.5">Hòm thư điện tử:</strong>
-                <span>hotro@nguhanh.net</span>
+                <span>hotro@luphuc.vn</span>
               </div>
             </div>
 

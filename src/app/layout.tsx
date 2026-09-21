@@ -8,11 +8,11 @@ import { getCurrentUser } from '@/server/auth';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Nguhanh.net | Bát Tự Manh Phái & Dịch Học Cổ Truyền',
+  title: 'Lữ Phúc | Bát Tự Manh Phái & Dịch Học Cổ Truyền',
   description:
     'Lập lá số Bát Tự, Tứ Trụ phong thủy cải vận bổ khuyết, luận giải hiện tại tương lai quá khứ, lá số tử vi, quẻ dịch lục hào và phong thủy bát trạch.',
-  keywords: ['bát tự', 'tứ trụ', 'ngũ hành', 'tử vi', 'lục hào', 'quẻ dịch', 'bát trạch', 'manh phái'],
-  authors: [{ name: 'Nguhanh.net' }],
+  keywords: ['bát tự', 'tứ trụ', 'ngũ hành', 'tử vi', 'lục hào', 'quẻ dịch', 'bát trạch', 'manh phái', 'lữ phúc'],
+  authors: [{ name: 'Lữ Phúc' }],
 };
 
 export const viewport: Viewport = {

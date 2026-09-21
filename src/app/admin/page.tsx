@@ -49,7 +49,7 @@ export default function AdminDashboardPage() {
         <h2 className="text-lg font-bold text-red-900">Truy Cập Bị Giới Hạn</h2>
         <p className="text-xs text-red-700">{error}</p>
         <p className="text-xs text-gray-500">
-          Vui lòng đăng nhập bằng tài khoản Quản trị viên (admin@nguhanh.net) để tiếp tục.
+          Vui lòng đăng nhập bằng tài khoản Quản trị viên (admin@luphuc.vn) để tiếp tục.
         </p>
         <Link
           href="/tai-khoan/dang-nhap"

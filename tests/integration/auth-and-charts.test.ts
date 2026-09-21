@@ -6,7 +6,7 @@ import { calculateBazi } from '../../src/domain/bazi';
 import { Role, ChartType } from '@prisma/client';
 
 describe('Auth & Versioned Chart Persistence Integration', () => {
-  const testEmail = `test_${Date.now()}@nguhanh.net`;
+  const testEmail = `test_${Date.now()}@luphuc.vn`;
   let testUserId = '';
 
   beforeAll(async () => {
