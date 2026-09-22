@@ -49,6 +49,26 @@ export default function NgauNhienPage() {
     return () => window.removeEventListener('resize', calculateScale);
   }, [result]);
 
+  // Auto-generate high-res PNG image for right-click copy & modal preview
+  useEffect(() => {
+    if (!result) return;
+    let isMounted = true;
+    const gen = async () => {
+      if (!chartRef.current) return;
+      try {
+        const url = await captureChartImage(chartRef.current, { width: 720, height: 720 });
+        if (isMounted) setModalImageUrl(url);
+      } catch (err) {
+        console.error('Auto generate random iching image error:', err);
+      }
+    };
+    const t = setTimeout(gen, 150);
+    return () => {
+      isMounted = false;
+      clearTimeout(t);
+    };
+  }, [result]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -86,11 +106,11 @@ export default function NgauNhienPage() {
   };
 
   const handleDownloadImage = async () => {
-    if (!chartRef.current) return;
+    if ((!chartRef.current && !modalImageUrl) || !result) return;
     try {
       setDownloading(true);
       const hexName = result?.calculation.originalHexagram.name.trim().replace(/\s+/g, '_') || 'que_dich';
-      await downloadChartImage(chartRef.current, {
+      await downloadChartImage(modalImageUrl || chartRef.current!, {
         fileName: `QueDich_NgauNhien_${hexName}`,
         width: 720,
         height: 720,
@@ -105,18 +125,18 @@ export default function NgauNhienPage() {
   };
 
   const handleCopyImage = async () => {
-    if (!chartRef.current) return;
+    if ((!chartRef.current && !modalImageUrl) || !result) return;
     try {
       setCopying(true);
       const hexName = result?.calculation.originalHexagram.name.trim().replace(/\s+/g, '_') || 'que_dich';
-      const res = await copyChartImage(chartRef.current, {
+      const res = await copyChartImage(modalImageUrl || chartRef.current!, {
         fileName: `QueDich_NgauNhien_${hexName}`,
         width: 720,
         height: 720,
         title: `Quẻ Dịch: ${result?.calculation.originalHexagram.name}`,
       });
 
-      if (res.dataUrl) {
+      if (res.dataUrl && !modalImageUrl) {
         setModalImageUrl(res.dataUrl);
       }
 
@@ -325,6 +345,7 @@ export default function NgauNhienPage() {
             ref={chartRef}
             envelope={result}
             zoom={isZoomFit && scale < 1 ? scale : 1}
+            chartImageUrl={modalImageUrl}
           />
 
           {/* Action Toolbar Matching Reference Buttons */}

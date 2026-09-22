@@ -8,10 +8,11 @@ import { IChingLegend } from './IChingLegend';
 export interface LucHaoResultDocumentProps {
   envelope: IchingEnvelope;
   zoom?: number;
+  chartImageUrl?: string | null;
 }
 
 export const LucHaoResultDocument = forwardRef<HTMLDivElement, LucHaoResultDocumentProps>(
-  ({ envelope, zoom = 1 }, ref) => {
+  ({ envelope, zoom = 1, chartImageUrl }, ref) => {
     const { calculation } = envelope;
     const isScaled = zoom && zoom < 1;
 
@@ -64,6 +65,18 @@ export const LucHaoResultDocument = forwardRef<HTMLDivElement, LucHaoResultDocum
             {/* D. Footer Attribution & Five Elements Legend */}
             <IChingLegend />
           </div>
+
+          {/* High-res image overlay for right-click copy & mobile touch */}
+          {chartImageUrl && (
+            <img
+              src={chartImageUrl}
+              alt={`Quẻ Dịch Lục Hào - ${calculation.originalHexagram.name}`}
+              data-chart-overlay="true"
+              className="absolute inset-0 w-full h-full object-contain opacity-[0.001] z-30 pointer-events-auto cursor-pointer select-none no-print"
+              style={{ WebkitTouchCallout: 'default' }}
+              title="Nhấp chuột phải chọn 'Sao chép hình ảnh' hoặc nhấn giữ để lưu ảnh"
+            />
+          )}
         </div>
       </div>
     );

@@ -67,7 +67,7 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
         console.error('Auto generate Ziwei chart image error:', err);
       }
     };
-    const timer = setTimeout(generateImage, 400);
+    const timer = setTimeout(generateImage, 150);
     return () => {
       isMounted = false;
       clearTimeout(timer);
@@ -75,18 +75,18 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
   }, [calculation]);
 
   const handleCopyImage = async () => {
-    if (!chartRef.current) return;
+    if (!chartRef.current && !chartImageUrl) return;
     setCopyStatus('copying');
     try {
       const cleanName = personal.fullName.trim().replace(/\s+/g, '_');
-      const res = await copyChartImage(chartRef.current, {
+      const res = await copyChartImage(chartImageUrl || chartRef.current!, {
         fileName: `LaSoTuVi_${cleanName}`,
         width: 720,
         height: 1000,
         title: `Lá số Tử Vi - ${personal.fullName}`,
       });
 
-      if (res.dataUrl) {
+      if (res.dataUrl && !chartImageUrl) {
         setChartImageUrl(res.dataUrl);
       }
 
@@ -107,11 +107,11 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
   };
 
   const handleDownloadImage = async () => {
-    if (!chartRef.current) return;
+    if (!chartRef.current && !chartImageUrl) return;
     setDownloading(true);
     try {
       const cleanName = personal.fullName.trim().replace(/\s+/g, '_');
-      await downloadChartImage(chartRef.current, {
+      await downloadChartImage(chartImageUrl || chartRef.current!, {
         fileName: `LaSoTuVi_${cleanName}`,
         width: 720,
         height: 1000,
@@ -630,7 +630,8 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
                 <img
                   src={chartImageUrl}
                   alt={`Lá số Tử Vi - ${personal.fullName}`}
-                  className="absolute inset-0 w-full h-full object-contain opacity-[0.001] z-20 pointer-events-auto cursor-pointer select-none"
+                  data-chart-overlay="true"
+                  className="absolute inset-0 w-full h-full object-contain opacity-[0.001] z-30 pointer-events-auto cursor-pointer select-none no-print"
                   style={{ WebkitTouchCallout: 'default' }}
                   title="Nhấp chuột phải chọn 'Sao chép hình ảnh' hoặc nhấn giữ để lưu ảnh"
                 />
@@ -642,7 +643,7 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
 
       {/* Helpful Tip */}
       <div className="text-[11px] sm:text-xs text-gray-500 text-center px-2 no-print">
-        💡 Mẹo: Bạn có thể <strong>nhấp chuột phải</strong> (hoặc bấm nút <strong>&ldquo;Phóng to&rdquo;</strong> trên điện thoại) để chọn <strong>&ldquo;Sao chép hình ảnh&rdquo;</strong> gửi qua Zalo, Facebook Messenger.
+        💡 Mẹo: Bạn có thể <strong>nhấp chuột phải</strong> (hoặc <strong>nhấn giữ trên điện thoại</strong>) trực tiếp vào lá số để chọn <strong>&ldquo;Sao chép hình ảnh&rdquo;</strong> gửi qua Zalo, Facebook Messenger.
       </div>
 
       {/* Mobile Image Preview Modal */}

@@ -40,7 +40,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
     return () => window.removeEventListener('resize', calculateScale);
   }, []);
 
-  // Auto-generate high-res PNG image for modal preview
+  // Auto-generate high-res PNG image for modal preview & right-click copy overlay
   useEffect(() => {
     let isMounted = true;
     const generateImage = async () => {
@@ -55,27 +55,27 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
       }
     };
 
-    const timer = setTimeout(generateImage, 500);
+    const timer = setTimeout(generateImage, 150);
     return () => {
       isMounted = false;
       clearTimeout(timer);
     };
-  }, [calc]);
+  }, [calc, envelope.input.focusYear, showAllDecades]);
 
   const handleCopyImage = async () => {
-    if (!chartRef.current) return;
+    if (!chartRef.current && !chartImageUrl) return;
     setCopyStatus('copying');
     try {
       const cleanName = calc.personal.fullName.trim().replace(/\s+/g, '_');
       const birthDate = `${envelope.input.year}-${envelope.input.month}-${envelope.input.day}`;
-      const res = await copyChartImage(chartRef.current, {
+      const res = await copyChartImage(chartImageUrl || chartRef.current!, {
         fileName: `LaSoBatTu_${cleanName}_${birthDate}`,
         width: 720,
         height: 0,
         title: `Lá số Bát Tự - ${calc.personal.fullName}`,
       });
 
-      if (res.dataUrl) {
+      if (res.dataUrl && !chartImageUrl) {
         setChartImageUrl(res.dataUrl);
       }
 
@@ -109,12 +109,12 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
   };
 
   const handleDownloadPng = async () => {
-    if (!chartRef.current) return;
+    if (!chartRef.current && !chartImageUrl) return;
     setIsExporting(true);
     try {
       const cleanName = calc.personal.fullName.trim().replace(/\s+/g, '_');
       const birthDate = `${envelope.input.year}-${envelope.input.month}-${envelope.input.day}`;
-      await downloadChartImage(chartRef.current, {
+      await downloadChartImage(chartImageUrl || chartRef.current!, {
         fileName: `LaSoBatTu_${cleanName}_${birthDate}`,
         width: 720,
         height: 0,

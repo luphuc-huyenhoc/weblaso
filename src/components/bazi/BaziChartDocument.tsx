@@ -72,6 +72,21 @@ export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentPro
             {/* [E] Footer & Five Elements Legend */}
             <FiveElementsLegend />
           </div>
+
+          {/* High-res image overlay for right-click 'Sao chép hình ảnh' & mobile long-press */}
+          {chartImageUrl && (
+            <img
+              src={chartImageUrl}
+              alt={`Lá số Bát Tự - ${personal.fullName}`}
+              data-chart-overlay="true"
+              className="absolute inset-0 w-full h-full object-contain z-30 cursor-pointer select-none no-print"
+              style={{
+                opacity: 0.001,
+                WebkitTouchCallout: 'default',
+              }}
+              title="Nhấp chuột phải chọn 'Sao chép hình ảnh' hoặc nhấn giữ để lưu ảnh"
+            />
+          )}
         </div>
       </div>
     );

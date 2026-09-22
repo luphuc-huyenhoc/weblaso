@@ -54,7 +54,7 @@ export default function LucHaoPage() {
         console.error('Auto generate iching image error:', err);
       }
     };
-    const t = setTimeout(gen, 400);
+    const t = setTimeout(gen, 150);
     return () => {
       isMounted = false;
       clearTimeout(t);
@@ -87,11 +87,11 @@ export default function LucHaoPage() {
   };
 
   const handleDownloadImage = async () => {
-    if (!chartRef.current || !result) return;
+    if ((!chartRef.current && !modalImageUrl) || !result) return;
     try {
       setDownloading(true);
       const hexName = result.calculation.originalHexagram.name.trim().replace(/\s+/g, '_');
-      await downloadChartImage(chartRef.current, {
+      await downloadChartImage(modalImageUrl || chartRef.current!, {
         fileName: `QueDich_LucHao_${hexName}`,
         width: 720,
         height: 720,
@@ -106,18 +106,18 @@ export default function LucHaoPage() {
   };
 
   const handleCopyImage = async () => {
-    if (!chartRef.current || !result) return;
+    if ((!chartRef.current && !modalImageUrl) || !result) return;
     try {
       setCopying(true);
       const hexName = result.calculation.originalHexagram.name.trim().replace(/\s+/g, '_');
-      const res = await copyChartImage(chartRef.current, {
+      const res = await copyChartImage(modalImageUrl || chartRef.current!, {
         fileName: `QueDich_LucHao_${hexName}`,
         width: 720,
         height: 720,
         title: `Quẻ Dịch: ${result.calculation.originalHexagram.name}`,
       });
 
-      if (res.dataUrl) {
+      if (res.dataUrl && !modalImageUrl) {
         setModalImageUrl(res.dataUrl);
       }
 
@@ -195,6 +195,7 @@ export default function LucHaoPage() {
             ref={chartRef}
             envelope={result}
             zoom={isZoomFit && scale < 1 ? scale : 1}
+            chartImageUrl={modalImageUrl}
           />
 
           {/* Action Toolbar Matching HocVienLySo boidich tools */}

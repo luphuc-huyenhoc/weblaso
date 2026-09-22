@@ -24,7 +24,7 @@ export async function captureChartImage(
 
   // 2. Remove any invisible touch/click overlays from the clone
   const overlays = clone.querySelectorAll(
-    'img[title*="Sao chép"], img[class*="opacity-0"], img[class*="opacity-\\[0"]'
+    'img[title*="Sao chép"], img[class*="opacity-0"], img[class*="opacity-\\[0"], [data-chart-overlay="true"], img[data-chart-overlay]'
   );
   overlays.forEach((img) => img.remove());
 
@@ -123,19 +123,42 @@ export interface CopyChartResult {
 }
 
 /**
+ * Convert a base64 dataUrl to an object blob URL
+ */
+export function dataUrlToBlobUrl(dataUrl: string): string {
+  try {
+    const parts = dataUrl.split(';base64,');
+    if (parts.length < 2) return dataUrl;
+    const contentType = parts[0].split(':')[1] || 'image/png';
+    const raw = window.atob(parts[1]);
+    const uInt8Array = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; ++i) {
+      uInt8Array[i] = raw.charCodeAt(i);
+    }
+    const blob = new Blob([uInt8Array], { type: contentType });
+    return URL.createObjectURL(blob);
+  } catch {
+    return dataUrl;
+  }
+}
+
+/**
  * Handle copying the chart image:
  * - Desktop: writes PNG blob directly to clipboard
  * - Mobile: opens Web Share API with image file
  * - Returns CopyChartResult { status, dataUrl }
  */
 export async function copyChartImage(
-  element: HTMLElement,
+  target: HTMLElement | string,
   options: ExportChartOptions
 ): Promise<CopyChartResult> {
-  const dataUrl = await captureChartImage(element, {
-    width: options.width,
-    height: options.height,
-  });
+  const dataUrl =
+    typeof target === 'string'
+      ? target
+      : await captureChartImage(target, {
+          width: options.width,
+          height: options.height,
+        });
 
   const res = await fetch(dataUrl);
   const blob = await res.blob();
@@ -185,13 +208,16 @@ export async function copyChartImage(
  * Handle direct PNG file download
  */
 export async function downloadChartImage(
-  element: HTMLElement,
+  target: HTMLElement | string,
   options: ExportChartOptions
 ): Promise<void> {
-  const dataUrl = await captureChartImage(element, {
-    width: options.width,
-    height: options.height,
-  });
+  const dataUrl =
+    typeof target === 'string'
+      ? target
+      : await captureChartImage(target, {
+          width: options.width,
+          height: options.height,
+        });
 
   const res = await fetch(dataUrl);
   const blob = await res.blob();
