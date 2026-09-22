@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { BaziEnvelope } from '@/domain/bazi';
 import { Download, Printer, Bookmark, Check, AlertCircle, CalendarRange, Sparkles } from 'lucide-react';
 import { toPng } from 'html-to-image';
@@ -8,20 +8,53 @@ import { BaziChartDocument } from './BaziChartDocument';
 
 export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
   const chartRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState<number>(1);
+  const [isZoomFit, setIsZoomFit] = useState<boolean>(true);
+  const [showAllDecades, setShowAllDecades] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [saveMessage, setSaveMessage] = useState('');
   const [isExporting, setIsExporting] = useState(false);
-  const [showAllDecades, setShowAllDecades] = useState(false);
 
   const { calculation: calc, interpretation: interp } = envelope;
 
+  useEffect(() => {
+    function calculateScale() {
+      if (containerRef.current) {
+        // Measure the container's available clientWidth
+        const width = containerRef.current.clientWidth - 4;
+        const targetBaseWidth = 720;
+        if (width > 0 && width < targetBaseWidth) {
+          setScale(width / targetBaseWidth);
+        } else {
+          setScale(1);
+        }
+      }
+    }
+
+    calculateScale();
+    window.addEventListener('resize', calculateScale);
+    return () => window.removeEventListener('resize', calculateScale);
+  }, []);
+
   const handlePrint = () => {
-    window.print();
+    if (chartRef.current) {
+      const prevZoom = chartRef.current.style.zoom;
+      chartRef.current.style.zoom = '1';
+      window.print();
+      setTimeout(() => {
+        if (chartRef.current) chartRef.current.style.zoom = prevZoom;
+      }, 500);
+    } else {
+      window.print();
+    }
   };
 
   const handleDownloadPng = async () => {
     if (!chartRef.current) return;
     setIsExporting(true);
+    const prevZoom = chartRef.current.style.zoom;
+    chartRef.current.style.zoom = '1';
     try {
       const dataUrl = await toPng(chartRef.current, {
         pixelRatio: 2, // 2x high resolution matching ~1824x2628 px quality
@@ -39,6 +72,9 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
       console.error('Failed to download image:', err);
       alert('Không thể tạo ảnh lá số trực tiếp. Bạn có thể dùng tính năng "In lá số" để lưu PDF/ảnh.');
     } finally {
+      if (chartRef.current) {
+        chartRef.current.style.zoom = prevZoom;
+      }
       setIsExporting(false);
     }
   };
@@ -89,33 +125,54 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
       )}
 
       {/* MAIN DOCUMENT: Traditional Bát Tự Chart Sheet (1:1 with Reference) */}
-      <div className="print-container">
-        {/* Mobile Swipe Hint */}
-        <div className="sm:hidden flex items-center justify-center gap-1.5 py-2 px-3 bg-amber-100/90 border border-amber-300 text-[#8c451a] text-xs font-semibold rounded-xl mb-2.5 shadow-2xs no-print">
-          <span>👈 Vuốt sang ngang để xem đủ 4 Trụ & Đại Vận 👉</span>
+      <div ref={containerRef} className="print-container w-full flex flex-col items-center">
+        {/* Mobile View Toggle Bar (Only shown on screens narrower than 720px) */}
+        {scale < 1 && (
+          <div className="w-full flex items-center justify-between px-1 mb-2.5 no-print">
+            <button
+              type="button"
+              onClick={() => setIsZoomFit(!isZoomFit)}
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#27303f] hover:bg-[#1a222e] text-[#c8860a] text-xs font-bold rounded-lg border border-[#c8860a]/40 shadow-xs transition active:scale-95 cursor-pointer"
+            >
+              <span>{isZoomFit ? '🔍' : '📱'}</span>
+              <span className="text-white">
+                {isZoomFit ? 'Phóng to 100% (Vuốt ngang)' : 'Thu nhỏ vừa màn hình'}
+              </span>
+            </button>
+            <span className="text-[11px] text-[#8c451a] font-semibold bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
+              {isZoomFit ? '✓ Đã căn vừa màn hình' : '👈 Vuốt ngang để xem 👉'}
+            </span>
+          </div>
+        )}
+
+        <div
+          className={`w-full ${
+            isZoomFit && scale < 1 ? 'overflow-visible flex justify-center' : 'overflow-x-auto py-1'
+          }`}
+        >
+          <BaziChartDocument
+            ref={chartRef}
+            calculation={calc}
+            focusYear={envelope.input.focusYear}
+            showAllDecades={showAllDecades}
+            zoom={isZoomFit && scale < 1 ? scale : 1}
+          />
         </div>
 
-        <BaziChartDocument
-          ref={chartRef}
-          calculation={calc}
-          focusYear={envelope.input.focusYear}
-          showAllDecades={showAllDecades}
-        />
-
         {/* Bottom Action Buttons */}
-        <div className="flex flex-row justify-center sm:justify-end items-center gap-2 sm:space-x-2 mt-3 max-w-[960px] mx-auto px-2 no-print">
+        <div className="flex flex-row justify-center sm:justify-end items-center gap-2 sm:space-x-2 mt-3 w-full max-w-[960px] px-2 no-print">
           <button
             type="button"
             onClick={handleDownloadPng}
             disabled={isExporting}
-            className="flex-1 sm:flex-initial bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs sm:text-sm font-bold px-4 py-2 sm:py-1.5 rounded-lg shadow-2xs transition cursor-pointer text-center"
+            className="flex-1 sm:flex-initial bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs sm:text-sm font-bold px-4 py-2.5 sm:py-1.5 rounded-lg shadow-2xs transition cursor-pointer text-center"
           >
             {isExporting ? 'Đang tải...' : 'Tải lá số (PNG)'}
           </button>
           <button
             type="button"
             onClick={handlePrint}
-            className="flex-1 sm:flex-initial bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs sm:text-sm font-bold px-4 py-2 sm:py-1.5 rounded-lg shadow-2xs transition cursor-pointer text-center"
+            className="flex-1 sm:flex-initial bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs sm:text-sm font-bold px-4 py-2.5 sm:py-1.5 rounded-lg shadow-2xs transition cursor-pointer text-center"
           >
             In lá số
           </button>
@@ -123,12 +180,12 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
       </div>
 
       {/* Supplementary Astrological Interpretation & Remedies (Outside the printed document sheet) */}
-      <div className="no-print mt-8 space-y-4 bg-white border border-gray-200 rounded-lg p-5 md:p-6 shadow-xs">
-        <div className="flex items-center justify-between border-b border-gray-200 pb-3">
-          <h3 className="text-base font-bold text-[#112244] flex items-center space-x-2">
+      <div className="no-print mt-8 space-y-4 bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-200 pb-3 gap-1">
+          <h3 className="text-sm sm:text-base font-bold text-[#112244] flex items-center space-x-2">
             <span>Luận Giải Ngũ Hành & Phong Thủy Bổ Khuyết</span>
           </h3>
-          <span className="text-xs text-gray-500 font-medium">
+          <span className="text-[11px] sm:text-xs text-gray-500 font-medium">
             Lá Số Bát Tự — Cải Vận Bổ Khuyết
           </span>
         </div>
@@ -139,26 +196,26 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
             <h4 className="font-bold text-xs uppercase tracking-wider text-gray-700">
               Điểm Lực Ngũ Hành Bản Mệnh
             </h4>
-            <div className="grid grid-cols-5 gap-2 text-center text-xs">
-              <div className="p-2.5 rounded bg-gray-50 border border-gray-200">
-                <div className="font-bold text-[#707070]">Kim</div>
-                <div className="text-sm font-black text-gray-900 mt-1">{interp.elementsScore.Kim}</div>
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2 text-center text-xs">
+              <div className="p-1.5 sm:p-2.5 rounded bg-gray-50 border border-gray-200">
+                <div className="font-bold text-[#707070] text-[11px] sm:text-xs">Kim</div>
+                <div className="text-xs sm:text-sm font-black text-gray-900 mt-1">{interp.elementsScore.Kim}</div>
               </div>
-              <div className="p-2.5 rounded bg-emerald-50 border border-emerald-200">
-                <div className="font-bold text-[#138808]">Mộc</div>
-                <div className="text-sm font-black text-gray-900 mt-1">{interp.elementsScore.Mộc}</div>
+              <div className="p-1.5 sm:p-2.5 rounded bg-emerald-50 border border-emerald-200">
+                <div className="font-bold text-[#138808] text-[11px] sm:text-xs">Mộc</div>
+                <div className="text-xs sm:text-sm font-black text-gray-900 mt-1">{interp.elementsScore.Mộc}</div>
               </div>
-              <div className="p-2.5 rounded bg-blue-50 border border-blue-200">
-                <div className="font-bold text-[#0a1c8f]">Thủy</div>
-                <div className="text-sm font-black text-gray-900 mt-1">{interp.elementsScore.Thủy}</div>
+              <div className="p-1.5 sm:p-2.5 rounded bg-blue-50 border border-blue-200">
+                <div className="font-bold text-[#0a1c8f] text-[11px] sm:text-xs">Thủy</div>
+                <div className="text-xs sm:text-sm font-black text-gray-900 mt-1">{interp.elementsScore.Thủy}</div>
               </div>
-              <div className="p-2.5 rounded bg-red-50 border border-red-200">
-                <div className="font-bold text-[#d32f2f]">Hỏa</div>
-                <div className="text-sm font-black text-gray-900 mt-1">{interp.elementsScore.Hỏa}</div>
+              <div className="p-1.5 sm:p-2.5 rounded bg-red-50 border border-red-200">
+                <div className="font-bold text-[#d32f2f] text-[11px] sm:text-xs">Hỏa</div>
+                <div className="text-xs sm:text-sm font-black text-gray-900 mt-1">{interp.elementsScore.Hỏa}</div>
               </div>
-              <div className="p-2.5 rounded bg-amber-50 border border-amber-200">
-                <div className="font-bold text-[#8c451a]">Thổ</div>
-                <div className="text-sm font-black text-gray-900 mt-1">{interp.elementsScore.Thổ}</div>
+              <div className="p-1.5 sm:p-2.5 rounded bg-amber-50 border border-amber-200">
+                <div className="font-bold text-[#8c451a] text-[11px] sm:text-xs">Thổ</div>
+                <div className="text-xs sm:text-sm font-black text-gray-900 mt-1">{interp.elementsScore.Thổ}</div>
               </div>
             </div>
 
@@ -200,7 +257,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
           </div>
         </div>
 
-        <div className="pt-2 text-xs text-gray-500 border-t border-gray-100 flex items-center justify-between">
+        <div className="pt-2 text-xs text-gray-500 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
           <span>Hệ thống: Bát Tự Phúc Sơn & Tử Bình Toàn Thư</span>
           <span className="font-semibold text-gray-700">Đại Vận & Lưu Niên Timeline</span>
         </div>

@@ -11,22 +11,26 @@ export interface BaziChartDocumentProps {
   calculation: BaziCalculationResult;
   focusYear?: number;
   showAllDecades?: boolean;
+  zoom?: number;
 }
 
 export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentProps>(
-  ({ calculation, focusYear, showAllDecades = false }, ref) => {
+  ({ calculation, focusYear, showAllDecades = false, zoom = 1 }, ref) => {
     const { personal, pillars, majorLuck, solarTerms } = calculation;
 
+    const isScaled = zoom && zoom < 1;
+
     return (
-      <div className="w-full overflow-x-auto py-2">
+      <div className={`w-full ${isScaled ? 'overflow-visible flex justify-center' : 'overflow-x-auto'} py-2`}>
         <div
           ref={ref}
           id="bazi-printable-chart"
-          className="relative mx-auto border-2 border-[#1c4a78] shadow-md font-sans select-text text-gray-900 overflow-hidden"
+          className="relative mx-auto border-2 border-[#1c4a78] shadow-md font-sans select-text text-gray-900 overflow-hidden scroll-mt-24 transition-transform"
           style={{
-            width: '100%',
-            maxWidth: '860px',
-            minWidth: '680px',
+            width: isScaled ? '720px' : '100%',
+            maxWidth: isScaled ? '720px' : '860px',
+            minWidth: isScaled ? '720px' : '680px',
+            zoom: isScaled ? zoom : undefined,
             backgroundImage: "url('/BACKGROUND.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',

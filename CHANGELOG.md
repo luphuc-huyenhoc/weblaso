@@ -20,6 +20,13 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 - Điều chỉnh tông màu nền giao diện website sang sắc ấm nhẹ nhàng (`#f9f5ec` - vàng ngà dịu mắt, hài hòa với thẻ gỗ sẫm màu).
 - Cập nhật giao diện khung nhập liệu lập lá số Bát Tự (`BaziForm.tsx`) sang phong cách thẻ gỗ sẫm màu sang trọng với điểm nhấn vàng caramel, các ô chọn bo tròn thanh lịch và nút "MỞ LÁ SỐ" chuẩn theo mẫu thiết kế (`ChatGPT Image Sep 22, 2026, 08_19_14 AM`).
 
+### Fixed
+- **Tối ưu hiển thị lá số Bát Tự trên điện thoại di động (`[UI-BAZI-DOCUMENT]`):**
+  - Tự động co giãn tỷ lệ (auto-scale) vừa vặn 100% chiều rộng màn hình thiết bị di động, khắc phục triệt để hiện tượng bị tràn lề ngang, cắt mất 2 cột Trụ Ngày/Trụ Giờ và 5 cột Đại Vận.
+  - Thêm thanh điều khiển chế độ xem: Chuyển đổi linh hoạt giữa "Thu nhỏ vừa màn hình" và "Phóng to 100% (Vuốt ngang)".
+  - Tối ưu kích thước 5 ô điểm lực ngũ hành và căn chỉnh tiêu đề luận giải để không bị lệch bố cục trên màn hình nhỏ.
+  - Đảm bảo khi xuất ảnh PNG hoặc in ấn vẫn tự động giữ nguyên độ phân giải sắc nét chuẩn ban đầu.
+
 ### Planned
 - Hoàn thiện toàn diện độ phủ Unit Test cho các trường hợp biên của Lục Hào và Tử Vi.
 - Cấu hình quy trình CI/CD tự động kiểm tra Lint và Unit Test trên GitHub Actions trước khi merge.
