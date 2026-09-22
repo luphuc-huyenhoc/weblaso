@@ -18,17 +18,17 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
     <div className="w-full text-[#112244] border-b-[1.5px] border-[#3182ce]">
       {/* 1. DƯƠNG LỊCH ROW */}
       <div
-        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[46px] items-stretch text-center"
+        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[34px] items-stretch text-center"
         style={{ display: 'grid', gridTemplateColumns: '12% 22% 22% 22% 22%' }}
       >
-        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-xs sm:text-sm tracking-wider uppercase bg-blue-50/20 py-2">
+        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[10px] sm:text-xs tracking-wider uppercase bg-blue-50/20 py-1">
           <span>DƯƠNG</span>
           <span>LỊCH</span>
         </div>
         {pList.map((p, idx) => (
           <div
             key={`solar-${idx}`}
-            className={`h-full flex items-center justify-center font-bold text-base sm:text-lg text-[#112244] py-2 ${
+            className={`h-full flex items-center justify-center font-bold text-xs sm:text-sm text-[#112244] py-1 ${
               idx < 3 ? 'border-r-[1.5px] border-[#3182ce]' : ''
             }`}
           >
@@ -39,10 +39,10 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
 
       {/* 2. CHỦ TINH ROW */}
       <div
-        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[50px] items-stretch text-center"
+        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[36px] items-stretch text-center"
         style={{ display: 'grid', gridTemplateColumns: '12% 22% 22% 22% 22%' }}
       >
-        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-xs sm:text-sm tracking-wider uppercase bg-blue-50/20 py-2">
+        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[10px] sm:text-xs tracking-wider uppercase bg-blue-50/20 py-1">
           <span>CHỦ</span>
           <span>TINH</span>
         </div>
@@ -51,12 +51,12 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
           return (
             <div
               key={`main-god-${idx}`}
-              className={`h-full flex items-center justify-center font-bold text-sm sm:text-base text-[#112244] py-2 ${
+              className={`h-full flex items-center justify-center font-bold text-[11px] sm:text-xs text-[#112244] py-1 ${
                 idx < 3 ? 'border-r-[1.5px] border-[#3182ce]' : ''
               }`}
             >
               {isDay ? (
-                <div className="leading-tight font-black uppercase text-[#112244]">
+                <div className="leading-tight font-black uppercase text-[#112244] text-[10px] sm:text-[11px]">
                   <div>NHẬT</div>
                   <div>CHỦ</div>
                 </div>
@@ -68,12 +68,12 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
         })}
       </div>
 
-      {/* 3. BÁT TỰ ROW — Large Bold Typography with Ngũ Hành Colors */}
+      {/* 3. BÁT TỰ ROW — Refined balanced typography with Ngũ Hành Colors */}
       <div
-        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[140px] items-stretch text-center bg-transparent"
+        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[80px] sm:min-h-[90px] items-stretch text-center bg-transparent"
         style={{ display: 'grid', gridTemplateColumns: '12% 22% 22% 22% 22%' }}
       >
-        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-black text-sm sm:text-base tracking-widest uppercase bg-blue-50/20 py-4">
+        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-black text-xs sm:text-sm tracking-widest uppercase bg-blue-50/20 py-2">
           <span>BÁT</span>
           <span>TỰ</span>
         </div>
@@ -83,18 +83,18 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
           return (
             <div
               key={`battu-cell-${idx}`}
-              className={`h-full flex flex-col justify-center items-center py-4 space-y-2 ${
+              className={`h-full flex flex-col justify-center items-center py-2 space-y-1 ${
                 idx < 3 ? 'border-r-[1.5px] border-[#3182ce]' : ''
               }`}
             >
               <div
-                className="text-3xl sm:text-4xl font-black uppercase tracking-wider leading-none"
+                className="text-lg sm:text-2xl font-black uppercase tracking-wider leading-none"
                 style={{ color: stemColor }}
               >
                 {p.stem}
               </div>
               <div
-                className="text-3xl sm:text-4xl font-black uppercase tracking-wider leading-none"
+                className="text-lg sm:text-2xl font-black uppercase tracking-wider leading-none"
                 style={{ color: branchColor }}
               >
                 {p.branch}
@@ -106,24 +106,24 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
 
       {/* 4. TÀNG ẨN ROW */}
       <div
-        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[46px] items-stretch text-center"
+        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[34px] items-stretch text-center"
         style={{ display: 'grid', gridTemplateColumns: '12% 22% 22% 22% 22%' }}
       >
-        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-xs sm:text-sm tracking-wider uppercase bg-blue-50/20 py-2">
+        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[10px] sm:text-xs tracking-wider uppercase bg-blue-50/20 py-1">
           <span>TÀNG</span>
           <span>ẨN</span>
         </div>
         {pList.map((p, idx) => (
           <div
             key={`tang-an-${idx}`}
-            className={`h-full flex items-center justify-around px-2 py-2 ${
+            className={`h-full flex items-center justify-around px-1 py-1 ${
               idx < 3 ? 'border-r-[1.5px] border-[#3182ce]' : ''
             }`}
           >
             {p.hiddenStems.map((h, hIdx) => (
               <span
                 key={hIdx}
-                className="font-bold text-sm sm:text-base px-1"
+                className="font-bold text-xs sm:text-sm px-0.5"
                 style={{ color: getElementColor(h.element) }}
               >
                 {h.stem}
@@ -135,22 +135,22 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
 
       {/* 5. PHÓ TINH ROW */}
       <div
-        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[46px] items-stretch text-center"
+        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[34px] items-stretch text-center"
         style={{ display: 'grid', gridTemplateColumns: '12% 22% 22% 22% 22%' }}
       >
-        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-xs sm:text-sm tracking-wider uppercase bg-blue-50/20 py-2">
+        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[10px] sm:text-xs tracking-wider uppercase bg-blue-50/20 py-1">
           <span>PHÓ</span>
           <span>TINH</span>
         </div>
         {pList.map((p, idx) => (
           <div
             key={`pho-tinh-${idx}`}
-            className={`h-full flex items-center justify-around px-2 py-2 text-xs sm:text-sm font-semibold text-[#112244] ${
+            className={`h-full flex items-center justify-around px-1 py-1 text-[10px] sm:text-[11px] font-semibold text-[#112244] ${
               idx < 3 ? 'border-r-[1.5px] border-[#3182ce]' : ''
             }`}
           >
             {p.hiddenStems.map((h, hIdx) => (
-              <span key={hIdx} className="px-1">{h.tenGod}</span>
+              <span key={hIdx} className="px-0.5">{h.tenGod}</span>
             ))}
           </div>
         ))}
@@ -158,17 +158,17 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
 
       {/* 6. THẦN SÁT ROW */}
       <div
-        className="w-full min-h-[110px] items-stretch text-center"
+        className="w-full min-h-[65px] sm:min-h-[80px] items-stretch text-center"
         style={{ display: 'grid', gridTemplateColumns: '12% 22% 22% 22% 22%' }}
       >
-        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-xs sm:text-sm tracking-wider uppercase bg-blue-50/20 py-3">
+        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[10px] sm:text-xs tracking-wider uppercase bg-blue-50/20 py-2">
           <span>THẦN</span>
           <span>SÁT</span>
         </div>
         {pList.map((p, idx) => (
           <div
             key={`than-sat-${idx}`}
-            className={`h-full flex flex-col justify-start items-center py-3 px-1 space-y-1 text-xs sm:text-sm font-semibold text-[#112244] leading-snug ${
+            className={`h-full flex flex-col justify-start items-center py-2 px-1 space-y-0.5 text-[10px] sm:text-[11px] font-medium text-[#112244] leading-snug ${
               idx < 3 ? 'border-r-[1.5px] border-[#3182ce]' : ''
             }`}
           >

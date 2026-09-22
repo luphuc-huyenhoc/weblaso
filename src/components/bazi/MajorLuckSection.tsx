@@ -38,7 +38,7 @@ export function MajorLuckSection({
       style={{ display: 'grid', gridTemplateColumns: '12% 88%' }}
     >
       {/* Left Vertical Label Cell */}
-      <div className="border-r-[1.5px] border-[#3182ce] flex flex-col justify-center items-center font-black text-sm sm:text-base tracking-widest uppercase bg-blue-50/20 py-4">
+      <div className="border-r-[1.5px] border-[#3182ce] flex flex-col justify-center items-center font-bold text-xs sm:text-sm tracking-widest uppercase bg-blue-50/20 py-2">
         <span>ĐẠI</span>
         <span>VẬN</span>
       </div>
@@ -46,14 +46,14 @@ export function MajorLuckSection({
       {/* Right Content Area: Metadata & 10-Column Grid */}
       <div className="flex flex-col justify-between">
         {/* Top Metadata Header */}
-        <div className="px-3 sm:px-5 py-2.5 space-y-1 text-xs sm:text-sm">
-          <div className="font-extrabold text-sm sm:text-base text-[#112244]">
+        <div className="px-2.5 sm:px-4 py-1.5 space-y-0.5 text-[10px] sm:text-xs">
+          <div className="font-bold text-xs sm:text-sm text-[#112244]">
             Đại vận lưu niên
           </div>
-          <div className="text-xs sm:text-sm text-gray-800">
+          <div className="text-[10px] sm:text-xs text-gray-800 leading-snug">
             Số tính đại vận ={' '}
-            <strong className="text-[#003399] font-extrabold font-mono">
-              {Number(calcValue.toFixed(12))}
+            <strong className="text-[#003399] font-bold font-mono">
+              {Number(calcValue.toFixed(4))}
             </strong>
             ; Nhập đại vận lúc{' '}
             <strong className="text-[#112244] font-bold">
@@ -61,24 +61,24 @@ export function MajorLuckSection({
             </strong>
             .
           </div>
-          <div className="text-xs sm:text-sm text-gray-800">
+          <div className="text-[10px] sm:text-xs text-gray-800 leading-snug">
             Tiết{' '}
             <strong className="text-[#112244] font-bold">
               {solarTerms.currentTerm}
             </strong>{' '}
             bắt đầu{' '}
-            <span className="font-mono text-gray-900 font-semibold">
+            <span className="font-mono text-gray-900 font-medium">
               {solarTerms.currentStart}
             </span>{' '}
             và kết thúc{' '}
-            <span className="font-mono text-gray-900 font-semibold">
+            <span className="font-mono text-gray-900 font-medium">
               {solarTerms.nextStart}
             </span>
           </div>
         </div>
 
         {/* 10 Major Luck Columns */}
-        <div className="grid grid-cols-10 border-t-[1.5px] border-[#3182ce] text-center min-h-[95px] items-stretch">
+        <div className="grid grid-cols-10 border-t-[1.5px] border-[#3182ce] text-center min-h-[60px] sm:min-h-[70px] items-stretch">
           {pillars.slice(0, 10).map((p, idx) => {
             const isActive = idx === activePillarIndex;
             const stemColor = getStemColor(p.stem);
@@ -89,20 +89,20 @@ export function MajorLuckSection({
             return (
               <div
                 key={p.index || idx}
-                className={`flex-1 flex flex-col justify-between py-2 px-0.5 text-xs sm:text-sm transition-colors ${
+                className={`flex-1 flex flex-col justify-between py-1 px-0 text-[10px] transition-colors ${
                   idx < 9 ? 'border-r-[1.5px] border-[#3182ce]' : ''
                 } ${isActive ? 'bg-[#fff2d4] font-bold' : 'hover:bg-amber-50/40'}`}
               >
                 {/* Stem & Branch */}
                 <div className="leading-tight">
                   <div
-                    className="text-sm sm:text-lg font-black uppercase"
+                    className="text-[10px] sm:text-xs font-bold uppercase tracking-tight"
                     style={{ color: stemColor }}
                   >
                     {p.stem}
                   </div>
                   <div
-                    className="text-sm sm:text-lg font-black uppercase mt-0.5"
+                    className="text-[10px] sm:text-xs font-bold uppercase tracking-tight mt-0.5"
                     style={{ color: branchColor }}
                   >
                     {p.branch}
@@ -110,11 +110,11 @@ export function MajorLuckSection({
                 </div>
 
                 {/* Age Interval & Start Year */}
-                <div className="text-[11px] sm:text-xs text-[#0a1c8f] font-bold leading-tight mt-1">
+                <div className="text-[8px] sm:text-[9px] text-[#0a1c8f] font-semibold leading-tight mt-0.5">
                   <div>
                     {p.startAge}-{p.endAge}t
                   </div>
-                  <div className="text-gray-900 font-extrabold font-mono mt-0.5">
+                  <div className="text-gray-800 font-medium font-mono mt-0.5">
                     {startYear}
                   </div>
                 </div>

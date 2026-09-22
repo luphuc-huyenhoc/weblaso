@@ -26,6 +26,10 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
   - Thêm thanh điều khiển chế độ xem: Chuyển đổi linh hoạt giữa "Thu nhỏ vừa màn hình" và "Phóng to 100% (Vuốt ngang)".
   - Tối ưu kích thước 5 ô điểm lực ngũ hành và căn chỉnh tiêu đề luận giải để không bị lệch bố cục trên màn hình nhỏ.
   - Đảm bảo khi xuất ảnh PNG hoặc in ấn vẫn tự động giữ nguyên độ phân giải sắc nét chuẩn ban đầu.
+- **Tinh chỉnh tỷ lệ chữ và số trong từng ô lá số Bát Tự (`[UI-BAZI-DOCUMENT]`):**
+  - Giảm cỡ chữ và số xuống khoảng 1/2 cho hài hòa với từng ô (4 Trụ Can Chi từ 36px xuống ~18-20px, Đại Vận và Lưu Niên từ 14-18px xuống 9-11px).
+  - Khắc phục hoàn toàn hiện tượng chữ và số bị tràn mép, dính sát hoặc đè lẫn nhau ở các cột hẹp của 10 bước Đại Vận và Lưu Niên.
+  - Cân chỉnh kích cỡ huy hiệu logo, tiêu đề và thông tin cá nhân ở phần đầu lá số trang nhã, cân đối.
 
 ### Planned
 - Hoàn thiện toàn diện độ phủ Unit Test cho các trường hợp biên của Lục Hào và Tử Vi.
