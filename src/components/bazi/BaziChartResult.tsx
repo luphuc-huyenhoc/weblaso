@@ -175,8 +175,8 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
 
       {/* MAIN DOCUMENT: Traditional Bát Tự Chart Sheet (1:1 with Reference) */}
       <div ref={containerRef} className="print-container w-full flex flex-col items-center">
-        {/* Mobile View Toggle Bar (Only shown on screens narrower than 720px) */}
-        {scale < 1 && (
+        {/* Mobile View Toggle Bar (Only shown on screens narrower than 720px before image loads) */}
+        {!chartImageUrl && scale < 1 && (
           <div className="w-full flex items-center justify-between px-1 mb-2.5 no-print">
             <button
               type="button"
@@ -194,9 +194,26 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
           </div>
         )}
 
+        {/* Mobile View: Real Visible Image for Native iOS/Android Long-Press Menu (Sao chép ảnh) */}
+        {chartImageUrl && (
+          <div className="w-full flex justify-center px-1 py-1 md:hidden">
+            <img
+              src={chartImageUrl}
+              alt={`Lá số Bát Tự - ${calc.personal.fullName}`}
+              className="w-full h-auto max-w-[720px] rounded-xs border-2 border-[#1c4a78] shadow-md cursor-pointer block select-auto"
+              style={{ WebkitTouchCallout: 'default' }}
+            />
+          </div>
+        )}
+
+        {/* Desktop View & Background Rendering Host */}
         <div
           className={`w-full ${
-            isZoomFit && scale < 1 ? 'overflow-visible flex justify-center' : 'overflow-x-auto py-1'
+            chartImageUrl
+              ? 'hidden md:block'
+              : isZoomFit && scale < 1
+              ? 'overflow-visible flex justify-center'
+              : 'overflow-x-auto py-1'
           }`}
         >
           <BaziChartDocument

@@ -26,13 +26,13 @@ export function HexagramPanel({
         <div className="flex flex-col items-center justify-between p-3 sm:p-4 border-r-[1.5px] border-[#3182ce] text-center space-y-2">
           {/* Hexagram Name */}
           <div>
-            <h3 className="text-sm sm:text-lg font-black uppercase tracking-wider text-[#034687]">
+            <h3 className="text-lg font-black uppercase tracking-wider text-[#034687]">
               {originalHexagram.name}
             </h3>
           </div>
 
           {/* 6 Lines Graphic (Top to Bottom) - Red / Burgundy tone for Quẻ Chủ */}
-          <div className="w-24 sm:w-32 space-y-1 py-1">
+          <div className="w-32 space-y-1 py-1">
             {originalLinesDesc.map((line) => (
               <HexagramLine
                 key={line.lineIndex}
@@ -45,7 +45,7 @@ export function HexagramPanel({
 
           {/* Palace & Nature */}
           <div>
-            <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gray-700">
+            <span className="text-xs font-bold uppercase tracking-wider text-gray-700">
               {originalHexagram.palace}{' '}
               {originalHexagram.nature !== 'Thông Thường'
                 ? `(${originalHexagram.nature.toUpperCase()})`
@@ -55,18 +55,18 @@ export function HexagramPanel({
         </div>
 
         {/* Right: Quẻ Biến */}
-        <div className="flex flex-col items-center justify-between p-3 sm:p-4 text-center space-y-2">
+        <div className="flex flex-col items-center justify-between p-3.5 text-center space-y-2">
           {changedHexagram && changedLinesDesc ? (
             <>
               {/* Transformed Hexagram Name */}
               <div>
-                <h3 className="text-sm sm:text-lg font-black uppercase tracking-wider text-[#034687]">
+                <h3 className="text-lg font-black uppercase tracking-wider text-[#034687]">
                   {changedHexagram.name}
                 </h3>
               </div>
 
               {/* 6 Lines Graphic of Quẻ Biến - Blue / Indigo tone */}
-              <div className="w-24 sm:w-32 space-y-1 py-1">
+              <div className="w-32 space-y-1 py-1">
                 {changedLinesDesc.map((line) => (
                   <HexagramLine
                     key={line.lineIndex}
@@ -79,17 +79,17 @@ export function HexagramPanel({
 
               {/* Palace */}
               <div>
-                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gray-700">
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-700">
                   {changedHexagram.palace}
                 </span>
               </div>
             </>
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-gray-500 py-6 space-y-1">
-              <span className="text-xs sm:text-sm font-bold uppercase text-gray-700">
+              <span className="text-sm font-bold uppercase text-gray-700">
                 Quẻ Thuần Tĩnh
               </span>
-              <p className="text-[10px] sm:text-xs text-gray-500 max-w-[180px]">
+              <p className="text-xs text-gray-500 max-w-[180px]">
                 Không có hào động, sự việc giữ nguyên theo quẻ chủ.
               </p>
             </div>

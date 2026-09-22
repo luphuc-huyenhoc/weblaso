@@ -171,8 +171,8 @@ export default function LucHaoPage() {
       {/* Divination Result Section */}
       {result && (
         <div ref={resultRef} className="max-w-4xl mx-auto mt-8 space-y-6">
-          {/* Mobile View Toggle Bar (Only shown on screens narrower than 720px) */}
-          {scale < 1 && (
+          {/* Mobile View Toggle Bar (Only shown on screens narrower than 720px before image loads) */}
+          {!modalImageUrl && scale < 1 && (
             <div className="w-full flex items-center justify-between px-1 mb-2.5 no-print">
               <button
                 type="button"
@@ -190,13 +190,27 @@ export default function LucHaoPage() {
             </div>
           )}
 
+          {/* Mobile View: Real Visible Image for Native iOS/Android Long-Press Menu (Sao chép ảnh) */}
+          {modalImageUrl && (
+            <div className="w-full flex justify-center px-1 py-1 md:hidden">
+              <img
+                src={modalImageUrl}
+                alt={`Quẻ Dịch Lục Hào - ${result.calculation.originalHexagram.name}`}
+                className="w-full h-auto max-w-[720px] rounded-xs border-2 border-[#3182ce] shadow-md cursor-pointer block select-auto"
+                style={{ WebkitTouchCallout: 'default' }}
+              />
+            </div>
+          )}
+
           {/* Master 720 x 720 Document Sheet (Outputs to exact 1440 x 1440 px) */}
-          <LucHaoResultDocument
-            ref={chartRef}
-            envelope={result}
-            zoom={isZoomFit && scale < 1 ? scale : 1}
-            chartImageUrl={modalImageUrl}
-          />
+          <div className={modalImageUrl ? 'hidden md:block' : ''}>
+            <LucHaoResultDocument
+              ref={chartRef}
+              envelope={result}
+              zoom={isZoomFit && scale < 1 ? scale : 1}
+              chartImageUrl={modalImageUrl}
+            />
+          </div>
 
           {/* Action Toolbar Matching HocVienLySo boidich tools */}
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 py-2 no-print">

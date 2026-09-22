@@ -43,12 +43,12 @@ export function LucHaoResultTable({
   };
 
   return (
-    <div className="w-full border-b-[1.5px] border-[#3182ce] bg-transparent text-gray-900 text-xs sm:text-sm">
+    <div className="w-full border-b-[1.5px] border-[#3182ce] bg-transparent text-gray-900 text-xs">
       {/* 1. Main 6-Line Symmetrical Divination Table */}
       <div className="w-full overflow-x-auto">
         <table className="w-full border-collapse text-center min-w-[620px]">
           <thead>
-            <tr className="bg-blue-50/25 border-b-[1.5px] border-[#3182ce] text-[#034687] font-bold text-[11px] sm:text-xs">
+            <tr className="bg-blue-50/25 border-b-[1.5px] border-[#3182ce] text-[#034687] font-bold text-xs">
               {/* Left Side: Quẻ Chủ */}
               <th className="py-2 border-r-[1.5px] border-[#3182ce] w-[8%]">Hào</th>
               <th className="py-2 border-r-[1.5px] border-[#3182ce] w-[8%]">T/Ứ</th>
@@ -92,7 +92,7 @@ export function LucHaoResultTable({
                 >
                   {/* Quẻ Chủ: 1. Line Graphic */}
                   <td className="py-1.5 px-1 border-r-[1.5px] border-[#3182ce] flex items-center justify-center h-10">
-                    <div className="w-12 sm:w-14">
+                    <div className="w-14">
                       <HexagramLine
                         polarity={origLine.polarity}
                         isMoving={origLine.isMoving}
@@ -207,7 +207,7 @@ export function LucHaoResultTable({
 
       {/* 2. Sub-table: Vượng Suy & Thần Sát Details matching reference bottom table */}
       <div className="w-full border-t-[1.5px] border-[#3182ce] overflow-x-auto">
-        <table className="w-full border-collapse text-center text-[11px] sm:text-xs">
+        <table className="w-full border-collapse text-center text-xs">
           <thead>
             <tr className="bg-blue-50/25 border-b border-[#3182ce] text-[#034687] font-bold">
               {/* Left: Quẻ Chủ Thần Sát */}

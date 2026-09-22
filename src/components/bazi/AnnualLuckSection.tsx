@@ -36,11 +36,11 @@ export function AnnualLuckSection({
       {displayedPillars.map((pillar, pIdx) => (
         <div
           key={pillar.index || pIdx}
-          className="w-full border-b-[1.5px] border-[#3182ce] min-h-[58px] sm:min-h-[66px] items-stretch text-center"
+          className="w-full border-b-[1.5px] border-[#3182ce] min-h-[66px] items-stretch text-center"
           style={{ display: 'grid', gridTemplateColumns: '12% 88%' }}
         >
           {/* Left Vertical Label: LƯU NIÊN */}
-          <div className="border-r-[1.5px] border-[#3182ce] flex flex-col justify-center items-center font-bold text-xs sm:text-sm tracking-widest uppercase bg-blue-50/20 py-1">
+          <div className="border-r-[1.5px] border-[#3182ce] flex flex-col justify-center items-center font-black text-xs tracking-widest uppercase bg-blue-50/20 py-1">
             <span>LƯU</span>
             <span>NIÊN</span>
           </div>
@@ -60,7 +60,7 @@ export function AnnualLuckSection({
                   } ${isFocus ? 'bg-[#fff2d4] font-bold' : 'hover:bg-amber-50/30'}`}
                 >
                   {/* Stem & Branch */}
-                  <div className="text-[9px] sm:text-[11px] font-bold leading-tight">
+                  <div className="text-[11px] font-black leading-tight">
                     <div style={{ color: stemColor }}>{ay.stem}</div>
                     <div className="mt-0.5" style={{ color: branchColor }}>
                       {ay.branch}
@@ -68,11 +68,11 @@ export function AnnualLuckSection({
                   </div>
 
                   {/* Year & Age */}
-                  <div className="text-[8px] sm:text-[9px] leading-tight mt-0.5">
+                  <div className="text-[9.5px] leading-tight mt-0.5">
                     <div className="font-mono text-gray-800 font-semibold">
                       {ay.year}
                     </div>
-                    <div className="text-[#138808] font-bold mt-0.5">
+                    <div className="text-[#138808] font-black mt-0.5">
                       {ay.age}t
                     </div>
                   </div>

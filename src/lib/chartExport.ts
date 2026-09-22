@@ -29,6 +29,8 @@ export async function captureChartImage(
   overlays.forEach((img) => img.remove());
 
   // 3. Reset layout styles on the clone to pristine desktop metrics
+  clone.style.display = 'block';
+  clone.style.visibility = 'visible';
   clone.style.zoom = '1';
   clone.style.transform = 'none';
   clone.style.width = `${width}px`;

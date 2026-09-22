@@ -260,24 +260,24 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
       >
         {/* Top Header of Palace: Can Chi (left) | Cung Name (center) | Dai Han (right) */}
         <div className="flex items-center justify-between border-b border-gray-200 pb-0.5 text-[#1c2434]">
-          <span className="text-[10px] font-bold text-gray-500">
+          <span className="text-[10.5px] font-bold text-gray-600">
             {palace.stem}.{palace.branch}
           </span>
           <div className="flex items-center space-x-1">
             <span
-              className={`font-black uppercase tracking-wider text-[11px] ${
+              className={`font-black uppercase tracking-wider text-[11.5px] ${
                 palace.isMenh ? 'text-red-700 underline decoration-red-400 underline-offset-2' : 'text-[#112244]'
               }`}
             >
               {palace.cungName}
             </span>
             {palace.isThan && (
-              <span className="text-[8.5px] px-1 py-0.2 bg-red-600 text-white font-extrabold rounded">
+              <span className="text-[9px] px-1 py-0.5 bg-red-600 text-white font-extrabold rounded">
                 THÂN
               </span>
             )}
           </div>
-          <span className="text-[10.5px] font-black text-gray-800">
+          <span className="text-[11px] font-black text-gray-800">
             {palace.daiHanAge}
           </span>
         </div>
@@ -290,7 +290,7 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
             <div className="flex flex-wrap items-center justify-center gap-x-1.5">
               {palace.mainStars.map((star, sIdx) => (
                 <div key={sIdx} className="leading-tight">
-                  {renderStarWithTuHoa(star, `font-black text-[11px] ${getMainStarColor(star)}`)}
+                  {renderStarWithTuHoa(star, `font-black text-[12px] ${getMainStarColor(star)}`)}
                 </div>
               ))}
             </div>
@@ -298,7 +298,7 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
         </div>
 
         {/* Sub Stars: 2 Columns (Left: Cát Tinh / Tứ Hóa - Right: Sát Tinh / Hung Tinh) */}
-        <div className="grid grid-cols-2 gap-1 text-[9.5px] leading-tight flex-1 py-1">
+        <div className="grid grid-cols-2 gap-1 text-[10px] leading-snug flex-1 py-1">
           {/* Left Column: Cát tinh & Tứ hóa */}
           <div className="space-y-0.5 pr-0.5 border-r border-gray-100">
             {tuHoaStars.map((star, idx) => (
@@ -324,7 +324,7 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
         </div>
 
         {/* Bottom Footer of Palace (Chi, Vòng Tràng Sinh, Tiểu hạn) */}
-        <div className="flex items-center justify-between border-t border-gray-200 pt-0.5 text-[9.5px] text-gray-600">
+        <div className="flex items-center justify-between border-t border-gray-200 pt-0.5 text-[10px] text-gray-600">
           <span className="font-bold text-gray-700">{palace.branch}</span>
           <span className="font-bold text-blue-700">
             {vongStars.find((s) => s.type === 'Vòng Sao' && s.element === 'Thủy')?.name || ''}
@@ -340,7 +340,7 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
             {palace.tuanTriet.map((mark, mIdx) => (
               <span
                 key={mIdx}
-                className={`text-[8px] font-black text-white px-1.5 py-0.2 rounded shadow-xs uppercase tracking-wider ${
+                className={`text-[8.5px] font-black text-white px-1.5 py-0.5 rounded shadow-xs uppercase tracking-wider ${
                   mark === 'Triệt' ? 'bg-[#1b3b6f]' : 'bg-[#0e8c62]'
                 }`}
               >
@@ -455,8 +455,20 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
 
       {/* Main Chart Sheet Container */}
       <div ref={containerRef} className="print-container w-full flex flex-col items-center">
+        {/* Mobile View: Real Visible Image for Native iOS/Android Long-Press Menu (Sao chép ảnh) */}
+        {chartImageUrl && (
+          <div className="w-full flex justify-center px-1 py-1 md:hidden">
+            <img
+              src={chartImageUrl}
+              alt={`Lá số Tử Vi - ${personal.fullName}`}
+              className="w-full h-auto max-w-[720px] rounded-xs border-2 border-[#1c4a78] shadow-md cursor-pointer block select-auto"
+              style={{ WebkitTouchCallout: 'default' }}
+            />
+          </div>
+        )}
+
         {/* Mobile View Toggle Bar */}
-        {scale < 1 && (
+        {!chartImageUrl && scale < 1 && (
           <div className="w-full flex items-center justify-between px-1 mb-2.5 no-print">
             <button
               type="button"
@@ -476,7 +488,11 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
 
         <div
           className={`w-full ${
-            isZoomFit && scale < 1 ? 'overflow-visible flex justify-center' : 'overflow-x-auto py-1'
+            chartImageUrl
+              ? 'hidden md:block'
+              : isZoomFit && scale < 1
+              ? 'overflow-visible flex justify-center'
+              : 'overflow-x-auto py-1'
           }`}
         >
           <div

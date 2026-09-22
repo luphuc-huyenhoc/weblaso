@@ -21,7 +21,7 @@ export function IChingMetadata({ calculation }: IChingMetadataProps) {
   return (
     <div className="relative w-full p-4 sm:p-6 border-b-[1.5px] border-[#3182ce] bg-transparent text-gray-900">
       {/* Top-Right Traditional Three Coins Emblem (SVG) */}
-      <div className="absolute top-3 right-4 sm:right-6 opacity-85 hidden sm:block pointer-events-none">
+      <div className="absolute top-3 right-5 opacity-85 block pointer-events-none">
         <svg width="90" height="60" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
           {/* Coin 1 */}
           <circle cx="35" cy="45" r="28" fill="#d9aa55" stroke="#8c6214" strokeWidth="2" />
@@ -41,7 +41,7 @@ export function IChingMetadata({ calculation }: IChingMetadataProps) {
       </div>
 
       {/* Metadata content */}
-      <div className="space-y-1.5 text-xs sm:text-sm max-w-2xl">
+      <div className="space-y-1.5 text-sm max-w-2xl">
         <div>
           <span className="font-semibold text-gray-700">Thời gian lập quẻ: </span>
           <span className="font-bold text-gray-900 font-mono">{castTime}</span>
@@ -79,7 +79,7 @@ export function IChingMetadata({ calculation }: IChingMetadataProps) {
 
         <div className="pt-1">
           <span className="font-semibold text-gray-700">Việc cần xem: </span>
-          <strong className="text-sm sm:text-base font-extrabold text-[#935f37]">
+          <strong className="text-base font-extrabold text-[#935f37]">
             {title}
           </strong>
         </div>

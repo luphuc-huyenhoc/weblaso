@@ -38,7 +38,7 @@ export function MajorLuckSection({
       style={{ display: 'grid', gridTemplateColumns: '12% 88%' }}
     >
       {/* Left Vertical Label Cell */}
-      <div className="border-r-[1.5px] border-[#3182ce] flex flex-col justify-center items-center font-bold text-xs sm:text-sm tracking-widest uppercase bg-blue-50/20 py-2">
+      <div className="border-r-[1.5px] border-[#3182ce] flex flex-col justify-center items-center font-black text-xs tracking-widest uppercase bg-blue-50/20 py-2">
         <span>ĐẠI</span>
         <span>VẬN</span>
       </div>
@@ -46,11 +46,11 @@ export function MajorLuckSection({
       {/* Right Content Area: Metadata & 10-Column Grid */}
       <div className="flex flex-col justify-between">
         {/* Top Metadata Header */}
-        <div className="px-2.5 sm:px-4 py-1.5 space-y-0.5 text-[10px] sm:text-xs">
-          <div className="font-bold text-xs sm:text-sm text-[#112244]">
+        <div className="px-3 py-1.5 space-y-0.5 text-xs">
+          <div className="font-bold text-sm text-[#112244]">
             Đại vận lưu niên
           </div>
-          <div className="text-[10px] sm:text-xs text-gray-800 leading-snug">
+          <div className="text-[11.5px] text-gray-800 leading-snug">
             Số tính đại vận ={' '}
             <strong className="text-[#003399] font-bold font-mono">
               {Number(calcValue.toFixed(4))}
@@ -61,7 +61,7 @@ export function MajorLuckSection({
             </strong>
             .
           </div>
-          <div className="text-[10px] sm:text-xs text-gray-800 leading-snug">
+          <div className="text-[11.5px] text-gray-800 leading-snug">
             Tiết{' '}
             <strong className="text-[#112244] font-bold">
               {solarTerms.currentTerm}
@@ -78,7 +78,7 @@ export function MajorLuckSection({
         </div>
 
         {/* 10 Major Luck Columns */}
-        <div className="grid grid-cols-10 border-t-[1.5px] border-[#3182ce] text-center min-h-[60px] sm:min-h-[70px] items-stretch">
+        <div className="grid grid-cols-10 border-t-[1.5px] border-[#3182ce] text-center min-h-[70px] items-stretch">
           {pillars.slice(0, 10).map((p, idx) => {
             const isActive = idx === activePillarIndex;
             const stemColor = getStemColor(p.stem);
@@ -96,13 +96,13 @@ export function MajorLuckSection({
                 {/* Stem & Branch */}
                 <div className="leading-tight">
                   <div
-                    className="text-[10px] sm:text-xs font-bold uppercase tracking-tight"
+                    className="text-xs font-black uppercase tracking-tight"
                     style={{ color: stemColor }}
                   >
                     {p.stem}
                   </div>
                   <div
-                    className="text-[10px] sm:text-xs font-bold uppercase tracking-tight mt-0.5"
+                    className="text-xs font-black uppercase tracking-tight mt-0.5"
                     style={{ color: branchColor }}
                   >
                     {p.branch}
@@ -110,11 +110,11 @@ export function MajorLuckSection({
                 </div>
 
                 {/* Age Interval & Start Year */}
-                <div className="text-[8px] sm:text-[9px] text-[#0a1c8f] font-semibold leading-tight mt-0.5">
+                <div className="text-[9.5px] text-[#0a1c8f] font-bold leading-tight mt-0.5">
                   <div>
                     {p.startAge}-{p.endAge}t
                   </div>
-                  <div className="text-gray-800 font-medium font-mono mt-0.5">
+                  <div className="text-gray-800 font-semibold font-mono mt-0.5">
                     {startYear}
                   </div>
                 </div>

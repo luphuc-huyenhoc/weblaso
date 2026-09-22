@@ -46,7 +46,7 @@ export function BaziChartHeader({
       {/* Right Area: Structured Personal Metadata */}
       <div className="font-medium text-xs text-[#112244] space-y-0.5 leading-snug min-w-[220px]">
         <div className="flex">
-          <span className="w-20 sm:w-24 font-bold text-[#112244]">Họ và tên</span>
+          <span className="w-24 font-bold text-[#112244]">Họ và tên</span>
           <span className="mr-2 font-bold text-[#112244]">:</span>
           <strong className="font-extrabold text-[#112244] tracking-wide uppercase">
             {fullName}
@@ -54,25 +54,25 @@ export function BaziChartHeader({
         </div>
 
         <div className="flex">
-          <span className="w-20 sm:w-24 font-bold text-[#112244]">Giới tính</span>
+          <span className="w-24 font-bold text-[#112244]">Giới tính</span>
           <span className="mr-2 font-bold text-[#112244]">:</span>
           <strong className="font-bold text-[#112244]">{genderLabel}</strong>
         </div>
 
         <div className="flex">
-          <span className="w-20 sm:w-24 font-bold text-[#112244]">Dương lịch</span>
+          <span className="w-24 font-bold text-[#112244]">Dương lịch</span>
           <span className="mr-2 font-bold text-[#112244]">:</span>
           <strong className="font-extrabold text-[#d32f2f]">{solarDateStr}</strong>
         </div>
 
         <div className="flex">
-          <span className="w-20 sm:w-24 font-bold text-[#112244]">Âm lịch</span>
+          <span className="w-24 font-bold text-[#112244]">Âm lịch</span>
           <span className="mr-2 font-bold text-[#112244]">:</span>
           <strong className="font-extrabold text-[#138808]">{lunarDateStr}</strong>
         </div>
 
         <div className="flex">
-          <span className="w-20 sm:w-24 font-bold text-[#112244]">Nạp âm</span>
+          <span className="w-24 font-bold text-[#112244]">Nạp âm</span>
           <span className="mr-2 font-bold text-[#112244]">:</span>
           <strong className="font-extrabold" style={{ color: naYinColor }}>
             {napAm}

@@ -321,8 +321,8 @@ export default function NgauNhienPage() {
       {/* 2. Result Section with Action Toolbar */}
       {result && (
         <div ref={resultRef} className="space-y-4 pt-2">
-          {/* Mobile View Mode Switcher */}
-          {scale < 1 && (
+          {/* Mobile View Mode Switcher (Only shown before image loads) */}
+          {!modalImageUrl && scale < 1 && (
             <div className="flex items-center justify-between bg-amber-100/80 border border-amber-300 rounded-lg px-3 py-2 text-xs no-print">
               <button
                 type="button"
@@ -340,13 +340,27 @@ export default function NgauNhienPage() {
             </div>
           )}
 
+          {/* Mobile View: Real Visible Image for Native iOS/Android Long-Press Menu (Sao chép ảnh) */}
+          {modalImageUrl && (
+            <div className="w-full flex justify-center px-1 py-1 md:hidden">
+              <img
+                src={modalImageUrl}
+                alt={`Quẻ Dịch Ngẫu Nhiên - ${result.calculation.originalHexagram.name}`}
+                className="w-full h-auto max-w-[720px] rounded-xs border-2 border-[#3182ce] shadow-md cursor-pointer block select-auto"
+                style={{ WebkitTouchCallout: 'default' }}
+              />
+            </div>
+          )}
+
           {/* Master Divination Document Sheet */}
-          <LucHaoResultDocument
-            ref={chartRef}
-            envelope={result}
-            zoom={isZoomFit && scale < 1 ? scale : 1}
-            chartImageUrl={modalImageUrl}
-          />
+          <div className={modalImageUrl ? 'hidden md:block' : ''}>
+            <LucHaoResultDocument
+              ref={chartRef}
+              envelope={result}
+              zoom={isZoomFit && scale < 1 ? scale : 1}
+              chartImageUrl={modalImageUrl}
+            />
+          </div>
 
           {/* Action Toolbar Matching Reference Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 py-2 no-print">
