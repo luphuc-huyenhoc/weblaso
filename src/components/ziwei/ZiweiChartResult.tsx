@@ -64,7 +64,7 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
     return (
       <div
         key={palace.index}
-        className={`border border-gray-300 p-2.5 flex flex-col justify-between min-h-[160px] md:min-h-[180px] bg-white transition hover:bg-amber-50/20 text-xs ${
+        className={`border border-gray-300 p-2.5 flex flex-col justify-between min-h-[160px] md:min-h-[180px] bg-white/80 transition hover:bg-amber-50/40 text-xs ${
           palace.isMenh ? 'ring-2 ring-red-500/80' : ''
         }`}
       >
@@ -159,8 +159,29 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
       </div>
 
       {/* Traditional Square Chart: 4 Columns x 4 Rows */}
-      <div ref={chartRef} className="bg-white border-2 border-gray-400 p-2 md:p-4 rounded shadow-sm">
-        <div className="grid grid-cols-4 border border-gray-400">
+      <div
+        ref={chartRef}
+        className="relative bg-white border-2 border-gray-400 p-2 md:p-4 rounded shadow-sm overflow-hidden"
+        style={{
+          backgroundImage: "url('/BACKGROUND.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundColor: '#fefdf9',
+        }}
+      >
+        {/* Background watermark overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0"
+          aria-hidden="true"
+        >
+          <img
+            src="/BACKGROUND.png"
+            alt=""
+            className="w-full h-full object-cover opacity-20"
+          />
+        </div>
+
+        <div className="relative z-10 grid grid-cols-4 border border-gray-400 bg-white/60 backdrop-blur-[0.5px]">
           {/* Row 1: Tỵ, Ngọ, Mùi, Thân */}
           {renderPalaceCell('Tỵ')}
           {renderPalaceCell('Ngọ')}
@@ -169,7 +190,7 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
 
           {/* Row 2: Thìn, Center Info (Col 2-3, Row 2-3), Dậu */}
           {renderPalaceCell('Thìn')}
-          <div className="col-span-2 row-span-2 border border-gray-300 p-4 md:p-6 flex flex-col justify-center items-center text-center bg-amber-50/20 space-y-3">
+          <div className="col-span-2 row-span-2 border border-gray-300 p-4 md:p-6 flex flex-col justify-center items-center text-center bg-white/85 space-y-3">
             <div className="border-b border-amber-300/80 pb-2 w-full">
               <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#c8860a]">
                 Tử Vi Đẩu Số Toàn Thư

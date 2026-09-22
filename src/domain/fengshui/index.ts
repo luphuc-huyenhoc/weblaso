@@ -288,46 +288,52 @@ export function calculateBatTrach(birthYear: number, gender: boolean): BatTrachR
 }
 
 /** Get 24 Mountain by exact compass degree (0° to 359.999°) */
-export function getMountainByDegree(degree: number): Mountain24Detail | undefined {
+export function getMountainByDegree(degree: number, quaiMenh?: QuaiMenh): Mountain24Detail | undefined {
   const norm = ((degree % 360) + 360) % 360;
-  // Special wrap for Tý (352.5° to 7.5°)
-  if (norm >= 352.5 || norm < 7.5) {
-    const ty = MOUNTAINS_24.find(m => m.name === 'Tý')!;
-    return {
-      mountain: ty.name,
-      direction: ty.dir,
-      startDegree: ty.start,
-      endDegree: ty.end,
-      quaiMenhStar: 'Phục Vị',
-      nature: 'Cát',
-    };
+  let match = MOUNTAINS_24.find(m => {
+    if (m.name === 'Tý') {
+      return norm >= 352.5 || norm < 7.5;
+    }
+    return norm >= m.start && norm < m.end;
+  });
+
+  if (!match) {
+    match = MOUNTAINS_24.find(m => m.name === 'Tý')!;
   }
 
-  const match = MOUNTAINS_24.find(m => norm >= m.start && norm < m.end);
-  if (!match) return undefined;
+  let star: BatTrachStar = 'Phục Vị';
+  let nature: 'Cát' | 'Hung' = 'Cát';
+  if (quaiMenh && BAT_TRACH_MAP[quaiMenh]) {
+    star = BAT_TRACH_MAP[quaiMenh][match.dir];
+    nature = STAR_DETAILS[star].nature;
+  }
 
   return {
     mountain: match.name,
     direction: match.dir,
     startDegree: match.start,
     endDegree: match.end,
-    quaiMenhStar: 'Phục Vị',
-    nature: 'Cát',
+    quaiMenhStar: star,
+    nature,
   };
 }
 
 /** Evaluate degree boundary and check for Đại / Tiểu Không Vong */
-export function evaluateMountainDegree(degree: number): {
+export function evaluateMountainDegree(degree: number, quaiMenh?: QuaiMenh): {
   degree: number;
   mountain: string;
   direction: string;
+  quaiMenhStar?: BatTrachStar;
+  nature?: 'Cát' | 'Hung';
   status: 'An Toàn' | 'Đại Không Vong' | 'Tiểu Không Vong';
   warning?: string;
 } {
-  const norm = ((degree % 360) + 360) % 360;
-  const m = getMountainByDegree(norm);
+  const norm = Math.round((((degree % 360) + 360) % 360) * 10) / 10;
+  const m = getMountainByDegree(norm, quaiMenh);
   const mountainName = m ? m.mountain : 'Tý';
   const directionName = m ? m.direction : 'Bắc';
+  const star = m?.quaiMenhStar;
+  const nature = m?.nature;
 
   // Đại Không Vong boundaries
   const daiBoundaries = [22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5];

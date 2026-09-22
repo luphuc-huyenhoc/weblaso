@@ -30,13 +30,7 @@ function BaziPageContent() {
   const hasParams = Boolean(day && month && year);
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900 uppercase">Lập Lá Số Bát Tự Tứ Trụ</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Hệ thống luận giải Bát Tự theo Manh Phái & Tử Bình chính tông
-        </p>
-      </div>
+    <div className="w-full pb-10 bg-[#fcf8ee] rounded-xl p-3 sm:p-6 border border-[#f2e7d5]/80 shadow-2xs">
       <BaziForm
         key={`${day}-${month}-${year}-${hour}-${minute}`}
         initialValues={{

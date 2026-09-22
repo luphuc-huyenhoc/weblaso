@@ -8,10 +8,10 @@ import { getCurrentUser } from '@/server/auth';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Lữ Phúc | Bát Tự Manh Phái & Dịch Học Cổ Truyền',
+  title: 'Lữ Phúc | Bát Tự Phúc Sơn — Gieo Phúc - Gặt Phước',
   description:
-    'Lập lá số Bát Tự, Tứ Trụ phong thủy cải vận bổ khuyết, luận giải hiện tại tương lai quá khứ, lá số tử vi, quẻ dịch lục hào và phong thủy bát trạch.',
-  keywords: ['bát tự', 'tứ trụ', 'ngũ hành', 'tử vi', 'lục hào', 'quẻ dịch', 'bát trạch', 'manh phái', 'lữ phúc'],
+    'Lữ Phúc — Gieo Phúc - Gặt Phước. Lập lá số Bát Tự Phúc Sơn, Tứ Trụ phong thủy cải vận bổ khuyết, luận giải hiện tại tương lai quá khứ, lá số tử vi, quẻ dịch lục hào và phong thủy bát trạch.',
+  keywords: ['bát tự', 'bát tự phúc sơn', 'phúc sơn', 'lữ phúc', 'gieo phúc gặt phước', 'tứ trụ', 'ngũ hành', 'tử vi', 'lục hào', 'quẻ dịch', 'bát trạch'],
   authors: [{ name: 'Lữ Phúc' }],
 };
 
@@ -30,7 +30,7 @@ export default async function RootLayout({
 
   return (
     <html lang="vi">
-      <body className="min-h-screen flex flex-col justify-between bg-[#f4f6f9]">
+      <body className="min-h-screen flex flex-col justify-between bg-[#f9f5ec] text-gray-800">
         <div>
           <Header user={user ? { fullName: user.fullName, role: user.role } : null} />
           <Navbar />

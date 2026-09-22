@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { Mail, Clock, Send, CheckCircle2, Phone, MessageSquare, Video } from 'lucide-react';
 
 export default function LienHePage() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [category, setCategory] = useState('Tư vấn Bát Tự & Cải Vận');
+  const [category, setCategory] = useState('Tư vấn Bát Tự Phúc Sơn');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
@@ -21,13 +21,13 @@ export default function LienHePage() {
       {/* Header */}
       <div className="text-center space-y-2">
         <span className="text-xs uppercase font-extrabold tracking-widest px-3 py-1 bg-amber-50 text-[#c8860a] border border-amber-200 rounded-full">
-          Kết Nối Với Chúng Tôi
+          Lữ Phúc — Gieo Phúc - Gặt Phước
         </span>
         <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 uppercase">
-          Liên Hệ & Đặt Lịch Tư Vấn Phong Thủy
+          Liên Hệ & Đặt Lịch Tư Vấn Bát Tự Phúc Sơn
         </h1>
-        <p className="text-sm text-gray-500 max-w-xl mx-auto">
-          Đội ngũ chuyên gia sẵn sàng hỗ trợ giải đáp mọi thắc mắc về Bát Tự, Tử Vi, phong thủy nhà ở và vật phẩm hộ mệnh.
+        <p className="text-sm text-gray-600 max-w-xl mx-auto">
+          Đội ngũ chuyên gia Lữ Phúc sẵn sàng hỗ trợ giải đáp mọi thắc mắc về Bát Tự Phúc Sơn, Tử Vi, phong thủy nhà ở và vật phẩm hộ mệnh.
         </p>
       </div>
 
@@ -35,24 +35,45 @@ export default function LienHePage() {
         {/* Contact Info Details */}
         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-xs space-y-6">
           <h3 className="font-bold text-gray-900 text-base uppercase border-b pb-3">
-            Thông Tin Trụ Sở
+            Kênh Liên Hệ Trực Tiếp
           </h3>
 
           <div className="space-y-4 text-xs text-gray-700">
-
             <div className="flex items-start space-x-3">
               <Mail className="w-5 h-5 text-[#c8860a] shrink-0 mt-0.5" />
               <div>
                 <strong className="block text-gray-900 mb-0.5">Hòm thư điện tử:</strong>
-                <span>hotro@luphuc.vn</span>
+                <a href="mailto:khotailieuquy2206@gmail.com" className="text-amber-700 font-medium hover:underline">
+                  khotailieuquy2206@gmail.com
+                </a>
               </div>
             </div>
 
             <div className="flex items-start space-x-3">
+              <Phone className="w-5 h-5 text-[#c8860a] shrink-0 mt-0.5" />
+              <div>
+                <strong className="block text-gray-900 mb-0.5">Zalo / Hotline:</strong>
+                <a href="https://zalo.me/0374436921" target="_blank" rel="noopener noreferrer" className="text-amber-700 font-bold text-sm hover:underline">
+                  0374436921
+                </a>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-3">
+              <Video className="w-5 h-5 text-[#c8860a] shrink-0 mt-0.5" />
+              <div>
+                <strong className="block text-gray-900 mb-0.5">TikTok:</strong>
+                <span className="text-gray-900 font-semibold text-sm">
+                  Huyền Học Lữ Phúc
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-3 pt-2 border-t border-gray-100">
               <Clock className="w-5 h-5 text-[#c8860a] shrink-0 mt-0.5" />
               <div>
                 <strong className="block text-gray-900 mb-0.5">Thời gian làm việc:</strong>
-                <span>Thứ 2 — Chủ Nhật: 08:00 - 21:00</span>
+                <span>Thứ 2 — Chủ Nhật: 08:00 - 21:30</span>
               </div>
             </div>
           </div>

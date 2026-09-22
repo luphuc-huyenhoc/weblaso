@@ -7,13 +7,16 @@ export function Footer() {
       <div className="max-w-site mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand & Introduction */}
-          <div className="md:col-span-2 space-y-3">
-            <div className="text-lg font-bold text-white tracking-wide">
-              LỮ PHÚC
+          <div className="space-y-3">
+            <div className="text-lg font-bold text-white tracking-wide flex items-center space-x-2">
+              <span>LỮ PHÚC</span>
+              <span className="text-xs text-[#c8860a] font-normal border border-[#c8860a]/50 px-2 py-0.5 rounded">
+                Gieo Phúc - Gặt Phước
+              </span>
             </div>
-            <p className="text-gray-400 leading-relaxed">
+            <p className="text-gray-400 leading-relaxed text-[11px]">
               Bát Tự (Tứ Trụ) là một trong những phát minh quan trọng trong mệnh lý học truyền thống,
-              được đúc kết qua hàng nghìn năm lịch sử. Hệ thống lý luận Bát Tự Manh Phái & Dịch Học
+              được đúc kết qua hàng nghìn năm lịch sử. Hệ thống lý luận Bát Tự Phúc Sơn & Dịch Học
               hỗ trợ phân tích điểm vượng suy, ngũ hành khuyết thiếu để ứng dụng phong thủy cải vận bổ khuyết.
             </p>
           </div>
@@ -26,7 +29,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link href="/la-so-bat-tu" className="hover:text-[#c8860a] transition">
-                  Lập lá số Bát Tự
+                  Lập lá số Bát Tự Phúc Sơn
                 </Link>
               </li>
               <li>
@@ -65,13 +68,40 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/lien-he" className="hover:text-[#c8860a] transition">
-                  Liên hệ hợp tác
+                  Liên hệ tư vấn
                 </Link>
               </li>
               <li>
                 <Link href="/tim-kiem" className="hover:text-[#c8860a] transition">
                   Tìm kiếm nội dung
                 </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Details */}
+          <div>
+            <div className="text-sm font-bold text-white uppercase tracking-wider mb-3">
+              Kênh Liên Hệ
+            </div>
+            <ul className="space-y-2.5 text-gray-400 text-[11px]">
+              <li className="flex flex-col">
+                <span className="text-gray-500 uppercase text-[10px] font-bold">Email:</span>
+                <a href="mailto:khotailieuquy2206@gmail.com" className="text-amber-400 hover:underline">
+                  khotailieuquy2206@gmail.com
+                </a>
+              </li>
+              <li className="flex flex-col">
+                <span className="text-gray-500 uppercase text-[10px] font-bold">Zalo / Hotline:</span>
+                <a href="https://zalo.me/0374436921" target="_blank" rel="noopener noreferrer" className="text-amber-400 font-bold hover:underline">
+                  0374436921
+                </a>
+              </li>
+              <li className="flex flex-col">
+                <span className="text-gray-500 uppercase text-[10px] font-bold">TikTok:</span>
+                <span className="text-amber-400 font-semibold">
+                  Huyền Học Lữ Phúc
+                </span>
               </li>
             </ul>
           </div>

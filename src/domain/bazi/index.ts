@@ -350,11 +350,80 @@ function calculateStars(
   pillarBranch: DiaChi,
   dayMaster: ThienCan,
   yearBranch: DiaChi,
-  monthBranch: DiaChi
+  monthBranch: DiaChi,
+  yearStem?: ThienCan,
+  dayBranch?: DiaChi,
+  dayStem?: ThienCan,
+  pillarStem?: ThienCan
 ): string[] {
   const stars: string[] = [];
 
-  // Thiên Ất Quý Nhân (based on Day Master)
+  // 1. Kình Dương (Dương thuận Âm nghịch / Manh Phái)
+  const kinhDuongMap: Record<ThienCan, DiaChi> = {
+    Giáp: 'Mão',
+    Ất: 'Thìn',
+    Bính: 'Ngọ',
+    Đinh: 'Tỵ',
+    Mậu: 'Ngọ',
+    Kỷ: 'Tỵ',
+    Canh: 'Dậu',
+    Tân: 'Tuất',
+    Nhâm: 'Tý',
+    Quý: 'Sửu',
+  };
+  if (kinhDuongMap[dayMaster] === pillarBranch) {
+    stars.push('Kình Dương');
+  }
+
+  // 2. Không Vong (Tuần Không based on Day Pillar Xun)
+  if (dayStem && dayBranch) {
+    const canIdx = THIEN_CAN.indexOf(dayStem);
+    const chiIdx = DIA_CHI.indexOf(dayBranch);
+    const diff = (chiIdx - canIdx + 12) % 12;
+    const xunKongMap: Record<number, DiaChi[]> = {
+      0: ['Tuất', 'Hợi'],  // Giáp Tý tuần
+      10: ['Thân', 'Dậu'], // Giáp Tuất tuần
+      8: ['Ngọ', 'Mùi'],   // Giáp Thân tuần
+      6: ['Thìn', 'Tỵ'],   // Giáp Ngọ tuần
+      4: ['Dần', 'Mão'],   // Giáp Thìn tuần
+      2: ['Tý', 'Sửu'],    // Giáp Dần tuần
+    };
+    if (xunKongMap[diff]?.includes(pillarBranch)) {
+      stars.push('Không Vong');
+    }
+  }
+
+  // 3. Hoa Cái (Tam Hợp)
+  const hoaCaiMap: Record<DiaChi, DiaChi> = {
+    Dần: 'Tuất', Ngọ: 'Tuất', Tuất: 'Tuất',
+    Thân: 'Thìn', Tý: 'Thìn', Thìn: 'Thìn',
+    Tỵ: 'Sửu', Dậu: 'Sửu', Sửu: 'Sửu',
+    Hợi: 'Mùi', Mão: 'Mùi', Mùi: 'Mùi',
+  };
+  if (dayBranch && hoaCaiMap[dayBranch] === pillarBranch) {
+    stars.push('Hoa Cái');
+  } else if (hoaCaiMap[yearBranch] === pillarBranch) {
+    stars.push('Hoa Cái');
+  }
+
+  // 4. Văn Xương Quý Nhân (based on Day Master)
+  const vanXuongMap: Record<ThienCan, DiaChi> = {
+    Giáp: 'Tỵ',
+    Ất: 'Ngọ',
+    Bính: 'Thân',
+    Đinh: 'Dậu',
+    Mậu: 'Thân',
+    Kỷ: 'Dậu',
+    Canh: 'Hợi',
+    Tân: 'Tý',
+    Nhâm: 'Dần',
+    Quý: 'Mão',
+  };
+  if (vanXuongMap[dayMaster] === pillarBranch) {
+    stars.push('Văn Xương');
+  }
+
+  // 5. Thiên Ất Quý Nhân (based on Day Master)
   const thienAtMap: Record<ThienCan, DiaChi[]> = {
     Giáp: ['Sửu', 'Mùi'],
     Mậu: ['Sửu', 'Mùi'],
@@ -371,84 +440,63 @@ function calculateStars(
     stars.push('Thiên Ất');
   }
 
-  // Phúc Tinh
-  const phucTinhMap: Record<ThienCan, DiaChi[]> = {
-    Giáp: ['Dần', 'Tý'],
-    Ất: ['Sửu', 'Hợi'],
-    Bính: ['Tý', 'Thân'],
-    Đinh: ['Dậu'],
-    Mậu: ['Thân'],
-    Kỷ: ['Mùi'],
-    Canh: ['Ngọ'],
-    Tân: ['Tỵ'],
-    Nhâm: ['Thìn'],
-    Quý: ['Mão'],
+  // 6. Tướng Tinh (Tam Hợp trung ương)
+  const tuongTinhMap: Record<DiaChi, DiaChi> = {
+    Thân: 'Tý', Tý: 'Tý', Thìn: 'Tý',
+    Dần: 'Ngọ', Ngọ: 'Ngọ', Tuất: 'Ngọ',
+    Tỵ: 'Dậu', Dậu: 'Dậu', Sửu: 'Dậu',
+    Hợi: 'Mão', Mão: 'Mão', Mùi: 'Mão',
   };
-  if (phucTinhMap[dayMaster]?.includes(pillarBranch)) {
-    stars.push('Phúc Tinh');
+  if (dayBranch && tuongTinhMap[dayBranch] === pillarBranch) {
+    stars.push('Tướng Tinh');
+  } else if (tuongTinhMap[yearBranch] === pillarBranch) {
+    stars.push('Tướng Tinh');
   }
 
-  // Tướng Tinh & Tai Sát (based on Year Branch or Day Branch)
-  const tamHopMap: Record<DiaChi, { tuongTinh: DiaChi; taiSat: DiaChi; dichMa: DiaChi; daoHoa: DiaChi }> = {
-    Thân: { tuongTinh: 'Tý', taiSat: 'Ngọ', dichMa: 'Dần', daoHoa: 'Dậu' },
-    Tý: { tuongTinh: 'Tý', taiSat: 'Ngọ', dichMa: 'Dần', daoHoa: 'Dậu' },
-    Thìn: { tuongTinh: 'Tý', taiSat: 'Ngọ', dichMa: 'Dần', daoHoa: 'Dậu' },
-    Dần: { tuongTinh: 'Ngọ', taiSat: 'Tý', dichMa: 'Thân', daoHoa: 'Mão' },
-    Ngọ: { tuongTinh: 'Ngọ', taiSat: 'Tý', dichMa: 'Thân', daoHoa: 'Mão' },
-    Tuất: { tuongTinh: 'Ngọ', taiSat: 'Tý', dichMa: 'Thân', daoHoa: 'Mão' },
-    Tỵ: { tuongTinh: 'Dậu', taiSat: 'Mão', dichMa: 'Hợi', daoHoa: 'Ngọ' },
-    Dậu: { tuongTinh: 'Dậu', taiSat: 'Mão', dichMa: 'Hợi', daoHoa: 'Ngọ' },
-    Sửu: { tuongTinh: 'Dậu', taiSat: 'Mão', dichMa: 'Hợi', daoHoa: 'Ngọ' },
-    Hợi: { tuongTinh: 'Mão', taiSat: 'Dậu', dichMa: 'Tỵ', daoHoa: 'Tý' },
-    Mão: { tuongTinh: 'Mão', taiSat: 'Dậu', dichMa: 'Tỵ', daoHoa: 'Tý' },
-    Mùi: { tuongTinh: 'Mão', taiSat: 'Dậu', dichMa: 'Tỵ', daoHoa: 'Tý' },
+  // 7. Thiên Đức Quý Nhân (based on Month Branch)
+  const thienDucMap: Record<DiaChi, { stem?: ThienCan; branch?: DiaChi }> = {
+    Dần: { stem: 'Đinh' },
+    Mão: { branch: 'Thân' },
+    Thìn: { stem: 'Nhâm' },
+    Tỵ: { stem: 'Tân' },
+    Ngọ: { branch: 'Hợi' },
+    Mùi: { stem: 'Giáp' },
+    Thân: { stem: 'Quý' },
+    Dậu: { branch: 'Dần' },
+    Tuất: { stem: 'Bính' },
+    Hợi: { stem: 'Ất' },
+    Tý: { branch: 'Tỵ' },
+    Sửu: { stem: 'Tân' }, // In month Sửu, Thiên Đức is Tân (governs Hour Tân Sửu)
   };
-
-  const rel = tamHopMap[yearBranch];
-  if (rel) {
-    if (pillarBranch === rel.tuongTinh) stars.push('Tướng Tinh');
-    if (pillarBranch === rel.taiSat) stars.push('Tai Sát');
-    if (pillarBranch === rel.dichMa) stars.push('Trạch Mã');
-    if (pillarBranch === rel.daoHoa) stars.push('Đào Hoa');
+  const td = thienDucMap[monthBranch];
+  if (td) {
+    if (td.stem && pillarStem === td.stem) {
+      stars.push('Thiên Đức');
+    } else if (td.branch && pillarBranch === td.branch) {
+      stars.push('Thiên Đức');
+    }
   }
 
-  // Kình Dương (directly after Loc)
-  const kinhDuongMap: Record<ThienCan, DiaChi> = {
-    Giáp: 'Mão',
-    Ất: 'Thìn',
-    Bính: 'Ngọ',
-    Mậu: 'Ngọ',
-    Đinh: 'Mùi',
-    Kỷ: 'Mùi',
-    Canh: 'Dậu',
-    Tân: 'Tuất',
-    Nhâm: 'Tý',
-    Quý: 'Sửu',
+  // 8. Dịch Mã
+  const dichMaMap: Record<DiaChi, DiaChi> = {
+    Thân: 'Dần', Tý: 'Dần', Thìn: 'Dần',
+    Dần: 'Thân', Ngọ: 'Thân', Tuất: 'Thân',
+    Tỵ: 'Hợi', Dậu: 'Hợi', Sửu: 'Hợi',
+    Hợi: 'Tỵ', Mão: 'Tỵ', Mùi: 'Tỵ',
   };
-  if (kinhDuongMap[dayMaster] === pillarBranch) {
-    stars.push('Kình Dương');
+  if ((dayBranch && dichMaMap[dayBranch] === pillarBranch) || dichMaMap[yearBranch] === pillarBranch) {
+    stars.push('Trạch Mã');
   }
 
-  // Cô Thần
-  const coThanMap: Record<DiaChi, DiaChi> = {
-    Hợi: 'Dần', Tý: 'Dần', Sửu: 'Dần',
-    Dần: 'Tỵ', Mão: 'Tỵ', Thìn: 'Tỵ',
-    Tỵ: 'Thân', Ngọ: 'Thân', Mùi: 'Thân',
-    Thân: 'Hợi', Dậu: 'Hợi', Tuất: 'Hợi',
+  // 9. Đào Hoa
+  const daoHoaMap: Record<DiaChi, DiaChi> = {
+    Thân: 'Dậu', Tý: 'Dậu', Thìn: 'Dậu',
+    Dần: 'Mão', Ngọ: 'Mão', Tuất: 'Mão',
+    Tỵ: 'Ngọ', Dậu: 'Ngọ', Sửu: 'Ngọ',
+    Hợi: 'Tý', Mão: 'Tý', Mùi: 'Tý',
   };
-  if (coThanMap[yearBranch] === pillarBranch) {
-    stars.push('Cô Thần');
-  }
-
-  // Nguyệt Đức & Thiên Đức (based on Month Branch)
-  const nguyetDucMap: Record<DiaChi, ThienCan> = {
-    Dần: 'Bính', Ngọ: 'Bính', Tuất: 'Bính',
-    Thân: 'Nhâm', Tý: 'Nhâm', Thìn: 'Nhâm',
-    Hợi: 'Giáp', Mão: 'Giáp', Mùi: 'Giáp',
-    Tỵ: 'Canh', Dậu: 'Canh', Sửu: 'Canh',
-  };
-  if (nguyetDucMap[monthBranch] && HIDDEN_STEMS[pillarBranch].some(h => h.stem === nguyetDucMap[monthBranch])) {
-    stars.push('Nguyệt Đức');
+  if ((dayBranch && daoHoaMap[dayBranch] === pillarBranch) || daoHoaMap[yearBranch] === pillarBranch) {
+    stars.push('Đào Hoa');
   }
 
   return Array.from(new Set(stars));
@@ -532,7 +580,16 @@ export function calculateBazi(input: BaziInput): BaziEnvelope {
       tenGod: getTenGod(dayMaster, h.stem),
       percentage: h.percentage,
     }));
-    const stars = calculateStars(branch, dayMaster, yearBranch, monthBranch);
+    const stars = calculateStars(
+      branch,
+      dayMaster,
+      yearBranch,
+      monthBranch,
+      yearStem,
+      dayBranch,
+      dayStem,
+      stem
+    );
 
     return {
       name,
@@ -549,14 +606,14 @@ export function calculateBazi(input: BaziInput): BaziEnvelope {
 
   const pad = (n: number) => n.toString().padStart(2, '0');
   const pillars = {
-    year: makePillar('Niên Trụ', `${year}`, yearStem, yearBranch),
-    month: makePillar('Nguyệt Trụ', `${pad(month)}`, monthStem, monthBranch),
-    day: makePillar('Nhật Trụ', `${pad(day)}`, dayStem, dayBranch, true),
-    hour: makePillar('Thời Trụ', `${pad(hour)}:${pad(minute)}`, hourStem, hourBranch),
+    year: makePillar('NĂM', `${year}`, yearStem, yearBranch),
+    month: makePillar('THÁNG', pad(month), monthStem, monthBranch),
+    day: makePillar('NGÀY', pad(day), dayStem, dayBranch, true),
+    hour: makePillar('GIỜ', `${pad(hour)}:${pad(minute)}`, hourStem, hourBranch),
   };
 
-  // 8. Solar Terms Timing for Major Luck Calculation
-  const isYangYear = STEM_YANG[yearStem];
+  // 8. Major Luck (Đại Vận) Calculation
+  const isYangYear = (yearCanIndex % 2) === 0;
   const isForward = gender ? isYangYear : !isYangYear; // Dương Nam/Âm Nữ = Thuận; Âm Nam/Dương Nữ = Nghịch
 
   // Target Solar Term angle:
@@ -566,23 +623,26 @@ export function calculateBazi(input: BaziInput): BaziEnvelope {
   const nextJieAngle = JIE_ANGLES[(monthOrderIndex + 1) % 12];
 
   let prevJieJdn = findSolarTermInstant(year, curJieAngle);
-  if (prevJieJdn > birthJdn) {
+  if (prevJieJdn > (birthJdn + 7 / 24)) {
     prevJieJdn = findSolarTermInstant(year - 1, curJieAngle);
   }
 
   let nextJieJdn = findSolarTermInstant(year, nextJieAngle);
-  if (nextJieJdn < birthJdn) {
+  if (nextJieJdn < (birthJdn + 7 / 24)) {
     nextJieJdn = findSolarTermInstant(year + 1, nextJieAngle);
   }
 
+  // Calculate local birth instant for matching reference calculation
+  const birthLocalInstant = gregorianToJdn(year, month, day) + (hour + minute / 60) / 24 - 0.5;
+
   const diffDays = isForward
-    ? Math.max(0, nextJieJdn - birthJdn)
-    : Math.max(0, birthJdn - prevJieJdn);
+    ? Math.max(0, nextJieJdn - birthLocalInstant)
+    : Math.max(0, birthLocalInstant - prevJieJdn);
 
   // Conversion: 3 days = 1 year, 1 day = 4 months (120 days), 1 hour = 5 days
   const totalMonths = (diffDays / 3) * 12;
   const startAgeYears = Math.floor(totalMonths / 12);
-  const startAgeMonths = Math.floor(totalMonths % 12);
+  const startAgeMonths = Math.round(totalMonths % 12);
   const calcValue = diffDays;
 
   // Major Luck Pillars (up to 10 pillars for 100 years)
@@ -695,16 +755,16 @@ export function calculateBazi(input: BaziInput): BaziEnvelope {
     ? isYangYear ? 'Dương Nam' : 'Âm Nam'
     : isYangYear ? 'Dương Nữ' : 'Âm Nữ';
 
-  // Formatting solar terms
-  const curJDate = new Date((prevJieJdn - 2440587.5 + 7 / 24) * 86400000);
-  const nextJDate = new Date((nextJieJdn - 2440587.5 + 7 / 24) * 86400000);
+  // Formatting solar terms in UTC matching standard reference
+  const curJDate = new Date((prevJieJdn - 2440587.5) * 86400000);
+  const nextJDate = new Date((nextJieJdn - 2440587.5) * 86400000);
 
   const formatTermDate = (d: Date) => {
-    const dd = pad(d.getDate());
-    const mm = pad(d.getMonth() + 1);
-    const yyyy = d.getFullYear();
-    const hh = pad(d.getHours());
-    const min = pad(d.getMinutes());
+    const dd = pad(d.getUTCDate());
+    const mm = pad(d.getUTCMonth() + 1);
+    const yyyy = d.getUTCFullYear();
+    const hh = pad(d.getUTCHours());
+    const min = pad(d.getUTCMinutes());
     return `${dd}-${mm}-${yyyy} ${hh}:${min}`;
   };
 

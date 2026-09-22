@@ -71,59 +71,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
 
   return (
     <div className="w-full mt-6 space-y-6">
-      {/* Top Action Toolbar (Outside printable chart) */}
-      <div className="flex flex-wrap justify-between items-center bg-white p-4 rounded-lg shadow-xs border border-gray-200 gap-3 no-print">
-        <div className="flex items-center space-x-2 text-xs sm:text-sm text-gray-700">
-          <Sparkles className="w-4 h-4 text-[#c8860a]" />
-          <span>
-            Lá số Bát Tự: <strong className="text-gray-900 font-bold uppercase">{calc.personal.fullName}</strong>
-          </span>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Toggle 100-Year Decades View */}
-          <button
-            type="button"
-            onClick={() => setShowAllDecades(!showAllDecades)}
-            className="flex items-center space-x-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded text-xs font-semibold transition"
-          >
-            <CalendarRange className="w-3.5 h-3.5 text-[#0d5ca8]" />
-            <span>{showAllDecades ? 'Xem 20 năm gần nhất' : 'Xem toàn bộ 100 năm'}</span>
-          </button>
-
-          {/* Download PNG Button */}
-          <button
-            type="button"
-            onClick={handleDownloadPng}
-            disabled={isExporting}
-            className="flex items-center space-x-1.5 bg-emerald-700 hover:bg-emerald-800 text-white px-3.5 py-1.5 rounded text-xs font-bold transition shadow-2xs disabled:opacity-50"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>{isExporting ? 'Đang xuất ảnh...' : 'TẢI ẢNH LÁ SỐ'}</span>
-          </button>
-
-          {/* Print Button */}
-          <button
-            type="button"
-            onClick={handlePrint}
-            className="flex items-center space-x-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3.5 py-1.5 rounded text-xs font-semibold transition"
-          >
-            <Printer className="w-3.5 h-3.5" />
-            <span>IN LÁ SỐ</span>
-          </button>
-
-          {/* Save Chart Button */}
-          <button
-            type="button"
-            onClick={handleSaveChart}
-            disabled={saveStatus === 'saving' || saveStatus === 'saved'}
-            className="flex items-center space-x-1.5 bg-[#c8860a] hover:bg-amber-700 text-white px-3.5 py-1.5 rounded text-xs font-bold transition shadow-2xs disabled:opacity-50"
-          >
-            {saveStatus === 'saved' ? <Check className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
-            <span>{saveStatus === 'saved' ? 'Đã lưu' : saveStatus === 'saving' ? 'Đang lưu...' : 'Lưu lá số'}</span>
-          </button>
-        </div>
-      </div>
 
       {/* Notification status for save chart */}
       {saveStatus === 'error' && (
@@ -148,6 +96,25 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
           focusYear={envelope.input.focusYear}
           showAllDecades={showAllDecades}
         />
+
+        {/* Bottom Action Buttons matching media_1789978406443.png */}
+        <div className="flex justify-end items-center space-x-2 mt-3 max-w-[960px] mx-auto px-2 no-print">
+          <button
+            type="button"
+            onClick={handleDownloadPng}
+            disabled={isExporting}
+            className="bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs font-bold px-3.5 py-1.5 rounded shadow-2xs transition cursor-pointer"
+          >
+            {isExporting ? 'Đang tải...' : 'Tải lá số'}
+          </button>
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs font-bold px-3.5 py-1.5 rounded shadow-2xs transition cursor-pointer"
+          >
+            In lá số
+          </button>
+        </div>
       </div>
 
       {/* Supplementary Astrological Interpretation & Remedies (Outside the printed document sheet) */}
@@ -229,7 +196,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
         </div>
 
         <div className="pt-2 text-xs text-gray-500 border-t border-gray-100 flex items-center justify-between">
-          <span>Hệ thống: Bát Tự Manh Phái & Tử Bình Toàn Thư</span>
+          <span>Hệ thống: Bát Tự Phúc Sơn & Tử Bình Toàn Thư</span>
           <span className="font-semibold text-gray-700">Đại Vận & Lưu Niên Timeline</span>
         </div>
       </div>

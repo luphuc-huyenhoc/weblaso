@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Search, User, LogOut, Shield, FileText, Sparkles } from 'lucide-react';
@@ -10,6 +10,32 @@ export function Header({ user }: { user?: { fullName: string; role: string } | n
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+
+  const searchRef = useRef<HTMLDivElement>(null);
+  const accountRef = useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setIsSearchOpen(false);
+      }
+      if (accountRef.current && !accountRef.current.contains(event.target as Node)) {
+        setIsAccountMenuOpen(false);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsSearchOpen(false);
+        setIsAccountMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   // Vietnamese current date formatted like reference: "Thứ Hai, 21 Tháng Chín, 2026"
   const now = new Date();
@@ -44,14 +70,14 @@ export function Header({ user }: { user?: { fullName: string; role: string } | n
             <div className="hidden md:flex items-center space-x-2">
               <span className="text-[#c8860a] font-bold">Tin mới:</span>
               <span className="text-gray-300 hover:text-white transition">
-                Khóa luận giải Bát Tự & Dịch Học thực chiến cùng chuyên gia
+                Lữ Phúc: Gieo Phúc - Gặt Phước | Luận giải Bát Tự Phúc Sơn & Dịch Học thực chiến
               </span>
             </div>
           </div>
 
           <div className="flex items-center space-x-4">
             {/* Search Toggle */}
-            <div className="relative">
+            <div ref={searchRef} className="relative">
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className="hover:text-white p-1 flex items-center space-x-1"
@@ -85,7 +111,7 @@ export function Header({ user }: { user?: { fullName: string; role: string } | n
             </div>
 
             {/* Account dropdown */}
-            <div className="relative">
+            <div ref={accountRef} className="relative">
               <button
                 onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
                 className="flex items-center space-x-1 hover:text-white py-1 px-1.5 rounded"
@@ -162,16 +188,19 @@ export function Header({ user }: { user?: { fullName: string; role: string } | n
 
       {/* Main Brand & Banner Area */}
       <div className="max-w-site mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-        <Link href="/" className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-[#27303f] rounded-full border-2 border-[#c8860a] flex items-center justify-center text-[#c8860a] font-bold text-xl shadow-sm">
+        <Link href="/" className="flex items-center space-x-3 group">
+          <div className="w-12 h-12 bg-[#27303f] rounded-full border-2 border-[#c8860a] flex items-center justify-center text-[#c8860a] font-bold text-xl shadow-sm group-hover:scale-105 transition-transform">
             LP
           </div>
           <div>
             <div className="text-2xl font-bold tracking-tight text-[#27303f]">
               LỮ PHÚC
             </div>
-            <div className="text-xs text-gray-500 tracking-wider uppercase font-medium">
-              Bát Tự Manh Phái & Dịch Học Cổ Truyền
+            <div className="text-xs text-[#c8860a] font-bold tracking-wider uppercase">
+              Gieo Phúc - Gặt Phước
+            </div>
+            <div className="text-[11px] text-gray-500 tracking-wide font-medium">
+              Bát Tự Phúc Sơn & Dịch Học Cổ Truyền
             </div>
           </div>
         </Link>
@@ -180,12 +209,16 @@ export function Header({ user }: { user?: { fullName: string; role: string } | n
         <div className="w-full md:w-auto bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-3 flex items-center justify-between shadow-xs">
           <div className="pr-4">
             <span className="bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
-              Khóa Học Bát Tự
+              Khóa Học Bát Tự Phúc Sơn
             </span>
             <div className="text-xs md:text-sm font-bold text-gray-900 mt-1">
               Giải Mã Vận Mệnh Từ Ngày Giờ Sinh
             </div>
-            <div className="text-[11px] text-gray-600">Bài bản · Thực chiến · Giảng viên giàu kinh nghiệm</div>
+            <div className="text-[11px] text-gray-600 flex items-center space-x-2">
+              <span>Zalo/Hotline: <strong className="text-gray-900">0374436921</strong></span>
+              <span>·</span>
+              <span>TikTok: <strong className="text-gray-900">Huyền Học Lữ Phúc</strong></span>
+            </div>
           </div>
           <Link
             href="/lien-he"

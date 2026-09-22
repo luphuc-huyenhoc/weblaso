@@ -53,7 +53,7 @@ export function MajorLuckSection({
           <div className="text-xs sm:text-sm text-gray-800">
             Số tính đại vận ={' '}
             <strong className="text-[#003399] font-extrabold font-mono">
-              {calcValue.toFixed(5)}
+              {Number(calcValue.toFixed(12))}
             </strong>
             ; Nhập đại vận lúc{' '}
             <strong className="text-[#112244] font-bold">

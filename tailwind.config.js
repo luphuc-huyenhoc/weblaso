@@ -5,6 +5,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"DM Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+      },
       colors: {
         nguhanh: {
           kim: "#708090",
@@ -17,7 +20,7 @@ module.exports = {
           header: "#222222",
           nav: "#1f2937",
           border: "#e2e8f0",
-          bg: "#f8fafc",
+          bg: "#f9f5ec",
         }
       },
       maxWidth: {

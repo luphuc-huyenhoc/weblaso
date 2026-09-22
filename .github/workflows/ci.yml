@@ -2,9 +2,9 @@ name: Production CI & Quality Gates
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, develop, master]
   pull_request:
-    branches: [main, master]
+    branches: [main, develop, master]
 
 jobs:
   verify:

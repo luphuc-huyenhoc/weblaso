@@ -22,19 +22,23 @@ export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentPro
         <div
           ref={ref}
           id="bazi-printable-chart"
-          className="relative mx-auto bg-[#fefdf9] border-2 border-[#2b78c5] shadow-md font-sans select-text text-gray-900 overflow-hidden"
+          className="relative mx-auto border-2 border-[#1c4a78] shadow-md font-sans select-text text-gray-900 overflow-hidden"
           style={{
             width: '100%',
-            maxWidth: '960px',
+            maxWidth: '860px',
             minWidth: '680px',
+            backgroundImage: "url('/BACKGROUND.png')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
             backgroundColor: '#fefdf9',
           }}
         >
-          {/* Traditional Background Watermark */}
+          {/* Traditional Background Image Layer from BACKGROUND.png */}
           <BaziChartWatermark />
 
-          {/* Foreground Structured Layout (Z-Index 1) */}
-          <div className="relative z-10 w-full flex flex-col">
+          {/* Foreground Structured Layout (Z-Index 10 with semi-translucent backdrop for legibility) */}
+          <div className="relative z-10 w-full flex flex-col bg-white/85 backdrop-blur-[0.5px]">
             {/* [A] Header / Personal Metadata */}
             <BaziChartHeader
               fullName={personal.fullName}

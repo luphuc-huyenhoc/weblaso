@@ -19,7 +19,9 @@ node_modules
 *.pem
 
 # Local env files
+.env
 .env*.local
+.env.production
 
 # Vercel
 .vercel
@@ -28,8 +30,13 @@ node_modules
 *.tsbuildinfo
 next-env.d.ts
 
-# Playwright
+# Playwright & test artifacts
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+actual_*.png
+reference_*.png
+test_*.png
+/*.png
+/Ảnh thay/

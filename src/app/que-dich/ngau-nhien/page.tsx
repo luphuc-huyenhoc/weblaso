@@ -1,105 +1,47 @@
 'use client';
 
-import React, { useState } from 'react';
-import { IchingEnvelope, IchingLineInput } from '@/domain/iching';
-import { HexagramVisualizer } from '@/components/iching/HexagramVisualizer';
-import { Coins, RotateCw, Sparkles, CheckCircle2 } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { IchingEnvelope } from '@/domain/iching';
+import { LucHaoResultDocument } from '@/components/iching/LucHaoResultDocument';
+import { IChingInterpretation } from '@/components/iching/IChingInterpretation';
+import { toPng } from 'html-to-image';
+import { Download, Printer, Bookmark, Loader2, Sparkles } from 'lucide-react';
 
 export default function NgauNhienPage() {
-  const [title, setTitle] = useState('Chiêm đoán thời vận sắp tới');
-  const [currentToss, setCurrentToss] = useState<number>(0); // 0 to 6
-  const [tossedLines, setTossedLines] = useState<IchingLineInput[]>([]);
-  const [lastCoins, setLastCoins] = useState<[boolean, boolean, boolean] | null>(null);
+  const now = new Date();
+  const [title, setTitle] = useState('');
+  const [day, setDay] = useState(now.getDate());
+  const [month, setMonth] = useState(now.getMonth() + 1);
+  const [year, setYear] = useState(now.getFullYear());
+  const [hour, setHour] = useState(now.getHours());
+  const [minute, setMinute] = useState(now.getMinutes());
+
   const [loading, setLoading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [result, setResult] = useState<IchingEnvelope | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Roll 3 coins
-  const rollCoins = () => {
-    // true = Dương (ngửa, 3 điểm), false = Âm (sấp, 2 điểm)
-    const c1 = Math.random() < 0.5;
-    const c2 = Math.random() < 0.5;
-    const c3 = Math.random() < 0.5;
-    const sum = (c1 ? 3 : 2) + (c2 ? 3 : 2) + (c3 ? 3 : 2);
+  const chartRef = useRef<HTMLDivElement>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
 
-    let polarity: 'Âm' | 'Dương' = 'Dương';
-    let movement: 'Tĩnh' | 'Động' = 'Tĩnh';
-
-    if (sum === 9) {
-      polarity = 'Dương';
-      movement = 'Động';
-    } else if (sum === 7) {
-      polarity = 'Dương';
-      movement = 'Tĩnh';
-    } else if (sum === 8) {
-      polarity = 'Âm';
-      movement = 'Tĩnh';
-    } else if (sum === 6) {
-      polarity = 'Âm';
-      movement = 'Động';
-    }
-
-    return {
-      coins: [c1, c2, c3] as [boolean, boolean, boolean],
-      line: {
-        lineIndex: tossedLines.length,
-        polarity,
-        movement,
-      } as IchingLineInput,
-    };
-  };
-
-  const handleTossOnce = async () => {
-    if (tossedLines.length >= 6) return;
-
-    const { coins, line } = rollCoins();
-    const nextLines = [...tossedLines, line];
-    setLastCoins(coins);
-    setTossedLines(nextLines);
-    setCurrentToss(nextLines.length);
-
-    if (nextLines.length === 6) {
-      // Finished 6 tosses -> calculate
-      await triggerCalculation(nextLines);
-    }
-  };
-
-  const handleTossAll = async () => {
-    const lines: IchingLineInput[] = [];
-    for (let i = 0; i < 6; i++) {
-      const { line } = rollCoins();
-      lines.push({ ...line, lineIndex: i });
-    }
-    setTossedLines(lines);
-    setCurrentToss(6);
-    await triggerCalculation(lines);
-  };
-
-  const handleReset = () => {
-    setCurrentToss(0);
-    setTossedLines([]);
-    setLastCoins(null);
-    setResult(null);
-    setError(null);
-  };
-
-  const triggerCalculation = async (finalLines: IchingLineInput[]) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     setError(null);
+
     try {
-      const now = new Date();
       const res = await fetch('/api/iching/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title,
+          title: title.trim() || 'Xem tài lộc thời vận',
           method: 'Ngẫu Nhiên',
-          lines: finalLines,
-          day: now.getDate(),
-          month: now.getMonth() + 1,
-          year: now.getFullYear(),
-          hour: now.getHours(),
-          minute: now.getMinutes(),
+          day,
+          month,
+          year,
+          hour,
+          minute,
         }),
       });
 
@@ -107,144 +49,246 @@ export default function NgauNhienPage() {
       if (!res.ok) {
         throw new Error(data.message || 'Lỗi khi gieo quẻ');
       }
+
       setResult(data);
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     } catch (err: any) {
-      setError(err.message || 'Có lỗi xảy ra');
+      setError(err.message || 'Có lỗi xảy ra khi gieo quẻ');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleDownloadImage = async () => {
+    if (!chartRef.current) return;
+    try {
+      setDownloading(true);
+      const dataUrl = await toPng(chartRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: '#fefdf9',
+      });
+      const link = document.createElement('a');
+      link.download = `que-dich-ngau-nhien-${result?.calculation.originalHexagram.name || 'la-so'}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Error exporting chart to PNG:', err);
+      alert('Không thể xuất ảnh quẻ dịch. Vui lòng dùng tính năng In quẻ để lưu PDF.');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleSave = () => {
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
+  };
+
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      {/* Header */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-xs text-center">
-        <h1 className="text-xl md:text-2xl font-bold text-gray-900 uppercase tracking-wide">
-          Gieo Quẻ Đồng Xu Cổ Truyền Ngẫu Nhiên
-        </h1>
-        <p className="text-sm text-gray-500 mt-2 max-w-2xl mx-auto">
-          Tung 3 đồng tiền cổ qua 6 lần gieo ứng với 6 hào từ Hào 1 (Sơ) lên Hào 6 (Thượng). Xác suất hoàn toàn ngẫu nhiên và trung thực.
-        </p>
-      </div>
-
-      {/* Interactive Coin Box */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8 shadow-xs space-y-6">
-        <div>
-          <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-            Sự việc muốn khấn nguyện & chiêm đoán
-          </label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            disabled={tossedLines.length > 0}
-            className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:border-[#c8860a]"
-          />
-        </div>
-
-        {/* Toss Control & Visual Coins */}
-        <div className="bg-gradient-to-b from-amber-50 to-amber-100/50 border border-amber-200 rounded-lg p-6 text-center space-y-4">
-          <div className="text-xs font-bold text-amber-900 uppercase tracking-wide">
-            Tiến độ gieo hào: {currentToss} / 6
+    <div className="max-w-4xl mx-auto space-y-8 py-4 px-2 sm:px-4">
+      {/* 1. Form Section Matching Nguhanh.net Reference Layout */}
+      <div id="quedich" className="form-quedich bg-white border border-gray-200 rounded-lg p-5 sm:p-7 shadow-xs">
+        <form onSubmit={handleSubmit} data-selector="anqueluchao-form">
+          <div className="tracuu text-center space-y-1 mb-6">
+            <h2 className="centertitle text-lg sm:text-2xl font-bold uppercase tracking-wider text-gray-900 flex items-center justify-center space-x-2">
+              <span className="leftarrow text-amber-600">❖</span>
+              <span>Quẻ dịch</span>
+              <span className="rightarrow text-amber-600">❖</span>
+            </h2>
+            <p className="centertitle2 text-xs sm:text-sm text-gray-500 font-medium">
+              ( Gieo quẻ ngẫu nhiên )
+            </p>
           </div>
 
-          {/* 3 Coins visualization */}
-          <div className="flex justify-center items-center space-x-6 py-3">
-            {[0, 1, 2].map((idx) => {
-              const isYang = lastCoins ? lastCoins[idx] : null;
-              return (
-                <div
-                  key={idx}
-                  className={`w-16 h-16 md:w-20 md:h-20 rounded-full border-2 flex items-center justify-center font-serif text-xs md:text-sm font-bold shadow-md transition-all transform ${
-                    isYang === null
-                      ? 'bg-amber-100 border-amber-300 text-amber-700'
-                      : isYang
-                      ? 'bg-amber-400 border-amber-600 text-amber-950 scale-105'
-                      : 'bg-yellow-200 border-yellow-500 text-yellow-900'
-                  }`}
-                >
-                  {isYang === null ? 'TIỀN CỔ' : isYang ? 'DƯƠNG (3)' : 'ÂM (2)'}
-                </div>
-              );
-            })}
-          </div>
+          <div className="space-y-4 max-w-2xl mx-auto">
+            {/* Việc cần xem */}
+            <div className="laso-form">
+              <label htmlFor="Title" className="label-form block text-xs font-bold text-gray-700 uppercase mb-1">
+                Việc cần xem
+              </label>
+              <div className="form-item">
+                <input
+                  id="Title"
+                  name="Title"
+                  type="text"
+                  maxLength={256}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Việc cần xem (Ví dụ: Chiêm đoán công danh, tài lộc, gia đạo...)"
+                  className="w-full px-3 py-2 border border-gray-300 rounded text-sm text-gray-900 focus:outline-hidden focus:border-[#c8860a] focus:ring-1 focus:ring-[#c8860a]"
+                />
+              </div>
+            </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            {currentToss < 6 ? (
-              <>
-                <button
-                  type="button"
-                  onClick={handleTossOnce}
-                  className="inline-flex items-center space-x-2 bg-[#c8860a] hover:bg-amber-700 text-white font-extrabold px-6 py-3 rounded-md shadow uppercase tracking-wider text-xs transition transform active:scale-95"
+            {/* Ngày Dương Lịch */}
+            <div className="laso-form">
+              <label htmlFor="SolarDay" className="label-form block text-xs font-bold text-gray-700 uppercase mb-1">
+                Ngày
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                <select
+                  id="SolarDay"
+                  name="SolarDay"
+                  value={day}
+                  onChange={(e) => setDay(parseInt(e.target.value, 10))}
+                  className="w-full px-2 py-2 border border-gray-300 rounded text-sm bg-white text-gray-900 focus:outline-hidden focus:border-[#c8860a]"
                 >
-                  <Coins className="w-4 h-4" />
-                  <span>Tung Đồng Xu (Lần {currentToss + 1})</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleTossAll}
-                  className="inline-flex items-center space-x-1 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 font-bold px-4 py-3 rounded-md text-xs transition"
+                  {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                    <option key={d} value={d}>
+                      {d.toString().padStart(2, '0')}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  id="SolarMonth"
+                  name="SolarMonth"
+                  value={month}
+                  onChange={(e) => setMonth(parseInt(e.target.value, 10))}
+                  className="w-full px-2 py-2 border border-gray-300 rounded text-sm bg-white text-gray-900 focus:outline-hidden focus:border-[#c8860a]"
                 >
-                  <span>Gieo nhanh 6 hào</span>
-                </button>
-              </>
-            ) : (
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                    <option key={m} value={m}>
+                      Tháng {m.toString().padStart(2, '0')}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  id="SolarYear"
+                  name="SolarYear"
+                  value={year}
+                  onChange={(e) => setYear(parseInt(e.target.value, 10))}
+                  className="w-full px-2 py-2 border border-gray-300 rounded text-sm bg-white text-gray-900 focus:outline-hidden focus:border-[#c8860a]"
+                >
+                  {Array.from({ length: 157 }, (_, i) => 1900 + i).map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Giờ Dương Lịch */}
+            <div className="laso-form">
+              <label htmlFor="Hour" className="label-form block text-xs font-bold text-gray-700 uppercase mb-1">
+                Giờ
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <select
+                  id="Hour"
+                  name="Hour"
+                  value={hour}
+                  onChange={(e) => setHour(parseInt(e.target.value, 10))}
+                  className="w-full px-2 py-2 border border-gray-300 rounded text-sm bg-white text-gray-900 focus:outline-hidden focus:border-[#c8860a]"
+                >
+                  {Array.from({ length: 24 }, (_, i) => i).map((h) => (
+                    <option key={h} value={h}>
+                      {h.toString().padStart(2, '0')} giờ
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  id="Minutes"
+                  name="Minutes"
+                  value={minute}
+                  onChange={(e) => setMinute(parseInt(e.target.value, 10))}
+                  className="w-full px-2 py-2 border border-gray-300 rounded text-sm bg-white text-gray-900 focus:outline-hidden focus:border-[#c8860a]"
+                >
+                  {Array.from({ length: 60 }, (_, i) => i).map((m) => (
+                    <option key={m} value={m}>
+                      {m.toString().padStart(2, '0')} phút
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Submit Button matching #btnCreateNgauNhien */}
+            <div className="laso-form pt-3">
               <button
-                type="button"
-                onClick={handleReset}
-                className="inline-flex items-center space-x-2 bg-gray-700 hover:bg-gray-800 text-white font-bold px-6 py-2.5 rounded-md text-xs transition"
+                type="submit"
+                id="btnCreateNgauNhien"
+                disabled={loading}
+                className="w-full py-3 bg-[#c8860a] hover:bg-amber-700 text-white font-extrabold text-sm uppercase tracking-wider rounded shadow transition duration-150 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
               >
-                <RotateCw className="w-3.5 h-3.5" />
-                <span>Gieo lại từ đầu</span>
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Đang an quẻ ngẫu nhiên...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    <span>Lập quẻ</span>
+                  </>
+                )}
               </button>
+            </div>
+
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded text-center">
+                {error}
+              </div>
             )}
           </div>
-        </div>
-
-        {/* Stacked lines preview */}
-        {tossedLines.length > 0 && (
-          <div className="border border-gray-200 rounded-lg p-4 space-y-2">
-            <span className="text-xs font-bold text-gray-700 uppercase block mb-2">
-              Các hào đã gieo (xếp từ Hào 6 trên xuống Hào 1 dưới):
-            </span>
-            <div className="space-y-1.5">
-              {[5, 4, 3, 2, 1, 0].map((idx) => {
-                const line = tossedLines[idx];
-                if (!line) {
-                  return (
-                    <div key={idx} className="h-6 bg-gray-100 rounded flex items-center justify-center text-[10px] text-gray-400">
-                      Hào {idx + 1}: Chưa gieo
-                    </div>
-                  );
-                }
-                return (
-                  <div
-                    key={idx}
-                    className={`h-6 rounded flex items-center justify-between px-3 text-xs font-semibold ${
-                      line.movement === 'Động' ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-gray-100 text-gray-800'
-                    }`}
-                  >
-                    <span>Hào {idx + 1}: {line.polarity} {line.movement === 'Động' ? '(Động)' : '(Tĩnh)'}</span>
-                    <span className="font-mono">
-                      {line.polarity === 'Dương' ? '━━━━━━━' : '━━━ ━━━'} {line.movement === 'Động' ? '○' : ''}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {error && (
-          <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded">
-            {error}
-          </div>
-        )}
+        </form>
       </div>
 
-      {/* Result Display */}
-      {result && <HexagramVisualizer envelope={result} />}
+      {/* 2. Result Section with Action Toolbar */}
+      {result && (
+        <div ref={resultRef} className="space-y-6 pt-2">
+          {/* Master Divination Document Sheet */}
+          <LucHaoResultDocument ref={chartRef} envelope={result} />
+
+          {/* Action Toolbar Matching Reference Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-3 py-2">
+            <button
+              type="button"
+              onClick={handleDownloadImage}
+              disabled={downloading}
+              className="inline-flex items-center space-x-2 bg-[#00897b] hover:bg-[#00796b] text-white px-5 py-2.5 rounded font-bold text-xs uppercase tracking-wider shadow transition disabled:opacity-50 cursor-pointer"
+            >
+              {downloading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
+              <span>Tải quẻ dịch</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="inline-flex items-center space-x-2 bg-[#2e7d32] hover:bg-[#1b5e20] text-white px-5 py-2.5 rounded font-bold text-xs uppercase tracking-wider shadow transition cursor-pointer"
+            >
+              <Printer className="w-4 h-4" />
+              <span>In quẻ dịch</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSave}
+              className="inline-flex items-center space-x-2 bg-gray-700 hover:bg-gray-800 text-white px-5 py-2.5 rounded font-bold text-xs uppercase tracking-wider shadow transition cursor-pointer"
+            >
+              <Bookmark className="w-4 h-4" />
+              <span>{saved ? 'Đã lưu quẻ!' : 'Lưu quẻ'}</span>
+            </button>
+          </div>
+
+          {/* 3. Detailed Commentary (Luận giải) */}
+          <IChingInterpretation envelope={result} />
+        </div>
+      )}
     </div>
   );
 }
