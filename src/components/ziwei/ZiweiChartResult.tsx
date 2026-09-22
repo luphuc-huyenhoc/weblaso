@@ -86,7 +86,11 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
         title: `Lá số Tử Vi - ${personal.fullName}`,
       });
 
-      if (res === 'fallback') {
+      if (res.dataUrl) {
+        setChartImageUrl(res.dataUrl);
+      }
+
+      if (res.status === 'fallback') {
         setShowImageModal(true);
         setCopyStatus('idle');
       } else {
@@ -509,7 +513,7 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
                   {/* Thiên Bàn Header: Official Logo Lữ Phúc */}
                   <div className="w-full flex flex-col items-center border-b border-gray-200 pb-2">
                     <div className="flex items-center space-x-2">
-                      <img src="/logo.png" alt="Lữ Phúc" className="w-10 h-10 object-contain" />
+                      <img src="/logo.png" alt="Lữ Phúc" className="w-8 h-8 object-contain" />
                       <div className="text-left">
                         <div className="text-sm font-black text-[#1b3b6f] uppercase tracking-wider">
                           BÁT TỰ LỮ PHÚC

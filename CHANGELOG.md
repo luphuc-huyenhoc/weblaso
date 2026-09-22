@@ -10,6 +10,16 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ## [Unreleased]
 
 ### Added
+- **Cơ chế Offscreen Sandbox Clone xuất ảnh chuẩn mực (`src/lib/chartExport.ts`):**
+  - Tách biệt hoàn toàn quá trình kết xuất ảnh khỏi DOM hiển thị thực tế: Nhân bản cây DOM độc lập (`cloneNode`), đưa vào Sandbox Host ẩn với chiều rộng pixel chuẩn (`720px`), loại bỏ toàn bộ ảnh hưởng của CSS `zoom`, `transform` hay co giãn màn hình điện thoại.
+  - Khắc phục triệt để lỗi ảnh bị phóng đại cắt cụt (mất cột trụ giờ, mất đại vận 8-10) và lỗi khoảng trắng đáy ảnh khi sao chép hoặc tải về trên mọi thiết bị (máy tính, iPad, điện thoại).
+  - Trả về đồng thời `dataUrl` chất lượng cao trong `copyChartImage` giúp các modal xem trước luôn hiển thị ảnh nét nguyên bản.
+- **Khôi phục hoàn toàn tính năng Lập Quẻ Dịch Lục Hào (`[PAGE-ICHING-LUCHAO]`):**
+  - Sửa lỗi định tuyến API gọi sai đường dẫn: Chuyển sang kết nối endpoint chuẩn `/api/iching/calculate` kèm tham số `method: 'Lục Hào'`, khôi phục việc gieo và an quẻ tức thì.
+- **Tinh chỉnh tỷ lệ Logo Lữ Phúc hài hòa toàn hệ thống:**
+  - Giảm kích thước logo trên thanh điều hướng Header xuống `w-10 h-10`, tạo vẻ thanh lịch sang trọng.
+  - Tối ưu huy hiệu logo trên đầu lá số Bát Tự xuống `w-9 h-9` cùng phông chữ thương hiệu cân xứng, không còn bị quá khổ.
+  - Tinh chỉnh logo tại trung tâm Thiên Bàn Tử Vi và chân trang Footer xuống `w-8 h-8` hài hòa và nhã nhặn.
 - **Thay logo chính thức Lữ Phúc (`public/logo.png`):**
   - Cập nhật logo mới từ thư mục `Ảnh thay/Logo.png` ("LP - Lữ Phúc - Gieo Phúc - Gặt Phước").
   - Đồng bộ hiển thị logo trên Header, Footer và đầu lá số Bát Tự (`BaziChartHeader.tsx`).

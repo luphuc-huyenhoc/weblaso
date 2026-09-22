@@ -40,13 +40,13 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
     return () => window.removeEventListener('resize', calculateScale);
   }, []);
 
-  // Auto-generate high-res PNG image for right-click copy & mobile long-press
+  // Auto-generate high-res PNG image for modal preview
   useEffect(() => {
     let isMounted = true;
     const generateImage = async () => {
       if (!chartRef.current) return;
       try {
-        const url = await captureChartImage(chartRef.current, { width: 720, height: 1000 });
+        const url = await captureChartImage(chartRef.current, { width: 720 });
         if (isMounted) {
           setChartImageUrl(url);
         }
@@ -55,7 +55,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
       }
     };
 
-    const timer = setTimeout(generateImage, 400);
+    const timer = setTimeout(generateImage, 500);
     return () => {
       isMounted = false;
       clearTimeout(timer);
@@ -71,11 +71,15 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
       const res = await copyChartImage(chartRef.current, {
         fileName: `LaSoBatTu_${cleanName}_${birthDate}`,
         width: 720,
-        height: 1000,
+        height: 0,
         title: `Lá số Bát Tự - ${calc.personal.fullName}`,
       });
 
-      if (res === 'fallback') {
+      if (res.dataUrl) {
+        setChartImageUrl(res.dataUrl);
+      }
+
+      if (res.status === 'fallback') {
         setShowImageModal(true);
         setCopyStatus('idle');
       } else {
@@ -113,7 +117,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
       await downloadChartImage(chartRef.current, {
         fileName: `LaSoBatTu_${cleanName}_${birthDate}`,
         width: 720,
-        height: 1000,
+        height: 0,
         title: `Lá số Bát Tự - ${calc.personal.fullName}`,
       });
     } catch (err) {
@@ -209,7 +213,13 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
         <div className="flex flex-wrap justify-center sm:justify-end items-center gap-2 mt-3 w-full max-w-[960px] px-2 no-print">
           <button
             type="button"
-            onClick={() => setShowImageModal(true)}
+            onClick={async () => {
+              if (!chartImageUrl && chartRef.current) {
+                const url = await captureChartImage(chartRef.current, { width: 720 });
+                setChartImageUrl(url);
+              }
+              setShowImageModal(true);
+            }}
             className="flex-1 sm:flex-initial bg-[#27303f] hover:bg-[#1a222e] border border-amber-500/40 text-amber-300 text-xs sm:text-sm font-bold px-3.5 py-2 rounded-lg shadow-2xs transition cursor-pointer text-center flex items-center justify-center gap-1.5"
             title="Phóng to ảnh lá số"
           >

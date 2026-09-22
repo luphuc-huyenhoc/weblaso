@@ -65,10 +65,13 @@ export default function LucHaoPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/iching/luc-hao', {
+      const res = await fetch('/api/iching/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          method: 'Lục Hào',
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Lỗi khi lập quẻ');
@@ -114,7 +117,11 @@ export default function LucHaoPage() {
         title: `Quẻ Dịch: ${result.calculation.originalHexagram.name}`,
       });
 
-      if (res === 'fallback') {
+      if (res.dataUrl) {
+        setModalImageUrl(res.dataUrl);
+      }
+
+      if (res.status === 'fallback') {
         setShowImageModal(true);
       } else {
         setCopied(true);
@@ -140,39 +147,50 @@ export default function LucHaoPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 py-4 px-2 sm:px-4">
-      {/* 1. Form Section */}
+    <div className="min-h-screen bg-[#f9f5ec] text-[#2d2d2d] py-6 sm:py-10 px-3 sm:px-6">
+      {/* Header Info */}
+      <div className="max-w-4xl mx-auto text-center space-y-2 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-black text-[#1b3b6f] uppercase tracking-wide">
+          Lập Quẻ Dịch Lục Hào
+        </h1>
+        <p className="text-xs sm:text-sm text-gray-600 max-w-xl mx-auto">
+          An quẻ Lục Hào cổ truyền chính thống, tính toán Quẻ Chủ, Quẻ Biến, Thế Ứng, Lục Thân, Lục Thú và Tuần Không.
+        </p>
+      </div>
+
+      {/* Main Form */}
       <LucHaoForm onSubmit={handleFormSubmit} loading={loading} />
 
+      {/* Error display */}
       {error && (
-        <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded text-center">
+        <div className="max-w-3xl mx-auto mt-4 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg text-center font-bold">
           {error}
         </div>
       )}
 
-      {/* 2. Result Section with Action Toolbar */}
+      {/* Divination Result Section */}
       {result && (
-        <div ref={resultRef} className="space-y-4 pt-2">
-          {/* Mobile View Mode Switcher */}
+        <div ref={resultRef} className="max-w-4xl mx-auto mt-8 space-y-6">
+          {/* Mobile View Toggle Bar (Only shown on screens narrower than 720px) */}
           {scale < 1 && (
-            <div className="flex items-center justify-between bg-amber-100/80 border border-amber-300 rounded-lg px-3 py-2 text-xs no-print">
+            <div className="w-full flex items-center justify-between px-1 mb-2.5 no-print">
               <button
                 type="button"
                 onClick={() => setIsZoomFit(!isZoomFit)}
-                className="inline-flex items-center space-x-1 font-bold text-white bg-amber-800 hover:bg-amber-900 px-3 py-1.5 rounded shadow-xs transition"
+                className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#27303f] hover:bg-[#1a222e] text-[#c8860a] text-xs font-bold rounded-lg border border-[#c8860a]/40 shadow-xs transition active:scale-95 cursor-pointer"
               >
                 <span>{isZoomFit ? '🔍' : '📱'}</span>
-                <span>
+                <span className="text-white">
                   {isZoomFit ? 'Phóng to 100% (Vuốt ngang)' : 'Thu nhỏ vừa màn hình'}
                 </span>
               </button>
-              <span className="text-[11px] text-[#8c451a] font-semibold bg-white/80 border border-amber-200 px-2.5 py-1 rounded-full">
+              <span className="text-[11px] text-[#8c451a] font-semibold bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
                 {isZoomFit ? '✓ Đã căn vừa màn hình' : '👈 Vuốt ngang để xem 👉'}
               </span>
             </div>
           )}
 
-          {/* Master Divination Document Sheet */}
+          {/* Master 720 x 720 Document Sheet (Outputs to exact 1440 x 1440 px) */}
           <LucHaoResultDocument
             ref={chartRef}
             envelope={result}
@@ -197,9 +215,12 @@ export default function LucHaoPage() {
             {/* 2. Phóng to (Phụ) */}
             <button
               type="button"
-              onClick={() => {
-                if (modalImageUrl) setShowImageModal(true);
-                else handleCopyImage();
+              onClick={async () => {
+                if (!modalImageUrl && chartRef.current) {
+                  const url = await captureChartImage(chartRef.current, { width: 720, height: 720 });
+                  setModalImageUrl(url);
+                }
+                setShowImageModal(true);
               }}
               className="inline-flex items-center space-x-1.5 bg-[#27303f] hover:bg-[#1a222e] border border-amber-500/40 text-amber-300 px-3.5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow transition cursor-pointer"
             >

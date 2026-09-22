@@ -4,8 +4,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { IchingEnvelope } from '@/domain/iching';
 import { LucHaoResultDocument } from '@/components/iching/LucHaoResultDocument';
 import { IChingInterpretation } from '@/components/iching/IChingInterpretation';
-import { toPng } from 'html-to-image';
-import { Download, Printer, Bookmark, Loader2, Sparkles, Copy, Check } from 'lucide-react';
+import { captureChartImage, copyChartImage, downloadChartImage } from '@/lib/chartExport';
+import { Download, Printer, Bookmark, Loader2, Sparkles, Copy, Check, Eye } from 'lucide-react';
 
 export default function NgauNhienPage() {
   const now = new Date();
@@ -89,18 +89,13 @@ export default function NgauNhienPage() {
     if (!chartRef.current) return;
     try {
       setDownloading(true);
-      const prevZoom = chartRef.current.style.zoom;
-      chartRef.current.style.zoom = '1';
-      const dataUrl = await toPng(chartRef.current, {
-        cacheBust: true,
-        pixelRatio: 2,
-        backgroundColor: '#fefdf9',
+      const hexName = result?.calculation.originalHexagram.name.trim().replace(/\s+/g, '_') || 'que_dich';
+      await downloadChartImage(chartRef.current, {
+        fileName: `QueDich_NgauNhien_${hexName}`,
+        width: 720,
+        height: 720,
+        title: `Quẻ Dịch: ${result?.calculation.originalHexagram.name}`,
       });
-      chartRef.current.style.zoom = prevZoom;
-      const link = document.createElement('a');
-      link.download = `que-dich-ngau-nhien-${result?.calculation.originalHexagram.name || 'la-so'}.png`;
-      link.href = dataUrl;
-      link.click();
     } catch (err) {
       console.error('Error exporting chart to PNG:', err);
       alert('Không thể xuất ảnh quẻ dịch. Vui lòng dùng tính năng In quẻ để lưu PDF.');
@@ -113,42 +108,29 @@ export default function NgauNhienPage() {
     if (!chartRef.current) return;
     try {
       setCopying(true);
-      const prevZoom = chartRef.current.style.zoom;
-      chartRef.current.style.zoom = '1';
-      const dataUrl = await toPng(chartRef.current, {
-        cacheBust: true,
-        pixelRatio: 2,
-        backgroundColor: '#fefdf9',
+      const hexName = result?.calculation.originalHexagram.name.trim().replace(/\s+/g, '_') || 'que_dich';
+      const res = await copyChartImage(chartRef.current, {
+        fileName: `QueDich_NgauNhien_${hexName}`,
+        width: 720,
+        height: 720,
+        title: `Quẻ Dịch: ${result?.calculation.originalHexagram.name}`,
       });
-      chartRef.current.style.zoom = prevZoom;
-      setModalImageUrl(dataUrl);
 
-      const res = await fetch(dataUrl);
-      const blob = await res.blob();
-      const hexName = result?.calculation.originalHexagram.name || 'que_ngau_nhien';
-      const file = new File([blob], `QueDich_${hexName}.png`, { type: 'image/png' });
-
-      // If mobile supports Web Share API
-      if (typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: `Quẻ Dịch Ngẫu Nhiên - ${result?.calculation.originalHexagram.name}`,
-          text: `Quẻ Dịch Lữ Phúc: ${result?.calculation.originalHexagram.name}`,
-        });
-        setCopied(true);
-        setTimeout(() => setCopied(false), 3000);
-        return;
+      if (res.dataUrl) {
+        setModalImageUrl(res.dataUrl);
       }
 
-      await navigator.clipboard.write([
-        new ClipboardItem({ 'image/png': blob }),
-      ]);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
+      if (res.status === 'fallback') {
+        setShowImageModal(true);
+      } else {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 3000);
+      }
     } catch (err: any) {
-      if (err?.name === 'AbortError') return;
-      console.error('Copy iching image error:', err);
-      setShowImageModal(true);
+      if (err?.name !== 'AbortError') {
+        console.error('Copy iching image error:', err);
+        setShowImageModal(true);
+      }
     } finally {
       setCopying(false);
     }

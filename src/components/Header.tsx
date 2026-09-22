@@ -201,7 +201,7 @@ export function Header({ user }: { user?: { fullName: string; role: string; emai
       <div className="max-w-site mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <Link href="/" className="flex items-center space-x-3.5 group">
           {/* Official Lữ Phúc Logo */}
-          <div className="relative w-13 h-13 flex-shrink-0 flex items-center justify-center filter drop-shadow-md group-hover:scale-105 transition-transform duration-300">
+          <div className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center filter drop-shadow-md group-hover:scale-105 transition-transform duration-300">
             <img src="/logo.png" alt="Lữ Phúc" className="w-full h-full object-contain" />
           </div>
           <div>
