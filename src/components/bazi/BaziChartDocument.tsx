@@ -38,7 +38,7 @@ export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentPro
           <BaziChartWatermark />
 
           {/* Foreground Structured Layout (Z-Index 10 with semi-translucent backdrop for legibility) */}
-          <div className="relative z-10 w-full flex flex-col bg-white/85 backdrop-blur-[0.5px]">
+          <div className="relative z-10 w-full flex flex-col bg-white/45">
             {/* [A] Header / Personal Metadata */}
             <BaziChartHeader
               fullName={personal.fullName}

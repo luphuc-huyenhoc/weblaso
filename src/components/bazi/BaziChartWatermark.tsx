@@ -10,7 +10,7 @@ export function BaziChartWatermark() {
       <img
         src="/BACKGROUND.png"
         alt=""
-        className="w-full h-full object-cover opacity-25"
+        className="w-full h-full object-cover opacity-60 contrast-105"
       />
     </div>
   );
