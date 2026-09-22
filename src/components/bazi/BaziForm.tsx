@@ -78,6 +78,14 @@ export function BaziForm({
       }
 
       setResult(data);
+      if (typeof window !== 'undefined') {
+        setTimeout(() => {
+          const el = document.getElementById('bazi-printable-chart') || document.getElementById('bazi-result-section');
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 150);
+      }
     } catch (err: any) {
       clearInterval(timer);
       setError(err.message || 'Có lỗi xảy ra trong quá trình tính toán');
@@ -123,8 +131,8 @@ export function BaziForm({
   return (
     <div className="w-full">
       {/* Target Design Card matching ChatGPT Image Sep 22, 2026, 08_19_14 AM.png */}
-      <div className="w-full max-w-[760px] mx-auto my-4 sm:my-6 px-2 sm:px-0">
-        <div className="bg-[#3e2c1f] text-[#ede3d5] rounded-[24px] sm:rounded-[32px] p-6 sm:p-10 md:p-12 shadow-[0_20px_50px_rgba(30,18,10,0.35)] border border-[#523c2d]/50 select-none">
+      <div className="w-full max-w-[760px] mx-auto my-3 sm:my-6 px-1 sm:px-0">
+        <div className="bg-[#3e2c1f] text-[#ede3d5] rounded-[20px] sm:rounded-[32px] p-4 sm:p-10 md:p-12 shadow-[0_20px_50px_rgba(30,18,10,0.35)] border border-[#523c2d]/50 select-none">
           {/* Form Header / Title */}
           <div className="text-center mb-6 sm:mb-8">
             <h2 className="text-2xl sm:text-3xl md:text-4xl text-[#fdf7f0] font-medium tracking-normal font-['Lora','Playfair_Display',Georgia,serif]">
@@ -133,12 +141,12 @@ export function BaziForm({
             <div className="w-16 h-[2.5px] bg-[#9e7d58] mx-auto mt-2.5 sm:mt-3 rounded-full" />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-5">
             {/* Row 1: Họ tên */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4">
+            <div className="flex flex-row items-center gap-2 sm:gap-4">
               <label
                 htmlFor="fullName"
-                className="w-20 sm:w-28 text-left font-medium text-[#ede3d5] text-sm sm:text-base flex-shrink-0"
+                className="w-16 sm:w-28 text-left font-medium text-[#ede3d5] text-xs sm:text-base flex-shrink-0"
               >
                 Họ tên
               </label>
@@ -151,27 +159,27 @@ export function BaziForm({
                   required
                   maxLength={128}
                   placeholder="NGUYỄN VĂN A"
-                  className="w-full h-11 sm:h-12 px-4 bg-[#f8f3ea] text-[#2c1b12] text-sm sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition placeholder:text-gray-400"
+                  className="w-full h-10 sm:h-12 px-3 sm:px-4 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition placeholder:text-gray-400"
                 />
               </div>
             </div>
 
             {/* Row 2: Ngày sinh */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4">
+            <div className="flex flex-row items-center gap-2 sm:gap-4">
               <label
                 htmlFor="day"
-                className="w-20 sm:w-28 text-left font-medium text-[#ede3d5] text-sm sm:text-base flex-shrink-0"
+                className="w-16 sm:w-28 text-left font-medium text-[#ede3d5] text-xs sm:text-base flex-shrink-0"
               >
                 Ngày sinh
               </label>
-              <div className="flex-1 grid grid-cols-3 gap-2.5 sm:gap-3.5">
+              <div className="flex-1 grid grid-cols-3 gap-1.5 sm:gap-3.5">
                 {/* Day */}
                 <div className="relative">
                   <select
                     id="day"
                     value={day}
                     onChange={(e) => setDay(parseInt(e.target.value, 10))}
-                    className="w-full h-11 sm:h-12 pl-3.5 pr-8 bg-[#f8f3ea] text-[#2c1b12] text-sm sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
+                    className="w-full h-10 sm:h-12 pl-2 sm:pl-3.5 pr-6 sm:pr-8 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
                   >
                     {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
                       <option key={d} value={d}>
@@ -179,7 +187,7 @@ export function BaziForm({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="w-4 h-4 text-[#2c1b12] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
+                  <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2c1b12] absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
                 </div>
 
                 {/* Month */}
@@ -188,7 +196,7 @@ export function BaziForm({
                     id="month"
                     value={month}
                     onChange={(e) => setMonth(parseInt(e.target.value, 10))}
-                    className="w-full h-11 sm:h-12 pl-3.5 pr-8 bg-[#f8f3ea] text-[#2c1b12] text-sm sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
+                    className="w-full h-10 sm:h-12 pl-2 sm:pl-3.5 pr-6 sm:pr-8 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
                   >
                     {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                       <option key={m} value={m}>
@@ -196,7 +204,7 @@ export function BaziForm({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="w-4 h-4 text-[#2c1b12] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
+                  <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2c1b12] absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
                 </div>
 
                 {/* Year */}
@@ -205,7 +213,7 @@ export function BaziForm({
                     id="year"
                     value={year}
                     onChange={(e) => setYear(parseInt(e.target.value, 10))}
-                    className="w-full h-11 sm:h-12 pl-3.5 pr-8 bg-[#f8f3ea] text-[#2c1b12] text-sm sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
+                    className="w-full h-10 sm:h-12 pl-2 sm:pl-3.5 pr-6 sm:pr-8 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
                   >
                     {yearsRange.map((y) => (
                       <option key={y} value={y}>
@@ -213,27 +221,27 @@ export function BaziForm({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="w-4 h-4 text-[#2c1b12] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
+                  <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2c1b12] absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
                 </div>
               </div>
             </div>
 
             {/* Row 3: Giờ sinh */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4">
+            <div className="flex flex-row items-center gap-2 sm:gap-4">
               <label
                 htmlFor="hour"
-                className="w-20 sm:w-28 text-left font-medium text-[#ede3d5] text-sm sm:text-base flex-shrink-0"
+                className="w-16 sm:w-28 text-left font-medium text-[#ede3d5] text-xs sm:text-base flex-shrink-0"
               >
                 Giờ sinh
               </label>
-              <div className="flex-1 grid grid-cols-3 gap-2.5 sm:gap-3.5">
+              <div className="flex-1 grid grid-cols-3 gap-1.5 sm:gap-3.5">
                 {/* Hour */}
                 <div className="relative">
                   <select
                     id="hour"
                     value={hour}
                     onChange={(e) => setHour(parseInt(e.target.value, 10))}
-                    className="w-full h-11 sm:h-12 pl-3.5 pr-8 bg-[#f8f3ea] text-[#2c1b12] text-sm sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
+                    className="w-full h-10 sm:h-12 pl-2 sm:pl-3.5 pr-6 sm:pr-8 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
                   >
                     {Array.from({ length: 24 }, (_, i) => i).map((h) => (
                       <option key={h} value={h}>
@@ -241,7 +249,7 @@ export function BaziForm({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="w-4 h-4 text-[#2c1b12] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
+                  <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2c1b12] absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
                 </div>
 
                 {/* Minute */}
@@ -250,7 +258,7 @@ export function BaziForm({
                     id="minute"
                     value={minute}
                     onChange={(e) => setMinute(parseInt(e.target.value, 10))}
-                    className="w-full h-11 sm:h-12 pl-3.5 pr-8 bg-[#f8f3ea] text-[#2c1b12] text-sm sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
+                    className="w-full h-10 sm:h-12 pl-2 sm:pl-3.5 pr-6 sm:pr-8 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
                   >
                     {Array.from({ length: 60 }, (_, i) => i).map((min) => (
                       <option key={min} value={min}>
@@ -258,7 +266,7 @@ export function BaziForm({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="w-4 h-4 text-[#2c1b12] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
+                  <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2c1b12] absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
                 </div>
 
                 {/* 3rd Column Placeholder for alignment */}
@@ -267,21 +275,21 @@ export function BaziForm({
             </div>
 
             {/* Row 4: Năm tính & Giới tính */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4">
+            <div className="flex flex-row items-center gap-2 sm:gap-4">
               <label
                 htmlFor="focusYear"
-                className="w-20 sm:w-28 text-left font-medium text-[#ede3d5] text-sm sm:text-base flex-shrink-0"
+                className="w-16 sm:w-28 text-left font-medium text-[#ede3d5] text-xs sm:text-base flex-shrink-0"
               >
                 Năm tính
               </label>
-              <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3.5 items-center">
+              <div className="flex-1 grid grid-cols-3 gap-1.5 sm:gap-3.5 items-center">
                 {/* Column 1: Year select */}
                 <div className="relative">
                   <select
                     id="focusYear"
                     value={focusYear}
                     onChange={(e) => setFocusYear(parseInt(e.target.value, 10))}
-                    className="w-full h-11 sm:h-12 pl-3.5 pr-8 bg-[#f8f3ea] text-[#2c1b12] text-sm sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
+                    className="w-full h-10 sm:h-12 pl-2 sm:pl-3.5 pr-6 sm:pr-8 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
                   >
                     {focusYearsRange.map((y) => (
                       <option key={y} value={y}>
@@ -289,12 +297,12 @@ export function BaziForm({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="w-4 h-4 text-[#2c1b12] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
+                  <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2c1b12] absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
                 </div>
 
                 {/* Columns 2 & 3: Giới tính & Styled Radio Buttons */}
-                <div className="sm:col-span-2 flex items-center justify-start sm:justify-center sm:pl-4 space-x-5 sm:space-x-7 pt-1 sm:pt-0">
-                  <span className="font-medium text-[#ede3d5] text-sm sm:text-base select-none">
+                <div className="col-span-2 flex items-center justify-start sm:justify-start sm:pl-4 space-x-2.5 sm:space-x-6">
+                  <span className="font-medium text-[#ede3d5] text-xs sm:text-base select-none whitespace-nowrap">
                     Giới tính
                   </span>
 
@@ -302,20 +310,20 @@ export function BaziForm({
                   <button
                     type="button"
                     onClick={() => setGender(true)}
-                    className="flex items-center space-x-2 cursor-pointer group select-none focus:outline-none"
+                    className="flex items-center space-x-1 sm:space-x-2 cursor-pointer group select-none focus:outline-none"
                   >
                     <span
-                      className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                      className={`w-4 h-4 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                         gender === true
                           ? 'border-[#d8a268] bg-[#3e2c1f]'
                           : 'border-[#d8a268]/70 group-hover:border-[#d8a268]'
                       }`}
                     >
                       {gender === true && (
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#d8a268]" />
+                        <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#d8a268]" />
                       )}
                     </span>
-                    <span className="text-[#ede3d5] font-medium text-sm sm:text-base">
+                    <span className="text-[#ede3d5] font-medium text-xs sm:text-base">
                       Nam
                     </span>
                   </button>
@@ -324,20 +332,20 @@ export function BaziForm({
                   <button
                     type="button"
                     onClick={() => setGender(false)}
-                    className="flex items-center space-x-2 cursor-pointer group select-none focus:outline-none"
+                    className="flex items-center space-x-1 sm:space-x-2 cursor-pointer group select-none focus:outline-none"
                   >
                     <span
-                      className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                      className={`w-4 h-4 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                         gender === false
                           ? 'border-[#d8a268] bg-[#3e2c1f]'
                           : 'border-[#d8a268]/70 group-hover:border-[#d8a268]'
                       }`}
                     >
                       {gender === false && (
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#d8a268]" />
+                        <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#d8a268]" />
                       )}
                     </span>
-                    <span className="text-[#ede3d5] font-medium text-sm sm:text-base">
+                    <span className="text-[#ede3d5] font-medium text-xs sm:text-base">
                       Nữ
                     </span>
                   </button>

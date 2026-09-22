@@ -205,24 +205,24 @@ export function Header({ user }: { user?: { fullName: string; role: string } | n
           </div>
         </Link>
 
-        {/* Promotional Banner Area matching 728x90 */}
-        <div className="w-full md:w-auto bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-3 flex items-center justify-between shadow-xs">
-          <div className="pr-4">
+        {/* Promotional Banner Area */}
+        <div className="w-full md:w-auto bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shadow-xs">
+          <div className="pr-0 sm:pr-4">
             <span className="bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
               Khóa Học Bát Tự Phúc Sơn
             </span>
-            <div className="text-xs md:text-sm font-bold text-gray-900 mt-1">
+            <div className="text-xs sm:text-sm font-bold text-gray-900 mt-1">
               Giải Mã Vận Mệnh Từ Ngày Giờ Sinh
             </div>
-            <div className="text-[11px] text-gray-600 flex items-center space-x-2">
-              <span>Zalo/Hotline: <strong className="text-gray-900">0374436921</strong></span>
-              <span>·</span>
-              <span>TikTok: <strong className="text-gray-900">Huyền Học Lữ Phúc</strong></span>
+            <div className="text-[11px] text-gray-600 flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
+              <span>Zalo/Hotline: <strong className="text-gray-900 font-bold">0374436921</strong></span>
+              <span className="hidden sm:inline">·</span>
+              <span>TikTok: <strong className="text-gray-900 font-bold">Huyền Học Lữ Phúc</strong></span>
             </div>
           </div>
           <Link
             href="/lien-he"
-            className="bg-[#c8860a] hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded shadow transition whitespace-nowrap"
+            className="w-full sm:w-auto text-center bg-[#c8860a] hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition whitespace-nowrap"
           >
             Đăng Ký Học →
           </Link>

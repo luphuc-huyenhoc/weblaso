@@ -213,17 +213,72 @@ export function Navbar() {
 
         {/* Mobile menu button */}
         <div className="lg:hidden flex items-center py-2.5">
-          <Link href="/" className="p-1 text-[#c8860a] mr-3" title="Trang chủ">
+          <Link href="/" className="p-1 text-[#c8860a] mr-2" title="Trang chủ">
             <Home className="w-5 h-5" />
           </Link>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-gray-200 hover:text-white p-1 rounded focus:outline-none"
+            className="flex items-center space-x-1.5 text-gray-200 hover:text-white px-2 py-1 bg-gray-800/80 rounded border border-gray-700/60 focus:outline-none text-xs"
             aria-label="Toggle navigation menu"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? <X className="w-4 h-4 text-[#c8860a]" /> : <Menu className="w-4 h-4 text-[#c8860a]" />}
+            <span className="font-semibold text-gray-200">Danh mục</span>
           </button>
         </div>
+      </div>
+
+      {/* Mobile Horizontal Quick Links Bar */}
+      <div className="lg:hidden flex items-center space-x-2 overflow-x-auto py-2 px-3 text-xs whitespace-nowrap bg-[#1e2633] border-t border-gray-700/50 scrollbar-none">
+        <Link
+          href="/la-so-bat-tu"
+          className={`px-3 py-1 rounded-full font-medium transition ${
+            pathname === '/' || pathname?.startsWith('/la-so-bat-tu')
+              ? 'bg-[#c8860a] text-white font-bold'
+              : 'bg-gray-800/80 text-gray-300 hover:text-white'
+          }`}
+        >
+          Bát Tự Phúc Sơn
+        </Link>
+        <Link
+          href="/la-so-tu-vi"
+          className={`px-3 py-1 rounded-full font-medium transition ${
+            pathname?.startsWith('/la-so-tu-vi')
+              ? 'bg-[#c8860a] text-white font-bold'
+              : 'bg-gray-800/80 text-gray-300 hover:text-white'
+          }`}
+        >
+          Tử Vi
+        </Link>
+        <Link
+          href="/que-dich/luc-hao"
+          className={`px-3 py-1 rounded-full font-medium transition ${
+            pathname?.startsWith('/que-dich')
+              ? 'bg-[#c8860a] text-white font-bold'
+              : 'bg-gray-800/80 text-gray-300 hover:text-white'
+          }`}
+        >
+          Lục Hào
+        </Link>
+        <Link
+          href="/phong-thuy/bat-trach"
+          className={`px-3 py-1 rounded-full font-medium transition ${
+            pathname?.startsWith('/phong-thuy')
+              ? 'bg-[#c8860a] text-white font-bold'
+              : 'bg-gray-800/80 text-gray-300 hover:text-white'
+          }`}
+        >
+          Phong Thủy
+        </Link>
+        <Link
+          href="/lien-he"
+          className={`px-3 py-1 rounded-full font-medium transition ${
+            pathname === '/lien-he'
+              ? 'bg-[#c8860a] text-white font-bold'
+              : 'bg-gray-800/80 text-gray-300 hover:text-white'
+          }`}
+        >
+          Liên Hệ
+        </Link>
       </div>
 
       {/* Mobile drawer */}

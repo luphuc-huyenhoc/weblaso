@@ -90,6 +90,11 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
 
       {/* MAIN DOCUMENT: Traditional Bát Tự Chart Sheet (1:1 with Reference) */}
       <div className="print-container">
+        {/* Mobile Swipe Hint */}
+        <div className="sm:hidden flex items-center justify-center gap-1.5 py-2 px-3 bg-amber-100/90 border border-amber-300 text-[#8c451a] text-xs font-semibold rounded-xl mb-2.5 shadow-2xs no-print">
+          <span>👈 Vuốt sang ngang để xem đủ 4 Trụ & Đại Vận 👉</span>
+        </div>
+
         <BaziChartDocument
           ref={chartRef}
           calculation={calc}
@@ -97,20 +102,20 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
           showAllDecades={showAllDecades}
         />
 
-        {/* Bottom Action Buttons matching media_1789978406443.png */}
-        <div className="flex justify-end items-center space-x-2 mt-3 max-w-[960px] mx-auto px-2 no-print">
+        {/* Bottom Action Buttons */}
+        <div className="flex flex-row justify-center sm:justify-end items-center gap-2 sm:space-x-2 mt-3 max-w-[960px] mx-auto px-2 no-print">
           <button
             type="button"
             onClick={handleDownloadPng}
             disabled={isExporting}
-            className="bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs font-bold px-3.5 py-1.5 rounded shadow-2xs transition cursor-pointer"
+            className="flex-1 sm:flex-initial bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs sm:text-sm font-bold px-4 py-2 sm:py-1.5 rounded-lg shadow-2xs transition cursor-pointer text-center"
           >
-            {isExporting ? 'Đang tải...' : 'Tải lá số'}
+            {isExporting ? 'Đang tải...' : 'Tải lá số (PNG)'}
           </button>
           <button
             type="button"
             onClick={handlePrint}
-            className="bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs font-bold px-3.5 py-1.5 rounded shadow-2xs transition cursor-pointer"
+            className="flex-1 sm:flex-initial bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs sm:text-sm font-bold px-4 py-2 sm:py-1.5 rounded-lg shadow-2xs transition cursor-pointer text-center"
           >
             In lá số
           </button>
