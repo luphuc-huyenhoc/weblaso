@@ -85,12 +85,7 @@ export function Footer() {
               Kênh Liên Hệ
             </div>
             <ul className="space-y-2.5 text-gray-400 text-[11px]">
-              <li className="flex flex-col">
-                <span className="text-gray-500 uppercase text-[10px] font-bold">Email:</span>
-                <a href="mailto:khotailieuquy2206@gmail.com" className="text-amber-400 hover:underline">
-                  khotailieuquy2206@gmail.com
-                </a>
-              </li>
+              {/* Zalo / Hotline */}
               <li className="flex flex-col">
                 <span className="text-gray-500 uppercase text-[10px] font-bold">Zalo / Hotline:</span>
                 <a href="https://zalo.me/0374436921" target="_blank" rel="noopener noreferrer" className="text-amber-400 font-bold hover:underline">

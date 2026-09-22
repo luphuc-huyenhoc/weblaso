@@ -39,15 +39,6 @@ export default function LienHePage() {
           </h3>
 
           <div className="space-y-4 text-xs text-gray-700">
-            <div className="flex items-start space-x-3">
-              <Mail className="w-5 h-5 text-[#c8860a] shrink-0 mt-0.5" />
-              <div>
-                <strong className="block text-gray-900 mb-0.5">Hòm thư điện tử:</strong>
-                <a href="mailto:khotailieuquy2206@gmail.com" className="text-amber-700 font-medium hover:underline">
-                  khotailieuquy2206@gmail.com
-                </a>
-              </div>
-            </div>
 
             <div className="flex items-start space-x-3">
               <Phone className="w-5 h-5 text-[#c8860a] shrink-0 mt-0.5" />

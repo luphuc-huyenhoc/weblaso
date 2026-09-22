@@ -31,10 +31,6 @@ export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentPro
             maxWidth: isScaled ? '720px' : '860px',
             minWidth: isScaled ? '720px' : '680px',
             zoom: isScaled ? zoom : undefined,
-            backgroundImage: "url('/BACKGROUND.png')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
             backgroundColor: '#fefdf9',
           }}
         >
@@ -42,7 +38,7 @@ export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentPro
           <BaziChartWatermark />
 
           {/* Foreground Structured Layout (Z-Index 10 with semi-translucent backdrop for legibility) */}
-          <div className="relative z-10 w-full flex flex-col bg-white/45">
+          <div className="relative z-10 w-full flex flex-col bg-white/50">
             {/* [A] Header / Personal Metadata */}
             <BaziChartHeader
               fullName={personal.fullName}

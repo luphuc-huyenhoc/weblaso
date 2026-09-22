@@ -30,6 +30,10 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
   - Giảm cỡ chữ và số xuống khoảng 1/2 cho hài hòa với từng ô (4 Trụ Can Chi từ 36px xuống ~18-20px, Đại Vận và Lưu Niên từ 14-18px xuống 9-11px).
   - Khắc phục hoàn toàn hiện tượng chữ và số bị tràn mép, dính sát hoặc đè lẫn nhau ở các cột hẹp của 10 bước Đại Vận và Lưu Niên.
   - Cân chỉnh kích cỡ huy hiệu logo, tiêu đề và thông tin cá nhân ở phần đầu lá số trang nhã, cân đối.
+- **Làm dịu hình nền watermark lá số Bát Tự (`[UI-BAZI-DOCUMENT]`):**
+  - Giảm độ đậm của hình nền watermark và loại bỏ lớp background-image trùng lặp ở khung chứa, tạo độ mờ nhẹ dịu mắt giúp chữ và số nổi bật, thanh nhã.
+- **Cập nhật kênh liên hệ (`[UI-LAYOUT-FOOT]`, `src/app/lien-he`):**
+  - Xóa bỏ địa chỉ email khỏi phần Kênh Liên Hệ ở Footer và trang Liên Hệ (`/lien-he`), duy trì hai kênh chính thức là Zalo / Hotline (0374436921) và TikTok (Huyền Học Lữ Phúc).
 
 ### Planned
 - Hoàn thiện toàn diện độ phủ Unit Test cho các trường hợp biên của Lục Hào và Tử Vi.
