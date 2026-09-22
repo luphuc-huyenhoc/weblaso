@@ -8,11 +8,14 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand & Introduction */}
           <div className="space-y-3">
-            <div className="text-lg font-bold text-white tracking-wide flex items-center space-x-2">
-              <span>LỮ PHÚC</span>
-              <span className="text-xs text-[#c8860a] font-normal border border-[#c8860a]/50 px-2 py-0.5 rounded">
-                Gieo Phúc - Gặt Phước
-              </span>
+            <div className="flex items-center space-x-3">
+              <img src="/logo.png" alt="Lữ Phúc" className="w-10 h-10 object-contain" />
+              <div className="text-lg font-bold text-white tracking-wide flex items-center space-x-2">
+                <span>LỮ PHÚC</span>
+                <span className="text-xs text-[#c8860a] font-normal border border-[#c8860a]/50 px-2 py-0.5 rounded">
+                  Gieo Phúc - Gặt Phước
+                </span>
+              </div>
             </div>
             <p className="text-gray-400 leading-relaxed text-[11px]">
               Bát Tự (Tứ Trụ) là một trong những phát minh quan trọng trong mệnh lý học truyền thống,

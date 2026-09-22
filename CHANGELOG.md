@@ -10,6 +10,16 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ## [Unreleased]
 
 ### Added
+- **Thay logo chính thức Lữ Phúc (`public/logo.png`):**
+  - Cập nhật logo mới từ thư mục `Ảnh thay/Logo.png` ("LP - Lữ Phúc - Gieo Phúc - Gặt Phước").
+  - Đồng bộ hiển thị logo trên Header, Footer và đầu lá số Bát Tự (`BaziChartHeader.tsx`).
+- **Quy chuẩn kích thước và thanh công cụ lá số chuẩn hocvienlyso.org:**
+  - `[PAGE-BAZI]`: Chuẩn hóa kích thước lá số Bát Tự xuất bản thành 1440 x 2000 px (tương ứng base 720 x 1000 px ở 2x DPI, tỷ lệ 18:25). Đồng bộ thanh công cụ chuẩn (Phóng to, Sao chép ảnh, Tải ảnh, In lá số, Lưu lá số, Đọc luận giải).
+  - `[PAGE-TUVI]`, `[UI-TUVI-CHART]`: Chuẩn hóa kích thước lá số Tử Vi xuất bản thành 1440 x 2000 px (base 720 x 1000 px ở 2x DPI). Bổ sung đầy đủ hệ thống sao phong phú (14 Chánh Tinh có độ sáng miếu/vượng/đắc/hãm, Tứ Hóa, Lục Cát, Lục Sát, Thái Tuế, Bác Sĩ, Tràng Sinh, Mệnh Chủ, Thân Chủ, Mệnh Quái, Bát Tự 4 trụ thu nhỏ tại Thiên Bàn, Tuần & Triệt, bảng màu ngũ hành).
+  - `[PAGE-ICHING-LUCHAO]`, `[UI-ICHING-RESULT]`: Chuẩn hóa kích thước quẻ dịch Lục Hào xuất bản thành 1440 x 1440 px (vuông 1:1, base 720 x 720 px ở 2x DPI). Đồng bộ thanh công cụ chuẩn (Đọc luận giải quẻ này, Phóng to, Sao chép ảnh, Tải ảnh, In quẻ, Lưu quẻ).
+- **Bộ công cụ xuất ảnh chuẩn hóa đa nền tảng (`src/lib/chartExport.ts`):**
+  - Xây dựng module `captureChartImage`: Trước khi chụp tự động reset tạm thời `zoom` của CSS về 1 và cố định kích thước pixel chuẩn nhằm khắc phục hoàn toàn hiện tượng ảnh bị cắt xén (clipping), mờ nhòe hoặc lệch tỉ lệ do co giãn màn hình di động. Cố định màu nền trắng đồng nhất `#ffffff`, loại bỏ lỗi nền đen hoặc trong suốt.
+  - Tích hợp `copyChartImage` và `downloadChartImage`: Hỗ trợ Clipboard API trên máy tính, Web Share API trên điện thoại và modal xem trước nét cao cho thao tác chạm giữ sao chép / lưu ảnh.
 - **Đổi mới bộ nhận diện thương hiệu & Logo hoàng kim Bát Tự Lữ Phúc:**
   - Chuyển đổi tên thương hiệu chính thức từ "Bát Tự Phúc Sơn" $\rightarrow$ **"Bát Tự Lữ Phúc"** trên toàn hệ thống (Header, Footer, Bát Tự, Tử Vi, Quẻ Dịch, Phong Thủy, Liên Hệ, Metadata).
   - Thiết kế huy hiệu Logo hoàng kim đế vương với đĩa Thái Cực Bát Quái, chữ viết tắt **LP** và danh hiệu **BÁT TỰ LỮ PHÚC** tinh xảo, uy nghiêm.
@@ -52,6 +62,10 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 - Cập nhật giao diện khung nhập liệu lập lá số Bát Tự (`BaziForm.tsx`) sang phong cách thẻ gỗ sẫm màu sang trọng với điểm nhấn vàng caramel, các ô chọn bo tròn thanh lịch và nút "MỞ LÁ SỐ" chuẩn theo mẫu thiết kế (`ChatGPT Image Sep 22, 2026, 08_19_14 AM`).
 
 ### Fixed
+- **Khắc phục triệt để lỗi tải ảnh và sao chép ảnh trên cả máy tính và điện thoại (`src/lib/chartExport.ts`):**
+  - Khắc phục lỗi ảnh xuất ra bị cắt cụt (clipping) do thuộc tính CSS co giãn responsive trên điện thoại bằng cơ chế tách biệt và khôi phục transform/zoom tạm thời khi render ảnh.
+  - Sửa lỗi nền ảnh bị tối hoặc trong suốt, ép buộc màu nền trắng `#ffffff` chuẩn xác.
+  - Tối ưu kích thước file ảnh tải về và khay nhớ tạm (Clipboard), khắc phục tình trạng lỗi bộ nhớ hoặc không tải được ảnh trên trình duyệt Safari/Chrome mobile.
 - **Tối ưu hiển thị lá số Bát Tự trên điện thoại di động (`[UI-BAZI-DOCUMENT]`):**
   - Tự động co giãn tỷ lệ (auto-scale) vừa vặn 100% chiều rộng màn hình thiết bị di động, khắc phục triệt để hiện tượng bị tràn lề ngang, cắt mất 2 cột Trụ Ngày/Trụ Giờ và 5 cột Đại Vận.
   - Thêm thanh điều khiển chế độ xem: Chuyển đổi linh hoạt giữa "Thu nhỏ vừa màn hình" và "Phóng to 100% (Vuốt ngang)".

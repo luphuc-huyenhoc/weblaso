@@ -7,6 +7,7 @@ import {
   solarToLunar,
   getCanChiYear,
 } from '../calendar/index';
+import { NAP_AM } from '../bazi/index';
 import crypto from 'crypto';
 
 export interface ZiWeiInput {
@@ -54,6 +55,14 @@ export interface PalaceDetail {
   daiHanAge: number;
 }
 
+export interface MiniBaziPillar {
+  can: string;
+  chi: string;
+  thapThan: string;
+  tangCan: string;
+  truongSinh: string;
+}
+
 export interface ZiWeiCalculationResult {
   personal: {
     fullName: string;
@@ -63,6 +72,20 @@ export interface ZiWeiCalculationResult {
     cuc: string; // e.g. "Thổ Ngũ Cục"
     menhElement: string;
     thanCungName: CungType;
+    lunarAge?: number;
+    yearCanChi?: string;
+    currentYearCanChi?: string;
+    menhMainStar?: string;
+    menhChu?: string;
+    thanChu?: string;
+    menhQuai?: string;
+    hanCuuCung?: string;
+    miniBazi?: {
+      year: MiniBaziPillar;
+      month: MiniBaziPillar;
+      day: MiniBaziPillar;
+      hour: MiniBaziPillar;
+    };
   };
   palaces: PalaceDetail[];
 }
@@ -148,6 +171,65 @@ const TU_HOA_MAP: Record<ThienCan, { loc: string; quyen: string; khoa: string; k
   Nhâm: { loc: 'Thiên Lương', quyen: 'Tử Vi', khoa: 'Tả Phù', ky: 'Vũ Khúc' },
   Quý: { loc: 'Phá Quân', quyen: 'Cự Môn', khoa: 'Thái Âm', ky: 'Tham Lang' },
 };
+
+/** Mệnh Chủ mapping by Year Branch */
+const MENH_CHU_MAP: Record<number, string> = {
+  0: 'Tham Lang', // Tý
+  1: 'Cự Môn',   // Sửu
+  2: 'Lộc Tồn',   // Dần
+  3: 'Văn Khúc',  // Mão
+  4: 'Liêm Trinh',// Thìn
+  5: 'Vũ Khúc',   // Tị
+  6: 'Phá Quân',  // Ngọ
+  7: 'Vũ Khúc',   // Mùi
+  8: 'Liêm Trinh',// Thân
+  9: 'Văn Khúc',  // Dậu
+  10: 'Lộc Tồn',  // Tuất
+  11: 'Cự Môn',   // Hợi
+};
+
+/** Thân Chủ mapping by Year Branch */
+const THAN_CHU_MAP: Record<number, string> = {
+  0: 'Hỏa Tinh',   // Tý
+  1: 'Thiên Tướng',// Sửu
+  2: 'Thiên Lương',// Dần
+  3: 'Thiên Đồng', // Mão
+  4: 'Văn Xương',  // Thìn
+  5: 'Thiên Cơ',   // Tị
+  6: 'Hỏa Tinh',   // Ngọ
+  7: 'Thiên Tướng',// Mùi
+  8: 'Thiên Lương',// Thân
+  9: 'Thiên Đồng', // Dậu
+  10: 'Văn Xương', // Tuất
+  11: 'Thiên Cơ',  // Hợi
+};
+
+/** Mệnh Quái mapping (Bát Trạch Cung Phi) */
+function getMenhQuai(lunarYear: number, gender: boolean): string {
+  let sum = 0;
+  let y = lunarYear;
+  while (y > 0) {
+    sum += y % 10;
+    y = Math.floor(y / 10);
+  }
+  while (sum > 9) {
+    sum = Math.floor(sum / 10) + (sum % 10);
+  }
+  let remainder = 0;
+  if (lunarYear < 2000) {
+    remainder = gender ? (10 - sum) : (sum + 5);
+  } else {
+    remainder = gender ? (9 - sum) : (sum + 6);
+  }
+  while (remainder > 9) remainder -= 9;
+  if (remainder <= 0) remainder += 9;
+  if (remainder === 5) remainder = gender ? 2 : 8;
+  const quaiMap: Record<number, string> = {
+    1: 'Khảm', 2: 'Khôn', 3: 'Chấn', 4: 'Tốn',
+    6: 'Càn', 7: 'Đoài', 8: 'Cấn', 9: 'Ly'
+  };
+  return quaiMap[remainder] || 'Khảm';
+}
 
 /** Lục Thập Hoa Giáp Nạp Âm to Cục */
 function determineCuc(menhBranchIdx: number, yearCan: ThienCan): { cucName: string; cucNum: number } {
@@ -434,6 +516,108 @@ export function calculateZiWei(input: ZiWeiInput): ZiWeiEnvelope {
     if (marks.length > 0) p.tuanTriet = marks;
   });
 
+  // [H] Phụ Tinh Cát/Hung bổ sung theo truyền thống Tử Vi Nam Phái & Bắc Phái
+  // 1. Ân Quang & Thiên Quý
+  const xuongIdx = (10 - hourBranchIdx + 12) % 12;
+  const khucIdx = (4 + hourBranchIdx) % 12;
+  const anQuangIdx = (xuongIdx + lunar.day - 2 + 120) % 12;
+  const thienQuyIdx = (khucIdx - lunar.day + 2 + 120) % 12;
+  placeSubStar('Ân Quang', anQuangIdx, 'Cát Tinh', 'Mộc');
+  placeSubStar('Thiên Quý', thienQuyIdx, 'Cát Tinh', 'Thổ');
+
+  // 2. Tam Thai & Bát Tọa
+  const phuIdx = (4 + (lMonth - 1)) % 12;
+  const batIdx = (10 - (lMonth - 1) + 12) % 12;
+  const tamThaiIdx = (phuIdx + lunar.day - 1) % 12;
+  const batToaIdx = (batIdx - lunar.day + 1 + 120) % 12;
+  placeSubStar('Tam Thai', tamThaiIdx, 'Cát Tinh', 'Thủy');
+  placeSubStar('Bát Tọa', batToaIdx, 'Cát Tinh', 'Thủy');
+
+  // 3. Phong Cáo & Quốc Ấn, Đường Phù
+  placeSubStar('Phong Cáo', (khucIdx + 2) % 12, 'Cát Tinh', 'Kim');
+  placeSubStar('Quốc Ấn', (locTonIdx + 8) % 12, 'Cát Tinh', 'Thổ');
+  placeSubStar('Đường Phù', (locTonIdx - 7 + 120) % 12, 'Cát Tinh', 'Mộc');
+
+  // 4. Thiên Thọ & Thiên Tài
+  placeSubStar('Thiên Tài', (menhBranchIdx + yearBranchIdx) % 12, 'Cát Tinh', 'Thổ');
+  placeSubStar('Thiên Thọ', (thanBranchIdx + yearBranchIdx) % 12, 'Cát Tinh', 'Thổ');
+
+  // 5. Thiên Hình & Thiên Diêu, Thiên Y
+  const thienHinhIdx = (9 + (lMonth - 1)) % 12; // Khởi Dậu (9) đi thuận
+  const thienDieuIdx = (1 + (lMonth - 1)) % 12; // Khởi Sửu (1) đi thuận
+  placeSubStar('Thiên Hình', thienHinhIdx, 'Sát Tinh', 'Hỏa', 'Đắc');
+  placeSubStar('Thiên Diêu', thienDieuIdx, 'Sát Tinh', 'Thủy');
+  placeSubStar('Thiên Y', (1 + (lMonth - 1)) % 12, 'Cát Tinh', 'Thủy');
+
+  // 6. Cô Thần & Quả Tú
+  const coThanMap: Record<number, [number, number]> = {
+    11: [2, 10], 3: [2, 10], 7: [2, 10], // Hợi Mão Mùi -> Dần, Tuất
+    2: [5, 1], 6: [5, 1], 10: [5, 1],    // Dần Ngọ Tuất -> Tị, Sửu
+    5: [8, 4], 9: [8, 4], 1: [8, 4],     // Tị Dậu Sửu -> Thân, Thìn
+    8: [11, 7], 0: [11, 7], 4: [11, 7],  // Thân Tý Thìn -> Hợi, Mùi
+  };
+  const [coThanIdx, quaTuIdx] = coThanMap[yearBranchIdx] || [2, 10];
+  placeSubStar('Cô Thần', coThanIdx, 'Sát Tinh', 'Hỏa');
+  placeSubStar('Quả Tú', quaTuIdx, 'Sát Tinh', 'Thổ');
+
+  // 7. Kiếp Sát, Hoa Cái, Phá Toái
+  const kiepSatMap: Record<number, number> = {
+    2: 11, 6: 11, 10: 11, // Dần Ngọ Tuất -> Hợi
+    8: 5, 0: 5, 4: 5,     // Thân Tý Thìn -> Tị
+    5: 2, 9: 2, 1: 2,     // Tị Dậu Sửu -> Dần
+    11: 8, 3: 8, 7: 8,    // Hợi Mão Mùi -> Thân
+  };
+  placeSubStar('Kiếp Sát', kiepSatMap[yearBranchIdx] ?? 11, 'Sát Tinh', 'Hỏa');
+
+  const hoaCaiMap: Record<number, number> = {
+    2: 10, 6: 10, 10: 10, // Dần Ngọ Tuất -> Tuất
+    8: 4, 0: 4, 4: 4,     // Thân Tý Thìn -> Thìn
+    5: 1, 9: 1, 1: 1,     // Tị Dậu Sửu -> Sửu
+    11: 7, 3: 7, 7: 7,    // Hợi Mão Mùi -> Mùi
+  };
+  placeSubStar('Hoa Cái', hoaCaiMap[yearBranchIdx] ?? 10, 'Cát Tinh', 'Kim');
+
+  const phaToaiMap: Record<number, number> = {
+    0: 5, 6: 5, 3: 5, 9: 5,    // Tý Ngọ Mão Dậu -> Tị
+    4: 1, 10: 1, 1: 1, 7: 1,  // Thìn Tuất Sửu Mùi -> Sửu
+    2: 9, 8: 9, 5: 9, 11: 9,  // Dần Thân Tị Hợi -> Dậu
+  };
+  placeSubStar('Phá Toái', phaToaiMap[yearBranchIdx] ?? 5, 'Sát Tinh', 'Hỏa');
+
+  // 8. Lưu Hà
+  const luuHaMap: Record<ThienCan, number> = {
+    Giáp: 9, Ất: 10, Bính: 7, Đinh: 4, Mậu: 5,
+    Kỷ: 6, Canh: 8, Tân: 3, Nhâm: 11, Quý: 2,
+  };
+  placeSubStar('Lưu Hà', luuHaMap[yearStem] ?? 9, 'Sát Tinh', 'Thủy');
+
+  // 9. Thiên Không (tại cung Thiếu Dương = yearBranchIdx + 1)
+  placeSubStar('Thiên Không', (yearBranchIdx + 1) % 12, 'Sát Tinh', 'Hỏa');
+
+  // 10. Đẩu Quân
+  const dauQuanIdx = (yearBranchIdx - (lMonth - 1) + hourBranchIdx + 120) % 12;
+  placeSubStar('Đẩu Quân', dauQuanIdx, 'Cát Tinh', 'Hỏa');
+
+  // 11. Thiên Phúc, Thiên Quan
+  const thienQuanMap: Record<ThienCan, number> = {
+    Giáp: 7, Ất: 4, Bính: 5, Đinh: 2, Mậu: 3, Kỷ: 9, Canh: 11, Tân: 9, Nhâm: 10, Quý: 6
+  };
+  const thienPhucMap: Record<ThienCan, number> = {
+    Giáp: 9, Ất: 8, Bính: 0, Đinh: 11, Mậu: 3, Kỷ: 2, Canh: 6, Tân: 5, Nhâm: 5, Quý: 2
+  };
+  placeSubStar('Thiên Quan', thienQuanMap[yearStem] ?? 7, 'Cát Tinh', 'Hỏa');
+  placeSubStar('Thiên Phúc', thienPhucMap[yearStem] ?? 9, 'Cát Tinh', 'Thổ');
+
+  // 12. Thiên Thương & Thiên Sứ
+  const noBocPalace = palaces.find(p => p.cungName === 'Nô Bộc');
+  if (noBocPalace) {
+    placeSubStar('Thiên Thương', DIA_CHI.indexOf(noBocPalace.branch), 'Sát Tinh', 'Thổ');
+  }
+  const tatAchPalace = palaces.find(p => p.cungName === 'Tật Ách');
+  if (tatAchPalace) {
+    placeSubStar('Thiên Sứ', DIA_CHI.indexOf(tatAchPalace.branch), 'Sát Tinh', 'Thủy');
+  }
+
   // 5. Tứ Hóa
   const tuHoa = TU_HOA_MAP[yearStem];
   if (tuHoa) {
@@ -457,6 +641,30 @@ export function calculateZiWei(input: ZiWeiInput): ZiWeiEnvelope {
   const thanPalace = palaces.find(p => p.isThan);
   const thanCungName = thanPalace ? thanPalace.cungName : 'Mệnh';
 
+  const viewYear = input.viewYear || 2026;
+  const lunarAge = viewYear - lunar.year + 1;
+  const currentYearCanChi = getCanChiYear(viewYear);
+
+  const menhPalace = palaces.find(p => p.isMenh);
+  const menhMainStar = menhPalace && menhPalace.mainStars.length > 0
+    ? menhPalace.mainStars.map(s => s.name.split(' ')[0]).join(', ')
+    : 'Mệnh Vô Chính Diệu';
+
+  const menhChu = MENH_CHU_MAP[yearBranchIdx] || 'Tham Lang';
+  const thanChu = THAN_CHU_MAP[yearBranchIdx] || 'Hỏa Tinh';
+  const menhQuai = getMenhQuai(lunar.year, gender);
+  const saoHan = calculateSaoHan(lunar.year, gender, viewYear);
+  const hanCuuCung = saoHan.cuuDieu.star;
+
+  const menhElement = (NAP_AM as Record<string, string>)[yearCanChi] || 'Sa Trung Kim';
+
+  const miniBazi = {
+    year: { can: yearStem, chi: yearBranch, thapThan: 'Năm', tangCan: '', truongSinh: '' },
+    month: { can: lunar.canChiMonth.split(' ')[0] || '', chi: lunar.canChiMonth.split(' ')[1] || '', thapThan: 'Tháng', tangCan: '', truongSinh: '' },
+    day: { can: lunar.canChiDay.split(' ')[0] || '', chi: lunar.canChiDay.split(' ')[1] || '', thapThan: 'Ngày', tangCan: '', truongSinh: '' },
+    hour: { can: THIEN_CAN[(startCanIdx + hourBranchIdx) % 10], chi: DIA_CHI[hourBranchIdx], thapThan: 'Giờ', tangCan: '', truongSinh: '' },
+  };
+
   const pad = (n: number) => n.toString().padStart(2, '0');
   const inputHash = crypto.createHash('sha256').update(JSON.stringify(input)).digest('hex');
 
@@ -467,8 +675,17 @@ export function calculateZiWei(input: ZiWeiInput): ZiWeiEnvelope {
       solarDateStr: `${pad(day)}/${pad(month)}/${year} ${pad(hour)}:${pad(minute)}`,
       lunarDateStr: `${pad(lunar.day)}/${pad(lunar.month)}/${lunar.year}${lunar.isLeap ? ' (Nhuận)' : ''}`,
       cuc: cucName,
-      menhElement: 'Kim Tứ Cục',
+      menhElement,
       thanCungName,
+      lunarAge,
+      yearCanChi,
+      currentYearCanChi,
+      menhMainStar,
+      menhChu,
+      thanChu,
+      menhQuai,
+      hanCuuCung,
+      miniBazi,
     },
     palaces,
   };

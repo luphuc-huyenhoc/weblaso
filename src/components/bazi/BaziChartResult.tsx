@@ -2,8 +2,8 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { BaziEnvelope } from '@/domain/bazi';
-import { Download, Printer, Bookmark, Check, AlertCircle, CalendarRange, Sparkles } from 'lucide-react';
-import { toPng } from 'html-to-image';
+import { Download, Printer, Bookmark, Check, AlertCircle, Copy, Eye, BookOpen, Loader2 } from 'lucide-react';
+import { captureChartImage, copyChartImage, downloadChartImage } from '@/lib/chartExport';
 import { BaziChartDocument } from './BaziChartDocument';
 
 export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
@@ -25,9 +25,8 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
   useEffect(() => {
     function calculateScale() {
       if (containerRef.current) {
-        // Measure the container's available clientWidth
         const width = containerRef.current.clientWidth - 4;
-        const targetBaseWidth = 750;
+        const targetBaseWidth = 720;
         if (width > 0 && width < targetBaseWidth) {
           setScale(width / targetBaseWidth);
         } else {
@@ -47,14 +46,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
     const generateImage = async () => {
       if (!chartRef.current) return;
       try {
-        const prevZoom = chartRef.current.style.zoom;
-        chartRef.current.style.zoom = '1';
-        const url = await toPng(chartRef.current, {
-          pixelRatio: 2,
-          backgroundColor: '#fefdf9',
-          cacheBust: true,
-        });
-        chartRef.current.style.zoom = prevZoom;
+        const url = await captureChartImage(chartRef.current, { width: 720, height: 1000 });
         if (isMounted) {
           setChartImageUrl(url);
         }
@@ -63,7 +55,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
       }
     };
 
-    const timer = setTimeout(generateImage, 350);
+    const timer = setTimeout(generateImage, 400);
     return () => {
       isMounted = false;
       clearTimeout(timer);
@@ -71,55 +63,31 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
   }, [calc]);
 
   const handleCopyImage = async () => {
+    if (!chartRef.current) return;
     setCopyStatus('copying');
     try {
-      let dataUrl = chartImageUrl;
-      if (!dataUrl && chartRef.current) {
-        const prevZoom = chartRef.current.style.zoom;
-        chartRef.current.style.zoom = '1';
-        dataUrl = await toPng(chartRef.current, {
-          pixelRatio: 2,
-          backgroundColor: '#fefdf9',
-          cacheBust: true,
-        });
-        chartRef.current.style.zoom = prevZoom;
-        setChartImageUrl(dataUrl);
-      }
-
-      if (!dataUrl) throw new Error('Chưa thể kết xuất hình ảnh');
-
-      const res = await fetch(dataUrl);
-      const blob = await res.blob();
       const cleanName = calc.personal.fullName.trim().replace(/\s+/g, '_');
-      const file = new File([blob], `LaSoBatTu_${cleanName}.png`, { type: 'image/png' });
+      const birthDate = `${envelope.input.year}-${envelope.input.month}-${envelope.input.day}`;
+      const res = await copyChartImage(chartRef.current, {
+        fileName: `LaSoBatTu_${cleanName}_${birthDate}`,
+        width: 720,
+        height: 1000,
+        title: `Lá số Bát Tự - ${calc.personal.fullName}`,
+      });
 
-      // If mobile supports Web Share API with files (iOS Safari, Android Chrome)
-      if (typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: `Lá số Bát Tự - ${calc.personal.fullName}`,
-          text: `Lá số Bát Tự Lữ Phúc - ${calc.personal.fullName}`,
-        });
+      if (res === 'fallback') {
+        setShowImageModal(true);
+        setCopyStatus('idle');
+      } else {
         setCopyStatus('copied');
         setTimeout(() => setCopyStatus('idle'), 3000);
-        return;
       }
-
-      // Standard desktop clipboard
-      await navigator.clipboard.write([
-        new ClipboardItem({ 'image/png': blob }),
-      ]);
-      setCopyStatus('copied');
-      setTimeout(() => setCopyStatus('idle'), 3000);
     } catch (err: any) {
-      if (err?.name === 'AbortError') {
-        setCopyStatus('idle');
-        return;
+      if (err?.name !== 'AbortError') {
+        console.error('Copy image error:', err);
+        setShowImageModal(true);
       }
-      console.error('Copy image error:', err);
       setCopyStatus('idle');
-      // On mobile or when clipboard write is blocked, open the image modal directly
-      setShowImageModal(true);
     }
   };
 
@@ -139,28 +107,19 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
   const handleDownloadPng = async () => {
     if (!chartRef.current) return;
     setIsExporting(true);
-    const prevZoom = chartRef.current.style.zoom;
-    chartRef.current.style.zoom = '1';
     try {
-      const dataUrl = await toPng(chartRef.current, {
-        pixelRatio: 2, // 2x high resolution matching ~1824x2628 px quality
-        backgroundColor: '#fefdf9',
-        cacheBust: true,
-      });
-
       const cleanName = calc.personal.fullName.trim().replace(/\s+/g, '_');
       const birthDate = `${envelope.input.year}-${envelope.input.month}-${envelope.input.day}`;
-      const link = document.createElement('a');
-      link.download = `LaSoBatTu_${cleanName}_${birthDate}.png`;
-      link.href = dataUrl;
-      link.click();
+      await downloadChartImage(chartRef.current, {
+        fileName: `LaSoBatTu_${cleanName}_${birthDate}`,
+        width: 720,
+        height: 1000,
+        title: `Lá số Bát Tự - ${calc.personal.fullName}`,
+      });
     } catch (err) {
       console.error('Failed to download image:', err);
-      alert('Không thể tạo ảnh lá số trực tiếp. Bạn có thể dùng tính năng "In lá số" để lưu PDF/ảnh.');
+      alert('Không thể tạo ảnh lá số trực tiếp. Bạn có thể bấm "Phóng to" để nhấn giữ lưu ảnh hoặc dùng tính năng "In lá số".');
     } finally {
-      if (chartRef.current) {
-        chartRef.current.style.zoom = prevZoom;
-      }
       setIsExporting(false);
     }
   };
@@ -246,52 +205,87 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
           />
         </div>
 
-        {/* Bottom Action Buttons */}
-        <div className="flex flex-wrap justify-center sm:justify-end items-center gap-2 sm:space-x-2 mt-3 w-full max-w-[960px] px-2 no-print">
+        {/* Bottom Action Buttons (Matching HocVienLySo.org tools) */}
+        <div className="flex flex-wrap justify-center sm:justify-end items-center gap-2 mt-3 w-full max-w-[960px] px-2 no-print">
+          <button
+            type="button"
+            onClick={() => setShowImageModal(true)}
+            className="flex-1 sm:flex-initial bg-[#27303f] hover:bg-[#1a222e] border border-amber-500/40 text-amber-300 text-xs sm:text-sm font-bold px-3.5 py-2 rounded-lg shadow-2xs transition cursor-pointer text-center flex items-center justify-center gap-1.5"
+            title="Phóng to ảnh lá số"
+          >
+            <Eye className="w-4 h-4 text-amber-400" />
+            <span>Phóng to</span>
+          </button>
+
           <button
             type="button"
             onClick={handleCopyImage}
             disabled={copyStatus === 'copying'}
-            className="flex-1 sm:flex-initial bg-[#1b3b6f] hover:bg-[#142e56] text-white text-xs sm:text-sm font-bold px-4 py-2.5 sm:py-1.5 rounded-lg shadow-2xs transition cursor-pointer text-center flex items-center justify-center gap-1.5"
+            className="flex-1 sm:flex-initial bg-[#1b3b6f] hover:bg-[#142e56] text-white text-xs sm:text-sm font-bold px-3.5 py-2 rounded-lg shadow-2xs transition cursor-pointer text-center flex items-center justify-center gap-1.5"
+            title="Sao chép ảnh lá số vào bộ nhớ tạm hoặc chia sẻ"
           >
             {copyStatus === 'copied' ? (
               <>
-                <Check className="w-3.5 h-3.5" />
-                <span>Đã sao chép ảnh!</span>
+                <Check className="w-4 h-4 text-emerald-400" />
+                <span>Đã sao chép!</span>
               </>
             ) : copyStatus === 'copying' ? (
-              <span>Đang sao chép...</span>
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Đang chép...</span>
+              </>
             ) : (
               <>
-                <span>📋</span>
+                <Copy className="w-4 h-4" />
                 <span>Sao chép ảnh</span>
               </>
             )}
           </button>
+
           <button
             type="button"
             onClick={handleDownloadPng}
             disabled={isExporting}
-            className="flex-1 sm:flex-initial bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs sm:text-sm font-bold px-4 py-2.5 sm:py-1.5 rounded-lg shadow-2xs transition cursor-pointer text-center"
+            className="flex-1 sm:flex-initial bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs sm:text-sm font-bold px-3.5 py-2 rounded-lg shadow-2xs transition cursor-pointer text-center flex items-center justify-center gap-1.5"
+            title="Tải ảnh lá số độ phân giải cao"
           >
-            {isExporting ? 'Đang tải...' : 'Tải lá số (PNG)'}
+            {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            <span>Tải ảnh</span>
           </button>
+
           <button
             type="button"
             onClick={handlePrint}
-            className="flex-1 sm:flex-initial bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs sm:text-sm font-bold px-4 py-2.5 sm:py-1.5 rounded-lg shadow-2xs transition cursor-pointer text-center"
+            className="flex-1 sm:flex-initial bg-[#c8860a] hover:bg-amber-700 text-white text-xs sm:text-sm font-bold px-3.5 py-2 rounded-lg shadow-2xs transition cursor-pointer text-center flex items-center justify-center gap-1.5"
+            title="In lá số ra giấy hoặc lưu PDF"
           >
-            In lá số
+            <Printer className="w-4 h-4" />
+            <span>In lá số</span>
           </button>
-          {chartImageUrl && (
-            <button
-              type="button"
-              onClick={() => setShowImageModal(true)}
-              className="flex-1 sm:flex-initial bg-[#8c451a] hover:bg-[#6e3513] text-white text-xs sm:text-sm font-bold px-4 py-2.5 sm:py-1.5 rounded-lg shadow-2xs transition cursor-pointer text-center"
-            >
-              📱 Xem ảnh lá số
-            </button>
-          )}
+
+          <button
+            type="button"
+            onClick={handleSaveChart}
+            disabled={saveStatus === 'saving'}
+            className="flex-1 sm:flex-initial bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 text-xs sm:text-sm font-bold px-3.5 py-2 rounded-lg shadow-2xs transition cursor-pointer text-center flex items-center justify-center gap-1.5"
+            title="Lưu lá số vào tài khoản"
+          >
+            <Bookmark className="w-4 h-4 text-[#c8860a]" />
+            <span>Lưu lá số</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById('luan-giai');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="flex-1 sm:flex-initial bg-[#3b2d54] hover:bg-[#2c2140] text-purple-200 text-xs sm:text-sm font-bold px-3.5 py-2 rounded-lg shadow-2xs transition cursor-pointer text-center flex items-center justify-center gap-1.5"
+            title="Xem phần phân tích luận giải chi tiết"
+          >
+            <BookOpen className="w-4 h-4 text-purple-300" />
+            <span>Đọc luận giải</span>
+          </button>
         </div>
 
         {/* Helpful Tip */}

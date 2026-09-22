@@ -28,12 +28,12 @@ export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentPro
           id="bazi-printable-chart"
           className="relative mx-auto border-2 border-[#1c4a78] shadow-md font-sans select-text text-gray-900 overflow-hidden scroll-mt-24 transition-transform"
           style={{
-            width: '750px',
-            minWidth: '750px',
-            maxWidth: '750px',
-            minHeight: '1056px',
+            width: '720px',
+            minWidth: '720px',
+            maxWidth: '720px',
+            minHeight: '1000px',
             zoom: isScaled ? zoom : 1,
-            backgroundColor: '#fefdf9',
+            backgroundColor: '#ffffff',
           }}
         >
           {/* Traditional Background Image Layer from BACKGROUND.png */}

@@ -5,8 +5,8 @@ import { IchingEnvelope } from '@/domain/iching';
 import { LucHaoForm, LucHaoFormData } from '@/components/iching/LucHaoForm';
 import { LucHaoResultDocument } from '@/components/iching/LucHaoResultDocument';
 import { IChingInterpretation } from '@/components/iching/IChingInterpretation';
-import { toPng } from 'html-to-image';
-import { Download, Printer, Bookmark, Loader2, Copy, Check } from 'lucide-react';
+import { captureChartImage, copyChartImage, downloadChartImage } from '@/lib/chartExport';
+import { Download, Printer, Bookmark, Loader2, Copy, Check, Eye, BookOpen } from 'lucide-react';
 
 export default function LucHaoPage() {
   const [loading, setLoading] = useState(false);
@@ -42,106 +42,89 @@ export default function LucHaoPage() {
     return () => window.removeEventListener('resize', calculateScale);
   }, [result]);
 
+  // Pre-generate image for modal
+  useEffect(() => {
+    let isMounted = true;
+    const gen = async () => {
+      if (!chartRef.current) return;
+      try {
+        const url = await captureChartImage(chartRef.current, { width: 720, height: 720 });
+        if (isMounted) setModalImageUrl(url);
+      } catch (err) {
+        console.error('Auto generate iching image error:', err);
+      }
+    };
+    const t = setTimeout(gen, 400);
+    return () => {
+      isMounted = false;
+      clearTimeout(t);
+    };
+  }, [result]);
+
   const handleFormSubmit = async (formData: LucHaoFormData) => {
     setLoading(true);
     setError(null);
-
     try {
-      const res = await fetch('/api/iching/calculate', {
+      const res = await fetch('/api/iching/luc-hao', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: formData.title,
-          method: 'Lục Hào',
-          lines: formData.lines,
-          day: formData.day,
-          month: formData.month,
-          year: formData.year,
-          hour: formData.hour,
-          minute: formData.minute,
-        }),
+        body: JSON.stringify(formData),
       });
-
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || 'Lỗi khi an quẻ lục hào');
-      }
-
+      if (!res.ok) throw new Error(data.message || 'Lỗi khi lập quẻ');
       setResult(data);
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+      }, 200);
     } catch (err: any) {
-      setError(err.message || 'Có lỗi xảy ra khi an quẻ');
+      setError(err.message || 'Không thể kết nối đến máy chủ');
     } finally {
       setLoading(false);
     }
   };
 
   const handleDownloadImage = async () => {
-    if (!chartRef.current) return;
+    if (!chartRef.current || !result) return;
     try {
       setDownloading(true);
-      const prevZoom = chartRef.current.style.zoom;
-      chartRef.current.style.zoom = '1';
-      const dataUrl = await toPng(chartRef.current, {
-        cacheBust: true,
-        pixelRatio: 2,
-        backgroundColor: '#fefdf9',
+      const hexName = result.calculation.originalHexagram.name.trim().replace(/\s+/g, '_');
+      await downloadChartImage(chartRef.current, {
+        fileName: `QueDich_LucHao_${hexName}`,
+        width: 720,
+        height: 720,
+        title: `Quẻ Dịch: ${result.calculation.originalHexagram.name}`,
       });
-      chartRef.current.style.zoom = prevZoom;
-      const link = document.createElement('a');
-      link.download = `que-dich-luc-hao-${result?.calculation.originalHexagram.name || 'la-so'}.png`;
-      link.href = dataUrl;
-      link.click();
     } catch (err) {
       console.error('Error exporting chart to PNG:', err);
-      alert('Không thể xuất ảnh quẻ dịch. Vui lòng dùng tính năng In quẻ để lưu PDF.');
+      alert('Không thể xuất ảnh quẻ dịch. Bạn có thể dùng "Phóng to" để nhấn giữ lưu ảnh hoặc dùng "In quẻ".');
     } finally {
       setDownloading(false);
     }
   };
 
   const handleCopyImage = async () => {
-    if (!chartRef.current) return;
+    if (!chartRef.current || !result) return;
     try {
       setCopying(true);
-      const prevZoom = chartRef.current.style.zoom;
-      chartRef.current.style.zoom = '1';
-      const dataUrl = await toPng(chartRef.current, {
-        cacheBust: true,
-        pixelRatio: 2,
-        backgroundColor: '#fefdf9',
+      const hexName = result.calculation.originalHexagram.name.trim().replace(/\s+/g, '_');
+      const res = await copyChartImage(chartRef.current, {
+        fileName: `QueDich_LucHao_${hexName}`,
+        width: 720,
+        height: 720,
+        title: `Quẻ Dịch: ${result.calculation.originalHexagram.name}`,
       });
-      chartRef.current.style.zoom = prevZoom;
-      setModalImageUrl(dataUrl);
 
-      const res = await fetch(dataUrl);
-      const blob = await res.blob();
-      const hexName = result?.calculation.originalHexagram.name || 'que_dich';
-      const file = new File([blob], `QueDich_${hexName}.png`, { type: 'image/png' });
-
-      // If mobile supports Web Share API
-      if (typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: `Quẻ Dịch Lục Hào - ${result?.calculation.originalHexagram.name}`,
-          text: `Quẻ Dịch Lữ Phúc: ${result?.calculation.originalHexagram.name}`,
-        });
+      if (res === 'fallback') {
+        setShowImageModal(true);
+      } else {
         setCopied(true);
         setTimeout(() => setCopied(false), 3000);
-        return;
       }
-
-      await navigator.clipboard.write([
-        new ClipboardItem({ 'image/png': blob }),
-      ]);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
     } catch (err: any) {
-      if (err?.name === 'AbortError') return;
-      console.error('Copy iching image error:', err);
-      setShowImageModal(true);
+      if (err?.name !== 'AbortError') {
+        console.error('Copy iching image error:', err);
+        setShowImageModal(true);
+      }
     } finally {
       setCopying(false);
     }
@@ -196,73 +179,92 @@ export default function LucHaoPage() {
             zoom={isZoomFit && scale < 1 ? scale : 1}
           />
 
-          {/* Action Toolbar Matching Reference Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 py-2 no-print">
+          {/* Action Toolbar Matching HocVienLySo boidich tools */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 py-2 no-print">
+            {/* 1. Đọc luận giải quẻ này (Chính) */}
             <button
               type="button"
-              onClick={handleCopyImage}
-              disabled={copying}
-              className="inline-flex items-center space-x-2 bg-[#1b3b6f] hover:bg-[#142e56] text-white px-4 sm:px-5 py-2.5 rounded font-bold text-xs uppercase tracking-wider shadow transition disabled:opacity-50 cursor-pointer"
+              onClick={() => {
+                const el = document.getElementById('luan-giai');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="inline-flex items-center space-x-1.5 bg-[#c8860a] hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow transition cursor-pointer"
             >
-              {copied ? (
-                <>
-                  <Check className="w-4 h-4 text-emerald-400" />
-                  <span>Đã sao chép ảnh!</span>
-                </>
-              ) : copying ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Đang sao chép...</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4" />
-                  <span>Sao chép ảnh quẻ</span>
-                </>
-              )}
+              <BookOpen className="w-4 h-4" />
+              <span>Đọc luận giải quẻ này</span>
             </button>
 
-            <button
-              type="button"
-              onClick={handleDownloadImage}
-              disabled={downloading}
-              className="inline-flex items-center space-x-2 bg-[#00897b] hover:bg-[#00796b] text-white px-4 sm:px-5 py-2.5 rounded font-bold text-xs uppercase tracking-wider shadow transition disabled:opacity-50 cursor-pointer"
-            >
-              {downloading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Download className="w-4 h-4" />
-              )}
-              <span>Tải quẻ dịch</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="inline-flex items-center space-x-2 bg-[#2e7d32] hover:bg-[#1b5e20] text-white px-4 sm:px-5 py-2.5 rounded font-bold text-xs uppercase tracking-wider shadow transition cursor-pointer"
-            >
-              <Printer className="w-4 h-4" />
-              <span>In quẻ dịch</span>
-            </button>
-
+            {/* 2. Phóng to (Phụ) */}
             <button
               type="button"
               onClick={() => {
                 if (modalImageUrl) setShowImageModal(true);
                 else handleCopyImage();
               }}
-              className="inline-flex items-center space-x-1.5 bg-[#8c451a] hover:bg-[#6e3513] text-white px-4 sm:px-5 py-2.5 rounded font-bold text-xs uppercase tracking-wider shadow transition cursor-pointer"
+              className="inline-flex items-center space-x-1.5 bg-[#27303f] hover:bg-[#1a222e] border border-amber-500/40 text-amber-300 px-3.5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow transition cursor-pointer"
             >
-              <span>📱 Xem ảnh quẻ</span>
+              <Eye className="w-4 h-4 text-amber-400" />
+              <span>Phóng to</span>
             </button>
 
+            {/* 3. Sao chép (Phụ) */}
+            <button
+              type="button"
+              onClick={handleCopyImage}
+              disabled={copying}
+              className="inline-flex items-center space-x-1.5 bg-[#1b3b6f] hover:bg-[#142e56] text-white px-3.5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow transition disabled:opacity-50 cursor-pointer"
+            >
+              {copied ? (
+                <>
+                  <Check className="w-4 h-4 text-emerald-400" />
+                  <span>Đã sao chép!</span>
+                </>
+              ) : copying ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Đang chép...</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  <span>Sao chép</span>
+                </>
+              )}
+            </button>
+
+            {/* 4. Tải ảnh (Phụ) */}
+            <button
+              type="button"
+              onClick={handleDownloadImage}
+              disabled={downloading}
+              className="inline-flex items-center space-x-1.5 bg-[#00897b] hover:bg-[#00796b] text-white px-3.5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow transition disabled:opacity-50 cursor-pointer"
+            >
+              {downloading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
+              <span>Tải ảnh</span>
+            </button>
+
+            {/* 5. In quẻ (Phụ) */}
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="inline-flex items-center space-x-1.5 bg-[#2e7d32] hover:bg-[#1b5e20] text-white px-3.5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow transition cursor-pointer"
+            >
+              <Printer className="w-4 h-4" />
+              <span>In quẻ</span>
+            </button>
+
+            {/* 6. Lưu quẻ */}
             <button
               type="button"
               onClick={handleSave}
-              className="inline-flex items-center space-x-2 bg-gray-700 hover:bg-gray-800 text-white px-4 sm:px-5 py-2.5 rounded font-bold text-xs uppercase tracking-wider shadow transition cursor-pointer"
+              className="inline-flex items-center space-x-1.5 bg-gray-700 hover:bg-gray-800 text-white px-3.5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow transition cursor-pointer"
             >
               <Bookmark className="w-4 h-4" />
-              <span>{saved ? 'Đã lưu quẻ!' : 'Lưu quẻ'}</span>
+              <span>{saved ? 'Đã lưu!' : 'Lưu quẻ'}</span>
             </button>
           </div>
 

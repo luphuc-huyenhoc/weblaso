@@ -14,7 +14,7 @@ import {
   X,
   AlertCircle,
 } from 'lucide-react';
-import { toPng } from 'html-to-image';
+import { captureChartImage, copyChartImage, downloadChartImage } from '@/lib/chartExport';
 
 interface ZiweiChartResultProps {
   envelope: ZiweiEnvelope;
@@ -38,13 +38,13 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
   const { calculation } = envelope;
   const { personal, palaces } = calculation;
 
-  // Responsive scale update
+  // Responsive scale update (base width 720px matching reference)
   useEffect(() => {
     const updateScale = () => {
       if (!containerRef.current) return;
       const containerWidth = containerRef.current.clientWidth;
-      if (isZoomFit && containerWidth < 760) {
-        const newScale = Math.max(0.35, Math.min(1, (containerWidth - 8) / 760));
+      if (isZoomFit && containerWidth < 720) {
+        const newScale = Math.max(0.35, Math.min(1, (containerWidth - 8) / 720));
         setScale(newScale);
       } else {
         setScale(1);
@@ -61,20 +61,13 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
     const generateImage = async () => {
       if (!chartRef.current) return;
       try {
-        const prevZoom = chartRef.current.style.zoom;
-        chartRef.current.style.zoom = '1';
-        const url = await toPng(chartRef.current, {
-          pixelRatio: 2,
-          backgroundColor: '#fefdf9',
-          cacheBust: true,
-        });
-        chartRef.current.style.zoom = prevZoom;
+        const url = await captureChartImage(chartRef.current, { width: 720, height: 1000 });
         if (isMounted) setChartImageUrl(url);
       } catch (err) {
         console.error('Auto generate Ziwei chart image error:', err);
       }
     };
-    const timer = setTimeout(generateImage, 350);
+    const timer = setTimeout(generateImage, 400);
     return () => {
       isMounted = false;
       clearTimeout(timer);
@@ -83,77 +76,46 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
 
   const handleCopyImage = async () => {
     if (!chartRef.current) return;
+    setCopyStatus('copying');
     try {
-      setCopyStatus('copying');
-      let dataUrl = chartImageUrl;
-      if (!dataUrl) {
-        const prevZoom = chartRef.current.style.zoom;
-        chartRef.current.style.zoom = '1';
-        dataUrl = await toPng(chartRef.current, {
-          pixelRatio: 2,
-          backgroundColor: '#fefdf9',
-          cacheBust: true,
-        });
-        chartRef.current.style.zoom = prevZoom;
-        setChartImageUrl(dataUrl);
-      }
-
-      if (!dataUrl) throw new Error('Chưa thể kết xuất hình ảnh');
-
-      const res = await fetch(dataUrl);
-      const blob = await res.blob();
       const cleanName = personal.fullName.trim().replace(/\s+/g, '_');
-      const file = new File([blob], `LaSoTuVi_${cleanName}.png`, { type: 'image/png' });
+      const res = await copyChartImage(chartRef.current, {
+        fileName: `LaSoTuVi_${cleanName}`,
+        width: 720,
+        height: 1000,
+        title: `Lá số Tử Vi - ${personal.fullName}`,
+      });
 
-      // Mobile Web Share API support (iOS Safari, Android Chrome)
-      if (typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: `Lá số Tử Vi - ${personal.fullName}`,
-          text: `Lá số Tử Vi Đẩu Số Lữ Phúc - ${personal.fullName}`,
-        });
+      if (res === 'fallback') {
+        setShowImageModal(true);
+        setCopyStatus('idle');
+      } else {
         setCopyStatus('copied');
         setTimeout(() => setCopyStatus('idle'), 3000);
-        return;
       }
-
-      // Desktop clipboard write
-      await navigator.clipboard.write([
-        new ClipboardItem({ 'image/png': blob }),
-      ]);
-      setCopyStatus('copied');
-      setTimeout(() => setCopyStatus('idle'), 3000);
     } catch (err: any) {
-      if (err?.name === 'AbortError') {
-        setCopyStatus('idle');
-        return;
+      if (err?.name !== 'AbortError') {
+        console.error('Copy ziwei image error:', err);
+        setShowImageModal(true);
       }
-      console.error('Copy ziwei image error:', err);
       setCopyStatus('idle');
-      setShowImageModal(true);
     }
   };
 
   const handleDownloadImage = async () => {
     if (!chartRef.current) return;
+    setDownloading(true);
     try {
-      setDownloading(true);
-      const prevZoom = chartRef.current.style.zoom;
-      chartRef.current.style.zoom = '1';
-      const dataUrl = await toPng(chartRef.current, {
-        pixelRatio: 2,
-        backgroundColor: '#fefdf9',
-        cacheBust: true,
+      const cleanName = personal.fullName.trim().replace(/\s+/g, '_');
+      await downloadChartImage(chartRef.current, {
+        fileName: `LaSoTuVi_${cleanName}`,
+        width: 720,
+        height: 1000,
+        title: `Lá số Tử Vi - ${personal.fullName}`,
       });
-      chartRef.current.style.zoom = prevZoom;
-
-      const link = document.createElement('a');
-      link.download = `LaSoTuVi_${personal.fullName.trim().replace(/\s+/g, '_')}.png`;
-      link.href = dataUrl;
-      link.click();
     } catch (err) {
       console.error('Download ziwei image error:', err);
-      alert('Không thể tải ảnh trực tiếp. Vui lòng thử nút "Sao chép ảnh" hoặc "In Lá Số".');
+      alert('Không thể tải ảnh trực tiếp. Vui lòng bấm "Phóng to" để nhấn giữ lưu ảnh hoặc dùng "In lá số".');
     } finally {
       setDownloading(false);
     }
@@ -220,22 +182,34 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
       Hãm: 'H',
     };
     return (
-      <span className={`text-[9.5px] ml-1 ${colors[brightness] || 'text-gray-500'}`}>
+      <span className={`text-[9px] ml-0.5 ${colors[brightness] || 'text-gray-500'}`}>
         ({abbrev[brightness] || brightness})
       </span>
     );
   };
 
-  // Render individual star with Tứ Hóa pill if applicable
-  const renderStarWithTuHoa = (star: StarDetail, className: string) => {
+  const getMainStarColor = (star: StarDetail) => {
+    const el = star.element;
+    switch (el) {
+      case 'Kim': return 'text-[#475569]'; // Slate / Grey
+      case 'Mộc': return 'text-[#16a34a]'; // Green
+      case 'Thủy': return 'text-[#0284c7]'; // Blue
+      case 'Hỏa': return 'text-[#dc2626]'; // Red
+      case 'Thổ': return 'text-[#d97706]'; // Amber
+      default: return 'text-red-700';
+    }
+  };
+
+  // Render individual star with Tứ Hóa badge if applicable
+  const renderStarWithTuHoa = (star: StarDetail, defaultClass: string) => {
     const match = star.name.match(/^(.*?)\s*\((Hóa [A-ZÀ-Ỹa-zà-ỹ]+)\)$/);
     if (match) {
       const baseName = match[1];
       const hoaName = match[2];
       return (
-        <span className="inline-flex items-center gap-0.5">
-          <span className={className}>{baseName}</span>
-          <span className="text-[8.5px] font-black text-purple-700 bg-purple-50 border border-purple-200 px-1 py-0.2 rounded leading-none">
+        <span className="inline-flex items-center gap-0.5 flex-wrap">
+          <span className={defaultClass}>{baseName}</span>
+          <span className="text-[8px] font-black text-white bg-purple-700 px-1 py-0.2 rounded leading-none shadow-2xs">
             {hoaName}
           </span>
           {renderStarBrightness(star.brightness)}
@@ -244,7 +218,7 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
     }
     return (
       <span className="inline-flex items-center">
-        <span className={className}>{star.name}</span>
+        <span className={defaultClass}>{star.name}</span>
         {renderStarBrightness(star.brightness)}
       </span>
     );
@@ -253,7 +227,7 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
   // Render an individual Palace Cell
   const renderPalaceCell = (branch: string) => {
     const palace = getPalaceByBranch(branch);
-    if (!palace) return <div className="border border-gray-300 p-2 min-h-[175px]" />;
+    if (!palace) return <div className="border border-gray-300 p-1.5 min-h-[180px]" />;
 
     // Group subStars
     const tuHoaStars: StarDetail[] = [];
@@ -276,97 +250,101 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
     return (
       <div
         key={palace.index}
-        className={`border border-amber-900/20 p-2 flex flex-col justify-between min-h-[185px] bg-[#fdfbf7]/90 transition hover:bg-amber-50/50 text-xs relative ${
-          palace.isMenh ? 'ring-2 ring-red-500/80 bg-red-50/20' : ''
+        className={`border border-[#1c4a78]/30 p-1.5 flex flex-col justify-between min-h-[195px] bg-[#ffffff] transition hover:bg-amber-50/30 text-xs relative ${
+          palace.isMenh ? 'bg-red-50/20' : ''
         }`}
       >
-        {/* Top Header of Palace */}
-        <div className="flex items-center justify-between border-b border-amber-800/15 pb-1">
+        {/* Top Header of Palace: Can Chi (left) | Cung Name (center) | Dai Han (right) */}
+        <div className="flex items-center justify-between border-b border-gray-200 pb-0.5 text-[#1c2434]">
+          <span className="text-[10px] font-bold text-gray-500">
+            {palace.stem}.{palace.branch}
+          </span>
           <div className="flex items-center space-x-1">
             <span
               className={`font-black uppercase tracking-wider text-[11px] ${
-                palace.isMenh ? 'text-red-700 underline decoration-red-400 underline-offset-2' : 'text-[#1c2434]'
+                palace.isMenh ? 'text-red-700 underline decoration-red-400 underline-offset-2' : 'text-[#112244]'
               }`}
             >
               {palace.cungName}
             </span>
             {palace.isThan && (
-              <span className="text-[9px] px-1 py-0.2 bg-red-100 text-red-700 font-extrabold rounded border border-red-300">
+              <span className="text-[8.5px] px-1 py-0.2 bg-red-600 text-white font-extrabold rounded">
                 THÂN
               </span>
             )}
           </div>
-          <div className="text-[10px] font-bold text-gray-500">
-            {palace.stem} {palace.branch}
-          </div>
-        </div>
-
-        {/* Palace Center Content: Stars */}
-        <div className="py-1 flex-1 flex flex-col justify-between space-y-1">
-          {/* Main Stars (Chính tinh) */}
-          <div className="space-y-0.5 border-b border-dashed border-gray-200/80 pb-1">
-            {palace.mainStars.length === 0 ? (
-              <span className="text-[10px] italic text-gray-400 font-medium">Vô chính diệu</span>
-            ) : (
-              palace.mainStars.map((star, sIdx) => (
-                <div key={sIdx} className="leading-tight">
-                  {renderStarWithTuHoa(star, 'font-black text-red-700 text-[11px]')}
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* Sub Stars & Special categories */}
-          <div className="grid grid-cols-2 gap-1 text-[9.5px] leading-tight flex-1 pt-0.5">
-            {/* Left Column: Cát tinh & Tứ hóa */}
-            <div className="space-y-0.5 pr-0.5 border-r border-gray-100">
-              {tuHoaStars.map((star, idx) => (
-                <div key={`th-${idx}`}>
-                  {renderStarWithTuHoa(star, 'font-bold text-purple-700')}
-                </div>
-              ))}
-              {catStars.map((star, idx) => (
-                <div key={`cat-${idx}`} className="text-blue-700 font-semibold">
-                  {renderStarWithTuHoa(star, 'text-blue-700 font-semibold')}
-                </div>
-              ))}
-            </div>
-
-            {/* Right Column: Sát tinh & Hung tinh */}
-            <div className="space-y-0.5 pl-0.5">
-              {satStars.map((star, idx) => (
-                <div key={`sat-${idx}`} className="text-[#8c1d1d] font-semibold">
-                  {renderStarWithTuHoa(star, 'text-[#8c1d1d] font-semibold')}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Vòng Sao: Thai Tue / Bac Si / Trang Sinh */}
-          {vongStars.length > 0 && (
-            <div className="pt-0.5 border-t border-gray-100 flex flex-wrap gap-x-1 gap-y-0 text-[8.5px] text-gray-500 font-normal">
-              {vongStars.slice(0, 4).map((star, idx) => (
-                <span key={`vong-${idx}`}>
-                  {star.name}
-                  {idx < Math.min(vongStars.length, 4) - 1 ? ' •' : ''}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Bottom Footer of Palace (Đại Hạn Age & Tuần / Triệt) */}
-        <div className="flex items-center justify-between border-t border-amber-800/15 pt-1 text-[10px] text-gray-600">
-          <span className="font-mono font-bold text-gray-800 bg-amber-100/60 px-1 rounded">
-            {palace.daiHanAge}t
+          <span className="text-[10.5px] font-black text-gray-800">
+            {palace.daiHanAge}
           </span>
+        </div>
 
-          {palace.tuanTriet && palace.tuanTriet.length > 0 && (
-            <span className="font-black text-white text-[8.5px] bg-red-600 px-1 py-0.2 rounded shadow-2xs">
-              {palace.tuanTriet.join(' - ')}
-            </span>
+        {/* Main Stars (Chính tinh) */}
+        <div className="py-0.5 border-b border-dashed border-gray-200 text-center">
+          {palace.mainStars.length === 0 ? (
+            <span className="text-[10px] italic text-gray-400 font-medium">Vô chính diệu</span>
+          ) : (
+            <div className="flex flex-wrap items-center justify-center gap-x-1.5">
+              {palace.mainStars.map((star, sIdx) => (
+                <div key={sIdx} className="leading-tight">
+                  {renderStarWithTuHoa(star, `font-black text-[11px] ${getMainStarColor(star)}`)}
+                </div>
+              ))}
+            </div>
           )}
         </div>
+
+        {/* Sub Stars: 2 Columns (Left: Cát Tinh / Tứ Hóa - Right: Sát Tinh / Hung Tinh) */}
+        <div className="grid grid-cols-2 gap-1 text-[9.5px] leading-tight flex-1 py-1">
+          {/* Left Column: Cát tinh & Tứ hóa */}
+          <div className="space-y-0.5 pr-0.5 border-r border-gray-100">
+            {tuHoaStars.map((star, idx) => (
+              <div key={`th-${idx}`}>
+                {renderStarWithTuHoa(star, 'font-bold text-purple-700')}
+              </div>
+            ))}
+            {catStars.map((star, idx) => (
+              <div key={`cat-${idx}`} className="text-[#15803d] font-semibold">
+                {renderStarWithTuHoa(star, 'text-[#15803d] font-semibold')}
+              </div>
+            ))}
+          </div>
+
+          {/* Right Column: Sát tinh & Hung tinh */}
+          <div className="space-y-0.5 pl-0.5">
+            {satStars.map((star, idx) => (
+              <div key={`sat-${idx}`} className="text-[#dc2626] font-semibold">
+                {renderStarWithTuHoa(star, 'text-[#dc2626] font-semibold')}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom Footer of Palace (Chi, Vòng Tràng Sinh, Tiểu hạn) */}
+        <div className="flex items-center justify-between border-t border-gray-200 pt-0.5 text-[9.5px] text-gray-600">
+          <span className="font-bold text-gray-700">{palace.branch}</span>
+          <span className="font-bold text-blue-700">
+            {vongStars.find((s) => s.type === 'Vòng Sao' && s.element === 'Thủy')?.name || ''}
+          </span>
+          <span className="font-mono text-gray-500 font-medium">
+            Th{(palace.index % 12) + 1}
+          </span>
+        </div>
+
+        {/* Tuần / Triệt Tag Badge Overlay */}
+        {palace.tuanTriet && palace.tuanTriet.length > 0 && (
+          <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 z-20 flex gap-0.5 pointer-events-none">
+            {palace.tuanTriet.map((mark, mIdx) => (
+              <span
+                key={mIdx}
+                className={`text-[8px] font-black text-white px-1.5 py-0.2 rounded shadow-xs uppercase tracking-wider ${
+                  mark === 'Triệt' ? 'bg-[#1b3b6f]' : 'bg-[#0e8c62]'
+                }`}
+              >
+                {mark}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     );
   };
@@ -387,44 +365,40 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
         </div>
       )}
 
-      {/* Action Toolbar */}
+      {/* Action Toolbar (Matching hocvienlyso.org tools) */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-white border border-gray-200 p-3 rounded-lg shadow-xs no-print">
         <div className="text-xs text-gray-700 font-medium">
           Lá số Tử Vi Đẩu Số: <span className="font-bold text-gray-900">{personal.fullName}</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {/* Mobile Preview Modal Trigger */}
+          {/* Phóng to */}
           <button
             type="button"
-            onClick={() => {
-              if (!chartImageUrl && chartRef.current) {
-                handleCopyImage();
-              } else {
-                setShowImageModal(true);
-              }
-            }}
-            className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-[#27303f] hover:bg-[#1a222e] border border-amber-500/40 rounded text-xs font-semibold text-amber-300 transition shadow-2xs cursor-pointer"
-            title="Mở ảnh lá số để nhấn giữ sao chép trên điện thoại"
+            onClick={() => setShowImageModal(true)}
+            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-[#27303f] hover:bg-[#1a222e] border border-amber-500/40 rounded text-xs font-semibold text-amber-300 transition shadow-2xs cursor-pointer"
+            title="Mở ảnh lá số để xem và nhấn giữ sao chép trên điện thoại"
           >
             <Eye className="w-3.5 h-3.5 text-amber-400" />
-            <span>📱 Xem ảnh lá số</span>
+            <span>Phóng to</span>
           </button>
 
+          {/* Sao chép ảnh */}
           <button
             type="button"
             onClick={handleCopyImage}
             disabled={copyStatus === 'copying'}
             className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-[#1b3b6f] hover:bg-[#142e56] rounded text-xs font-semibold text-white transition shadow-2xs cursor-pointer"
+            title="Sao chép ảnh lá số hoặc chia sẻ"
           >
             {copyStatus === 'copied' ? (
               <>
                 <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Đã sao chép ảnh!</span>
+                <span>Đã sao chép!</span>
               </>
             ) : copyStatus === 'copying' ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>Đang sao chép...</span>
+                <span>Đang chép...</span>
               </>
             ) : (
               <>
@@ -434,44 +408,50 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
             )}
           </button>
 
+          {/* Tải ảnh */}
           <button
             type="button"
             onClick={handleDownloadImage}
             disabled={downloading}
             className="inline-flex items-center space-x-1 px-3 py-1.5 bg-[#0e8c62] hover:bg-[#0a7552] rounded text-xs font-semibold text-white transition shadow-2xs cursor-pointer"
+            title="Tải ảnh lá số chuẩn 1440x2000 px"
           >
             {downloading ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
             ) : (
               <Download className="w-3.5 h-3.5" />
             )}
-            <span>Tải lá số</span>
+            <span>Tải ảnh</span>
           </button>
 
+          {/* In lá số */}
           <button
             type="button"
             onClick={handlePrint}
             className="inline-flex items-center space-x-1 px-3 py-1.5 bg-[#c8860a] hover:bg-amber-700 rounded text-xs font-semibold text-white transition shadow-2xs cursor-pointer"
+            title="In lá số ra giấy"
           >
             <Printer className="w-3.5 h-3.5" />
-            <span>In Lá Số</span>
+            <span>In lá số</span>
           </button>
 
+          {/* Lưu lá số */}
           <button
             type="button"
             onClick={handleSave}
             disabled={saveStatus === 'saving'}
             className="inline-flex items-center space-x-1 px-3 py-1.5 bg-white hover:bg-gray-50 border border-gray-300 rounded text-xs font-semibold text-gray-700 transition cursor-pointer"
+            title="Lưu lá số vào tài khoản"
           >
             <Bookmark className="w-3.5 h-3.5 text-[#c8860a]" />
-            <span>Lưu Lá Số</span>
+            <span>Lưu lá số</span>
           </button>
         </div>
       </div>
 
       {/* Main Chart Sheet Container */}
       <div ref={containerRef} className="print-container w-full flex flex-col items-center">
-        {/* Mobile View Toggle Bar (Shown on screens narrower than 760px) */}
+        {/* Mobile View Toggle Bar */}
         {scale < 1 && (
           <div className="w-full flex items-center justify-between px-1 mb-2.5 no-print">
             <button
@@ -497,100 +477,110 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
         >
           <div
             style={{
-              width: isZoomFit && scale < 1 ? `${760 * scale}px` : 'auto',
+              width: isZoomFit && scale < 1 ? `${720 * scale}px` : 'auto',
               overflow: 'hidden',
             }}
           >
-            {/* Traditional Square Chart: 4 Columns x 4 Rows */}
+            {/* Traditional 720 x 1000 Chart (Outputs to exact 1440 x 2000 px) */}
             <div
               ref={chartRef}
-              className="relative bg-[#fefdf9] border-2 border-amber-900/40 p-2 md:p-3 rounded-lg shadow-sm overflow-hidden select-none"
+              id="ziwei-printable-chart"
+              className="relative bg-[#ffffff] border-2 border-[#1c4a78] p-2 shadow-md overflow-hidden select-none"
               style={{
-                width: '760px',
-                minWidth: '760px',
+                width: '720px',
+                minWidth: '720px',
+                maxWidth: '720px',
+                minHeight: '1000px',
                 zoom: isZoomFit && scale < 1 ? scale : undefined,
-                backgroundImage: "url('/BACKGROUND.png')",
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundColor: '#fefdf9',
+                backgroundColor: '#ffffff',
               }}
             >
-              {/* Background watermark overlay */}
-              <div
-                className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0"
-                aria-hidden="true"
-              >
-                <img
-                  src="/BACKGROUND.png"
-                  alt=""
-                  className="w-full h-full object-cover opacity-15"
-                />
-              </div>
-
-              <div className="relative z-10 grid grid-cols-4 border border-amber-900/30 bg-white/70 backdrop-blur-[0.5px]">
+              {/* 4x4 Grid of 12 Palaces with Central Thiên Bàn */}
+              <div className="relative z-10 grid grid-cols-4 border border-[#1c4a78]/40 bg-white">
                 {/* Row 1: Tỵ, Ngọ, Mùi, Thân */}
                 {renderPalaceCell('Tỵ')}
                 {renderPalaceCell('Ngọ')}
                 {renderPalaceCell('Mùi')}
                 {renderPalaceCell('Thân')}
 
-                {/* Row 2: Thìn, Center Info (Col 2-3, Row 2-3), Dậu */}
+                {/* Row 2: Thìn, Central Thiên Bàn (Col 2-3, Row 2-3), Dậu */}
                 {renderPalaceCell('Thìn')}
-                <div className="col-span-2 row-span-2 border border-amber-900/20 p-4 flex flex-col justify-between items-center text-center bg-white/90 relative overflow-hidden">
-                  {/* Subtle seal watermark */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
-                    <span className="text-7xl font-serif font-black tracking-widest text-[#c8860a]">
-                      LỮ PHÚC
-                    </span>
-                  </div>
-
-                  {/* Header of Center Box */}
-                  <div className="border-b border-amber-300/80 pb-2 w-full relative z-10">
-                    <div className="flex items-center justify-center space-x-1.5 text-[10px] font-extrabold uppercase tracking-widest text-[#c8860a]">
-                      <Sparkles className="w-3 h-3 text-[#c8860a]" />
-                      <span>Bát Tự Lữ Phúc • Tử Vi Đẩu Số</span>
-                      <Sparkles className="w-3 h-3 text-[#c8860a]" />
+                <div className="col-span-2 row-span-2 border border-[#1c4a78]/40 p-3 flex flex-col justify-between items-center text-center bg-white relative">
+                  {/* Thiên Bàn Header: Official Logo Lữ Phúc */}
+                  <div className="w-full flex flex-col items-center border-b border-gray-200 pb-2">
+                    <div className="flex items-center space-x-2">
+                      <img src="/logo.png" alt="Lữ Phúc" className="w-10 h-10 object-contain" />
+                      <div className="text-left">
+                        <div className="text-sm font-black text-[#1b3b6f] uppercase tracking-wider">
+                          BÁT TỰ LỮ PHÚC
+                        </div>
+                        <div className="text-[9px] font-bold text-[#c8860a] tracking-widest uppercase">
+                          TỬ VI ĐẨU SỐ TOÀN THƯ
+                        </div>
+                      </div>
                     </div>
-                    <h2 className="text-xl font-black text-gray-900 uppercase mt-1 tracking-wide">
+
+                    <h2 className="text-lg font-black text-gray-900 uppercase mt-1 tracking-wide">
                       {personal.fullName}
                     </h2>
-                    <div className="text-[11px] text-gray-600 font-semibold mt-0.5">
-                      Giới tính: <span className="font-bold text-[#8c1d1d]">{personal.genderLabel}</span>
+                    <div className="text-[10.5px] text-gray-700 font-semibold mt-0.5">
+                      <span className="font-bold text-[#8c1d1d]">{personal.genderLabel}</span> - {personal.lunarAge || 37} tuổi (năm {personal.currentYearCanChi || 'Bính Ngọ'})
                     </div>
                   </div>
 
-                  {/* Body Info Grid */}
-                  <div className="text-xs space-y-1.5 text-gray-700 w-full py-2 px-3 relative z-10">
-                    <div className="flex justify-between border-b border-gray-200/60 pb-1">
-                      <span className="text-gray-500 font-medium">Dương Lịch:</span>
-                      <span className="font-semibold text-gray-900">{personal.solarDateStr}</span>
+                  {/* Core Academic Metadata matching hocvienlyso.org */}
+                  <div className="w-full py-1 text-[11px] leading-snug space-y-0.5 text-gray-800">
+                    <div className="font-black text-blue-900 text-xs">
+                      {personal.menhMainStar || 'Mệnh Vô Chính Diệu'}
                     </div>
-                    <div className="flex justify-between border-b border-gray-200/60 pb-1">
-                      <span className="text-gray-500 font-medium">Âm Lịch:</span>
-                      <span className="font-semibold text-gray-900">{personal.lunarDateStr}</span>
+                    <div>
+                      Bản mệnh: <span className="font-bold text-[#8c1d1d]">{personal.menhElement}</span> - <span className="font-bold text-blue-900">{personal.cuc}</span>
                     </div>
-                    <div className="flex justify-between border-b border-gray-200/60 pb-1">
-                      <span className="text-gray-500 font-medium">Bản Mệnh:</span>
-                      <span className="font-bold text-[#8c1d1d]">{personal.menhElement}</span>
+                    <div>
+                      Mệnh quái: <span className="font-bold text-gray-900">{personal.menhQuai || 'Khảm'}</span> | Thân cư <span className="font-bold text-purple-900">{personal.thanCungName}</span>
                     </div>
-                    <div className="flex justify-between border-b border-gray-200/60 pb-1">
-                      <span className="text-gray-500 font-medium">Cục:</span>
-                      <span className="font-bold text-blue-900">{personal.cuc}</span>
+                    <div>
+                      Chủ mệnh: <span className="font-bold text-[#112244]">{personal.menhChu || 'Tham Lang'}</span> - Chủ thân: <span className="font-bold text-[#112244]">{personal.thanChu || 'Hỏa Tinh'}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500 font-medium">Thân cư:</span>
-                      <span className="font-bold text-purple-900">{personal.thanCungName}</span>
+                    {personal.hanCuuCung && (
+                      <div className="text-[10px] text-amber-800 font-semibold">
+                        Hạn Cửu Cung năm {personal.currentYearCanChi || 'Bính Ngọ'}: <span className="font-bold text-red-700">{personal.hanCuuCung}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Mini 4 Pillars Table */}
+                  <div className="w-full border border-gray-200 rounded text-[9px] overflow-hidden my-1">
+                    <div className="grid grid-cols-4 bg-gray-50 border-b border-gray-200 font-bold text-gray-600 py-0.5">
+                      <div>NĂM</div>
+                      <div>THÁNG</div>
+                      <div>NGÀY</div>
+                      <div>GIỜ</div>
+                    </div>
+                    <div className="grid grid-cols-4 font-black text-gray-900 py-0.5 border-b border-gray-100">
+                      <div>{personal.miniBazi?.year.can} {personal.miniBazi?.year.chi}</div>
+                      <div>{personal.miniBazi?.month.can} {personal.miniBazi?.month.chi}</div>
+                      <div>{personal.miniBazi?.day.can} {personal.miniBazi?.day.chi}</div>
+                      <div>{personal.miniBazi?.hour.can} {personal.miniBazi?.hour.chi}</div>
+                    </div>
+                    <div className="grid grid-cols-4 text-gray-500 py-0.5 text-[8.5px]">
+                      <div>Dương Lịch</div>
+                      <div className="col-span-3 text-right pr-2 font-mono">{personal.solarDateStr}</div>
+                    </div>
+                    <div className="grid grid-cols-4 text-gray-500 py-0.5 text-[8.5px] bg-gray-50/50">
+                      <div>Âm Lịch</div>
+                      <div className="col-span-3 text-right pr-2 font-mono">{personal.lunarDateStr}</div>
                     </div>
                   </div>
 
-                  {/* Footer note */}
-                  <div className="border-t border-amber-200/60 pt-1.5 w-full text-[10px] text-[#c8860a] font-bold uppercase tracking-wider relative z-10">
-                    Khảo cứu chuẩn Nam Phái & Bắc Phái
+                  {/* Footer Brand Link */}
+                  <div className="border-t border-gray-200 pt-1 w-full text-[9px] text-gray-500">
+                    Lập tại <strong className="text-[#1b3b6f]">https://weblaso-five.vercel.app</strong>
                   </div>
                 </div>
                 {renderPalaceCell('Dậu')}
 
-                {/* Row 3: Mão, (Center Info continued), Tuất */}
+                {/* Row 3: Mão, (Central continued), Tuất */}
                 {renderPalaceCell('Mão')}
                 {renderPalaceCell('Tuất')}
 
@@ -601,7 +591,37 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
                 {renderPalaceCell('Hợi')}
               </div>
 
-              {/* Transparent high-res image overlay for right-click 'Sao chép hình ảnh' & mobile long-press */}
+              {/* Bottom 5 Elements & Brightness Legend matching hocvienlyso.org */}
+              <div className="mt-1 flex flex-wrap items-center justify-between text-[9px] text-gray-600 px-1 border-t border-gray-200 pt-1">
+                <div className="flex items-center space-x-2">
+                  <span className="font-bold">Độ sáng:</span>
+                  <span>M: Miếu</span>
+                  <span>V: Vượng</span>
+                  <span>Đ: Đắc</span>
+                  <span>B: Bình</span>
+                  <span>H: Hãm</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="font-bold">Ngũ hành:</span>
+                  <span className="inline-flex items-center gap-1 font-semibold text-[#475569]">
+                    <span className="w-2 h-2 rounded-full bg-[#475569]"></span>Kim
+                  </span>
+                  <span className="inline-flex items-center gap-1 font-semibold text-[#16a34a]">
+                    <span className="w-2 h-2 rounded-full bg-[#16a34a]"></span>Mộc
+                  </span>
+                  <span className="inline-flex items-center gap-1 font-semibold text-[#0284c7]">
+                    <span className="w-2 h-2 rounded-full bg-[#0284c7]"></span>Thủy
+                  </span>
+                  <span className="inline-flex items-center gap-1 font-semibold text-[#dc2626]">
+                    <span className="w-2 h-2 rounded-full bg-[#dc2626]"></span>Hỏa
+                  </span>
+                  <span className="inline-flex items-center gap-1 font-semibold text-[#d97706]">
+                    <span className="w-2 h-2 rounded-full bg-[#d97706]"></span>Thổ
+                  </span>
+                </div>
+              </div>
+
+              {/* Transparent high-res overlay for right-click copy & mobile touch */}
               {chartImageUrl && (
                 <img
                   src={chartImageUrl}
@@ -618,7 +638,7 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
 
       {/* Helpful Tip */}
       <div className="text-[11px] sm:text-xs text-gray-500 text-center px-2 no-print">
-        💡 Mẹo: Bạn có thể <strong>nhấp chuột phải</strong> (hoặc bấm nút <strong>"📱 Xem ảnh lá số"</strong> trên điện thoại) để chọn <strong>"Sao chép hình ảnh"</strong> gửi qua Zalo, Facebook Messenger.
+        💡 Mẹo: Bạn có thể <strong>nhấp chuột phải</strong> (hoặc bấm nút <strong>&ldquo;Phóng to&rdquo;</strong> trên điện thoại) để chọn <strong>&ldquo;Sao chép hình ảnh&rdquo;</strong> gửi qua Zalo, Facebook Messenger.
       </div>
 
       {/* Mobile Image Preview Modal */}
@@ -648,27 +668,33 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
             </div>
 
             <div className="p-3 bg-amber-50/60 border-b border-amber-200/60 text-xs text-amber-900 flex items-center space-x-2">
-              <span className="text-base">👆</span>
+              <span>👉</span>
               <span>
-                <strong>Hướng dẫn điện thoại:</strong> Nhấn và <strong>giữ ngón tay vào hình ảnh</strong> trong 1-2 giây rồi chọn <strong>"Sao chép ảnh"</strong> hoặc <strong>"Lưu vào ảnh"</strong>.
+                <strong>Nhấn giữ vào ảnh 1 giây</strong> để chọn <em>&ldquo;Lưu vào Ảnh&rdquo;</em> hoặc <em>&ldquo;Sao chép hình ảnh&rdquo;</em>.
               </span>
             </div>
 
-            <div className="overflow-auto p-4 flex justify-center bg-gray-100 flex-1">
+            <div className="p-4 overflow-y-auto flex items-center justify-center bg-gray-50">
               <img
                 src={chartImageUrl}
                 alt={`Lá số Tử Vi - ${personal.fullName}`}
-                className="max-w-full h-auto object-contain rounded border border-gray-300 shadow-md select-all"
+                className="max-w-full h-auto rounded shadow-sm border border-gray-200 select-auto"
                 style={{ WebkitTouchCallout: 'default' }}
               />
             </div>
 
-            <div className="p-3 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
-              <span className="text-[11px] text-gray-500">Độ phân giải sắc nét 2x</span>
+            <div className="p-3 border-t border-gray-200 flex justify-end gap-2 bg-gray-50">
+              <button
+                type="button"
+                onClick={handleDownloadImage}
+                className="px-3 py-1.5 bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs font-semibold rounded shadow-xs"
+              >
+                Tải ảnh (PNG)
+              </button>
               <button
                 type="button"
                 onClick={() => setShowImageModal(false)}
-                className="px-4 py-1.5 bg-[#27303f] hover:bg-[#1a222e] text-white text-xs font-semibold rounded transition cursor-pointer"
+                className="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold rounded"
               >
                 Đóng
               </button>

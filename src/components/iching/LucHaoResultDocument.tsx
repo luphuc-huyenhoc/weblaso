@@ -59,14 +59,12 @@ export const LucHaoResultDocument = forwardRef<HTMLDivElement, LucHaoResultDocum
           id="prtQueDich"
           className="relative mx-auto border-2 border-[#3182ce] shadow-md font-sans select-text text-gray-900 overflow-hidden transition-transform"
           style={{
-            width: isScaled ? '720px' : '100%',
-            maxWidth: isScaled ? '720px' : '920px',
-            minWidth: isScaled ? '720px' : '640px',
+            width: '720px',
+            maxWidth: '720px',
+            minWidth: '720px',
+            minHeight: '720px',
             zoom: isScaled ? zoom : undefined,
-            backgroundImage: "url('/BACKGROUND.png')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundColor: '#fefdf9',
+            backgroundColor: '#ffffff',
           }}
         >
           {/* Background illustration layer */}

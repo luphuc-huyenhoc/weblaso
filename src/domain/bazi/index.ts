@@ -312,7 +312,7 @@ export function getTenGod(dayMaster: ThienCan, target: ThienCan): TenGod {
 }
 
 /** Nạp Âm Lục Thập Hoa Giáp lookup */
-const NAP_AM: Record<string, string> = {
+export const NAP_AM: Record<string, string> = {
   'Giáp Tý': 'Hải Trung Kim', 'Ất Sửu': 'Hải Trung Kim',
   'Bính Dần': 'Lư Trung Hỏa', 'Đinh Mão': 'Lư Trung Hỏa',
   'Mậu Thìn': 'Đại Lâm Mộc', 'Kỷ Tỵ': 'Đại Lâm Mộc',

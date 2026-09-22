@@ -200,69 +200,9 @@ export function Header({ user }: { user?: { fullName: string; role: string; emai
       {/* Main Brand & Banner Area */}
       <div className="max-w-site mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <Link href="/" className="flex items-center space-x-3.5 group">
-          {/* Imperial Gold Medallion Logo */}
+          {/* Official Lữ Phúc Logo */}
           <div className="relative w-13 h-13 flex-shrink-0 flex items-center justify-center filter drop-shadow-md group-hover:scale-105 transition-transform duration-300">
-            <svg viewBox="0 0 100 100" className="w-full h-full">
-              <defs>
-                <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#f7d070" />
-                  <stop offset="35%" stopColor="#d4af37" />
-                  <stop offset="70%" stopColor="#aa7c11" />
-                  <stop offset="100%" stopColor="#e5b842" />
-                </linearGradient>
-                <linearGradient id="navyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#1e2c3d" />
-                  <stop offset="100%" stopColor="#0f1722" />
-                </linearGradient>
-              </defs>
-              {/* Outer Radiant Sunburst Ring */}
-              <circle cx="50" cy="50" r="48" fill="none" stroke="url(#goldGrad)" strokeWidth="2.5" />
-              <circle cx="50" cy="50" r="44" fill="none" stroke="#d4af37" strokeWidth="0.8" strokeDasharray="2, 2" />
-              {/* Dark Imperial Center Disc */}
-              <circle cx="50" cy="50" r="41" fill="url(#navyGrad)" stroke="url(#goldGrad)" strokeWidth="1.8" />
-              {/* 8 Auspicious Bagua Points */}
-              <g stroke="url(#goldGrad)" strokeWidth="1.2" opacity="0.6">
-                <line x1="50" y1="12" x2="50" y2="19" />
-                <line x1="50" y1="81" x2="50" y2="88" />
-                <line x1="12" y1="50" x2="19" y2="50" />
-                <line x1="81" y1="50" x2="88" y2="50" />
-                <line x1="23" y1="23" x2="28" y2="28" />
-                <line x1="72" y1="72" x2="77" y2="77" />
-                <line x1="77" y1="23" x2="72" y2="28" />
-                <line x1="23" y1="77" x2="28" y2="72" />
-              </g>
-              {/* Stylized Yin Yang Waves */}
-              <path
-                d="M50,22 A28,28 0 0,0 50,78 A14,14 0 0,0 50,50 A14,14 0 0,1 50,22 Z"
-                fill="url(#goldGrad)"
-                opacity="0.22"
-              />
-              {/* Inner Crest Monogram: LP with Crown / Star Accent */}
-              <circle cx="50" cy="27" r="2.5" fill="url(#goldGrad)" />
-              <text
-                x="50"
-                y="57"
-                textAnchor="middle"
-                fontFamily="serif"
-                fontSize="25"
-                fontWeight="900"
-                fill="url(#goldGrad)"
-                letterSpacing="1"
-              >
-                LP
-              </text>
-              <text
-                x="50"
-                y="69"
-                textAnchor="middle"
-                fontSize="7.5"
-                fontWeight="bold"
-                fill="#f7d070"
-                letterSpacing="2"
-              >
-                LỮ PHÚC
-              </text>
-            </svg>
+            <img src="/logo.png" alt="Lữ Phúc" className="w-full h-full object-contain" />
           </div>
           <div>
             <div className="text-2xl font-black tracking-tight text-[#1e293b] flex items-center space-x-1.5">
