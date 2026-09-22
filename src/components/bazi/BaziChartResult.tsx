@@ -15,6 +15,8 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [saveMessage, setSaveMessage] = useState('');
   const [isExporting, setIsExporting] = useState(false);
+  const [chartImageUrl, setChartImageUrl] = useState<string | null>(null);
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copying' | 'copied' | 'error'>('idle');
 
   const { calculation: calc, interpretation: interp } = envelope;
 
@@ -36,6 +38,68 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
     window.addEventListener('resize', calculateScale);
     return () => window.removeEventListener('resize', calculateScale);
   }, []);
+
+  // Auto-generate high-res PNG image for right-click copy & mobile long-press
+  useEffect(() => {
+    let isMounted = true;
+    const generateImage = async () => {
+      if (!chartRef.current) return;
+      try {
+        const prevZoom = chartRef.current.style.zoom;
+        chartRef.current.style.zoom = '1';
+        const url = await toPng(chartRef.current, {
+          pixelRatio: 2,
+          backgroundColor: '#fefdf9',
+          cacheBust: true,
+        });
+        chartRef.current.style.zoom = prevZoom;
+        if (isMounted) {
+          setChartImageUrl(url);
+        }
+      } catch (err) {
+        console.error('Auto generate Bazi chart image error:', err);
+      }
+    };
+
+    const timer = setTimeout(generateImage, 350);
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [calc]);
+
+  const handleCopyImage = async () => {
+    setCopyStatus('copying');
+    try {
+      let dataUrl = chartImageUrl;
+      if (!dataUrl && chartRef.current) {
+        const prevZoom = chartRef.current.style.zoom;
+        chartRef.current.style.zoom = '1';
+        dataUrl = await toPng(chartRef.current, {
+          pixelRatio: 2,
+          backgroundColor: '#fefdf9',
+          cacheBust: true,
+        });
+        chartRef.current.style.zoom = prevZoom;
+        setChartImageUrl(dataUrl);
+      }
+
+      if (!dataUrl) throw new Error('Chưa thể kết xuất hình ảnh');
+
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': blob }),
+      ]);
+      setCopyStatus('copied');
+      setTimeout(() => setCopyStatus('idle'), 3000);
+    } catch (err) {
+      console.error('Copy image error:', err);
+      setCopyStatus('error');
+      setTimeout(() => setCopyStatus('idle'), 3000);
+      alert('Đã sẵn sàng ảnh. Bạn có thể nhấp chuột phải (hoặc nhấn giữ trên điện thoại) vào lá số và chọn "Sao chép hình ảnh".');
+    }
+  };
 
   const handlePrint = () => {
     if (chartRef.current) {
@@ -156,11 +220,32 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
             focusYear={envelope.input.focusYear}
             showAllDecades={showAllDecades}
             zoom={isZoomFit && scale < 1 ? scale : 1}
+            chartImageUrl={chartImageUrl}
           />
         </div>
 
         {/* Bottom Action Buttons */}
-        <div className="flex flex-row justify-center sm:justify-end items-center gap-2 sm:space-x-2 mt-3 w-full max-w-[960px] px-2 no-print">
+        <div className="flex flex-wrap justify-center sm:justify-end items-center gap-2 sm:space-x-2 mt-3 w-full max-w-[960px] px-2 no-print">
+          <button
+            type="button"
+            onClick={handleCopyImage}
+            disabled={copyStatus === 'copying'}
+            className="flex-1 sm:flex-initial bg-[#1b3b6f] hover:bg-[#142e56] text-white text-xs sm:text-sm font-bold px-4 py-2.5 sm:py-1.5 rounded-lg shadow-2xs transition cursor-pointer text-center flex items-center justify-center gap-1.5"
+          >
+            {copyStatus === 'copied' ? (
+              <>
+                <Check className="w-3.5 h-3.5" />
+                <span>Đã sao chép ảnh!</span>
+              </>
+            ) : copyStatus === 'copying' ? (
+              <span>Đang sao chép...</span>
+            ) : (
+              <>
+                <span>📋</span>
+                <span>Sao chép ảnh</span>
+              </>
+            )}
+          </button>
           <button
             type="button"
             onClick={handleDownloadPng}
@@ -176,6 +261,11 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
           >
             In lá số
           </button>
+        </div>
+
+        {/* Helpful Tip */}
+        <div className="text-[11px] sm:text-xs text-gray-500 text-center mt-1.5 px-2 no-print">
+          💡 Mẹo: Bạn có thể <strong>nhấp chuột phải</strong> (hoặc <strong>nhấn giữ trên điện thoại</strong>) trực tiếp vào lá số để chọn <strong>"Sao chép hình ảnh"</strong> gửi qua Zalo, Messenger.
         </div>
       </div>
 

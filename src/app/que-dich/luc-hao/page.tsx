@@ -6,11 +6,13 @@ import { LucHaoForm, LucHaoFormData } from '@/components/iching/LucHaoForm';
 import { LucHaoResultDocument } from '@/components/iching/LucHaoResultDocument';
 import { IChingInterpretation } from '@/components/iching/IChingInterpretation';
 import { toPng } from 'html-to-image';
-import { Download, Printer, Bookmark, Loader2 } from 'lucide-react';
+import { Download, Printer, Bookmark, Loader2, Copy, Check } from 'lucide-react';
 
 export default function LucHaoPage() {
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [copying, setCopying] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [saved, setSaved] = useState(false);
   const [result, setResult] = useState<IchingEnvelope | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -75,6 +77,30 @@ export default function LucHaoPage() {
     }
   };
 
+  const handleCopyImage = async () => {
+    if (!chartRef.current) return;
+    try {
+      setCopying(true);
+      const dataUrl = await toPng(chartRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: '#fefdf9',
+      });
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': blob }),
+      ]);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch (err) {
+      console.error('Copy iching image error:', err);
+      alert('Đã sẵn sàng ảnh quẻ dịch. Bạn có thể nhấp chuột phải (hoặc nhấn giữ trên điện thoại) vào quẻ và chọn "Sao chép hình ảnh".');
+    } finally {
+      setCopying(false);
+    }
+  };
+
   const handlePrint = () => {
     window.print();
   };
@@ -103,6 +129,30 @@ export default function LucHaoPage() {
 
           {/* Action Toolbar Matching Reference Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-3 py-2">
+            <button
+              type="button"
+              onClick={handleCopyImage}
+              disabled={copying}
+              className="inline-flex items-center space-x-2 bg-[#1b3b6f] hover:bg-[#142e56] text-white px-5 py-2.5 rounded font-bold text-xs uppercase tracking-wider shadow transition disabled:opacity-50 cursor-pointer"
+            >
+              {copied ? (
+                <>
+                  <Check className="w-4 h-4 text-emerald-400" />
+                  <span>Đã sao chép ảnh!</span>
+                </>
+              ) : copying ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Đang sao chép...</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  <span>Sao chép ảnh quẻ</span>
+                </>
+              )}
+            </button>
+
             <button
               type="button"
               onClick={handleDownloadImage}
@@ -134,6 +184,10 @@ export default function LucHaoPage() {
               <Bookmark className="w-4 h-4" />
               <span>{saved ? 'Đã lưu quẻ!' : 'Lưu quẻ'}</span>
             </button>
+          </div>
+
+          <div className="text-[11px] sm:text-xs text-gray-500 text-center -mt-2 px-2 no-print">
+            💡 Mẹo: Bạn có thể <strong>nhấp chuột phải</strong> (hoặc <strong>nhấn giữ trên điện thoại</strong>) trực tiếp vào quẻ để chọn <strong>"Sao chép hình ảnh"</strong> gửi qua Zalo, Messenger.
           </div>
 
           {/* 3. Detailed Commentary (Luận giải) */}

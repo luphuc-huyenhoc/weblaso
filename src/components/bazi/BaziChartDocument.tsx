@@ -12,10 +12,11 @@ export interface BaziChartDocumentProps {
   focusYear?: number;
   showAllDecades?: boolean;
   zoom?: number;
+  chartImageUrl?: string | null;
 }
 
 export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentProps>(
-  ({ calculation, focusYear, showAllDecades = false, zoom = 1 }, ref) => {
+  ({ calculation, focusYear, showAllDecades = false, zoom = 1, chartImageUrl }, ref) => {
     const { personal, pillars, majorLuck, solarTerms } = calculation;
 
     const isScaled = zoom && zoom < 1;
@@ -71,6 +72,16 @@ export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentPro
             {/* [E] Footer & Five Elements Legend */}
             <FiveElementsLegend />
           </div>
+
+          {/* Transparent high-res image overlay for right-click 'Sao chép hình ảnh' & mobile long-press */}
+          {chartImageUrl && (
+            <img
+              src={chartImageUrl}
+              alt={`Lá số Bát Tự - ${personal.fullName}`}
+              className="absolute inset-0 w-full h-full object-contain opacity-0 z-30 pointer-events-auto cursor-pointer select-none"
+              title="Nhấp chuột phải chọn 'Sao chép hình ảnh' hoặc nhấn giữ để lưu ảnh"
+            />
+          )}
         </div>
       </div>
     );

@@ -10,6 +10,11 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ## [Unreleased]
 
 ### Added
+- **Hỗ trợ sao chép hình ảnh trực tiếp (Copy Image) cho Lá số và Quẻ Dịch (`[UI-BAZI-DOCUMENT]`, `[UI-ICHING-RESULT]`, `[UI-ZIWEI-RESULT]`):**
+  - Tích hợp lớp phủ ảnh trong suốt chuẩn nét cao (2x DPI) lên toàn bộ vùng lá số Bát Tự, Quẻ Dịch Lục Hào và Lá số Tử Vi, cho phép người dùng nhấp chuột phải trực tiếp để hiện menu ngữ cảnh trình duyệt: **"Sao chép hình ảnh"** (Copy image), **"Lưu hình ảnh thành..."** (Save image as...), **"Mở hình ảnh trong thẻ mới"**.
+  - Hỗ trợ đầy đủ trên thiết bị di động (iOS Safari, Android Chrome): Nhấn giữ (long-press) vào lá số hoặc quẻ dịch để chọn **"Sao chép"** hoặc **"Lưu vào Ảnh"**.
+  - Bổ sung nút bấm 1 chạm **"📋 Sao chép ảnh"** / **"📋 Sao chép ảnh quẻ"** trên thanh công cụ điều khiển của Bát Tự, Quẻ Dịch Lục Hào, Quẻ Ngẫu Nhiên và Tử Vi, tự động ghi trực tiếp ảnh PNG vào khay nhớ tạm (Clipboard) kèm thông báo `"✓ Đã sao chép ảnh!"`.
+  - Bổ sung dòng gợi ý hướng dẫn người dùng nhấp chuột phải hoặc nhấn giữ để sao chép gửi nhanh qua Zalo, Messenger.
 - Xuất tài liệu cẩm nang phương pháp luận chi tiết cách tính Tiết Khí, Đại Vận và Lưu Niên (`docs/CACH_TINH_DAI_VAN_LUU_NIEN_TIET_KHI.md`).
 
 ### Changed

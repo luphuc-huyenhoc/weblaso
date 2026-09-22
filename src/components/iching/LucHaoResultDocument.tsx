@@ -1,5 +1,6 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState, useEffect, useRef } from 'react';
 import { IchingEnvelope } from '@/domain/iching';
+import { toPng } from 'html-to-image';
 import { IChingMetadata } from './IChingMetadata';
 import { HexagramPanel } from './HexagramPanel';
 import { LucHaoResultTable } from './LucHaoResultTable';
@@ -12,11 +13,46 @@ export interface LucHaoResultDocumentProps {
 export const LucHaoResultDocument = forwardRef<HTMLDivElement, LucHaoResultDocumentProps>(
   ({ envelope }, ref) => {
     const { calculation } = envelope;
+    const internalRef = useRef<HTMLDivElement>(null);
+    const [chartImageUrl, setChartImageUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+      let isMounted = true;
+      const generateImage = async () => {
+        const node = internalRef.current;
+        if (!node) return;
+        try {
+          const url = await toPng(node, {
+            pixelRatio: 2,
+            backgroundColor: '#fefdf9',
+            cacheBust: true,
+          });
+          if (isMounted) {
+            setChartImageUrl(url);
+          }
+        } catch (err) {
+          console.error('Auto generate IChing image error:', err);
+        }
+      };
+
+      const timer = setTimeout(generateImage, 350);
+      return () => {
+        isMounted = false;
+        clearTimeout(timer);
+      };
+    }, [calculation]);
 
     return (
       <div className="w-full overflow-x-auto py-2">
         <div
-          ref={ref}
+          ref={(node) => {
+            (internalRef as any).current = node;
+            if (typeof ref === 'function') {
+              ref(node);
+            } else if (ref) {
+              (ref as any).current = node;
+            }
+          }}
           id="prtQueDich"
           className="relative mx-auto border-2 border-[#3182ce] shadow-md font-sans select-text text-gray-900 overflow-hidden"
           style={{
@@ -63,6 +99,16 @@ export const LucHaoResultDocument = forwardRef<HTMLDivElement, LucHaoResultDocum
             {/* D. Footer Attribution & Five Elements Legend */}
             <IChingLegend />
           </div>
+
+          {/* Transparent high-res image overlay for right-click 'Sao chép hình ảnh' & mobile long-press */}
+          {chartImageUrl && (
+            <img
+              src={chartImageUrl}
+              alt={`Quẻ Dịch ${calculation.originalHexagram.name}`}
+              className="absolute inset-0 w-full h-full object-contain opacity-0 z-20 pointer-events-auto cursor-pointer select-none"
+              title="Nhấp chuột phải chọn 'Sao chép hình ảnh' hoặc nhấn giữ để lưu ảnh"
+            />
+          )}
         </div>
       </div>
     );

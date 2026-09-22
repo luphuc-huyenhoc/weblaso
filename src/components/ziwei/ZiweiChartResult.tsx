@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { ZiweiEnvelope, PalaceDetail } from '@/domain/ziweidoushu';
-import { Printer, Bookmark, Sparkles, User } from 'lucide-react';
+import { Printer, Bookmark, Sparkles, User, Copy, Check, Download, Loader2 } from 'lucide-react';
+import { toPng } from 'html-to-image';
 
 interface ZiweiChartResultProps {
   envelope: ZiweiEnvelope;
@@ -10,8 +11,84 @@ interface ZiweiChartResultProps {
 
 export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
   const chartRef = useRef<HTMLDivElement>(null);
+  const [chartImageUrl, setChartImageUrl] = useState<string | null>(null);
+  const [copying, setCopying] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
   const { calculation } = envelope;
   const { personal, palaces } = calculation;
+
+  useEffect(() => {
+    let isMounted = true;
+    const generateImage = async () => {
+      if (!chartRef.current) return;
+      try {
+        const url = await toPng(chartRef.current, {
+          pixelRatio: 2,
+          backgroundColor: '#fefdf9',
+          cacheBust: true,
+        });
+        if (isMounted) setChartImageUrl(url);
+      } catch (err) {
+        console.error('Auto generate Ziwei chart image error:', err);
+      }
+    };
+    const timer = setTimeout(generateImage, 350);
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [calculation]);
+
+  const handleCopyImage = async () => {
+    if (!chartRef.current) return;
+    try {
+      setCopying(true);
+      let dataUrl = chartImageUrl;
+      if (!dataUrl) {
+        dataUrl = await toPng(chartRef.current, {
+          pixelRatio: 2,
+          backgroundColor: '#fefdf9',
+          cacheBust: true,
+        });
+        setChartImageUrl(dataUrl);
+      }
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': blob }),
+      ]);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch (err) {
+      console.error('Copy ziwei image error:', err);
+      alert('Đã sẵn sàng ảnh lá số. Bạn có thể nhấp chuột phải (hoặc nhấn giữ trên điện thoại) vào lá số và chọn "Sao chép hình ảnh".');
+    } finally {
+      setCopying(false);
+    }
+  };
+
+  const handleDownloadImage = async () => {
+    if (!chartRef.current) return;
+    try {
+      setDownloading(true);
+      const dataUrl = await toPng(chartRef.current, {
+        pixelRatio: 2,
+        backgroundColor: '#fefdf9',
+        cacheBust: true,
+      });
+      const link = document.createElement('a');
+      link.download = `LaSoTuVi_${personal.fullName.trim().replace(/\s+/g, '_')}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Download ziwei image error:', err);
+      alert('Không thể tải ảnh trực tiếp. Vui lòng dùng tính năng "In Lá Số".');
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const handlePrint = () => {
     window.print();
@@ -136,24 +213,62 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
   return (
     <div className="space-y-6">
       {/* Action Toolbar */}
-      <div className="flex items-center justify-between bg-white border border-gray-200 p-3 rounded-lg shadow-xs no-print">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white border border-gray-200 p-3 rounded-lg shadow-xs no-print">
         <div className="text-xs text-gray-600 font-medium">
           Lá số Tử Vi Đẩu Số: <span className="font-bold text-gray-900">{personal.fullName}</span>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={handleSave}
-            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-white hover:bg-gray-50 border border-gray-300 rounded text-xs font-semibold text-gray-700 transition"
+            type="button"
+            onClick={handleCopyImage}
+            disabled={copying}
+            className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-[#1b3b6f] hover:bg-[#142e56] rounded text-xs font-semibold text-white transition shadow-2xs cursor-pointer"
           >
-            <Bookmark className="w-3.5 h-3.5 text-[#c8860a]" />
-            <span>Lưu Lá Số</span>
+            {copied ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Đã sao chép ảnh!</span>
+              </>
+            ) : copying ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Đang sao chép...</span>
+              </>
+            ) : (
+              <>
+                <Copy className="w-3.5 h-3.5" />
+                <span>Sao chép ảnh</span>
+              </>
+            )}
           </button>
           <button
+            type="button"
+            onClick={handleDownloadImage}
+            disabled={downloading}
+            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-[#0e8c62] hover:bg-[#0a7552] rounded text-xs font-semibold text-white transition shadow-2xs cursor-pointer"
+          >
+            {downloading ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Download className="w-3.5 h-3.5" />
+            )}
+            <span>Tải lá số</span>
+          </button>
+          <button
+            type="button"
             onClick={handlePrint}
-            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-[#c8860a] hover:bg-amber-700 rounded text-xs font-semibold text-white transition shadow-2xs"
+            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-[#c8860a] hover:bg-amber-700 rounded text-xs font-semibold text-white transition shadow-2xs cursor-pointer"
           >
             <Printer className="w-3.5 h-3.5" />
             <span>In Lá Số</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-white hover:bg-gray-50 border border-gray-300 rounded text-xs font-semibold text-gray-700 transition cursor-pointer"
+          >
+            <Bookmark className="w-3.5 h-3.5 text-[#c8860a]" />
+            <span>Lưu Lá Số</span>
           </button>
         </div>
       </div>
@@ -238,6 +353,21 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
           {renderPalaceCell('Tý')}
           {renderPalaceCell('Hợi')}
         </div>
+
+        {/* Transparent high-res image overlay for right-click 'Sao chép hình ảnh' & mobile long-press */}
+        {chartImageUrl && (
+          <img
+            src={chartImageUrl}
+            alt={`Lá số Tử Vi - ${personal.fullName}`}
+            className="absolute inset-0 w-full h-full object-contain opacity-0 z-20 pointer-events-auto cursor-pointer select-none"
+            title="Nhấp chuột phải chọn 'Sao chép hình ảnh' hoặc nhấn giữ để lưu ảnh"
+          />
+        )}
+      </div>
+
+      {/* Helpful Tip */}
+      <div className="text-[11px] sm:text-xs text-gray-500 text-center -mt-3 px-2 no-print">
+        💡 Mẹo: Bạn có thể <strong>nhấp chuột phải</strong> (hoặc <strong>nhấn giữ trên điện thoại</strong>) trực tiếp vào lá số để chọn <strong>"Sao chép hình ảnh"</strong> gửi qua Zalo, Messenger.
       </div>
     </div>
   );
