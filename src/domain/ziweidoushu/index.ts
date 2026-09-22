@@ -231,42 +231,220 @@ export function calculateZiWei(input: ZiWeiInput): ZiWeiEnvelope {
   // 4. Place 14 Main Stars
   // An Tử Vi by Cục and Lunar Day
   const tuViBranchIdx = (2 + Math.floor(lunar.day / cucNum) + 12) % 12;
-  const placeStar = (starName: string, bIdx: number, type: 'Chánh Tinh' | 'Cát Tinh') => {
+
+  const getStarBrightness = (star: string, bIdx: number): 'Miếu' | 'Vượng' | 'Đắc' | 'Hãm' => {
+    // Standard brightness table
+    const brightMap: Record<string, number[]> = {
+      'Tử Vi': [1, 2, 6, 7],      // Miếu tại Sửu, Dần, Ngọ, Mùi
+      'Thiên Cơ': [0, 4, 6, 10],   // Miếu tại Tý, Thìn, Ngọ, Tuất
+      'Thái Dương': [3, 5, 6],     // Miếu tại Mão, Tị, Ngọ
+      'Vũ Khúc': [1, 4, 7, 10],    // Miếu tại Sửu, Thìn, Mùi, Tuất
+      'Thiên Đồng': [2, 3],        // Miếu tại Dần, Mão
+      'Liêm Trinh': [2, 8],        // Miếu tại Dần, Thân
+      'Thiên Phủ': [0, 1, 2, 4, 7, 8, 10], // Miếu tại Tý, Sửu, Dần, Thìn, Mùi, Thân, Tuất
+      'Thái Âm': [0, 1, 10, 11],   // Miếu tại Tý, Sửu, Tuất, Hợi
+      'Tham Lang': [1, 4, 7, 10],  // Miếu tại Sửu, Thìn, Mùi, Tuất
+      'Cự Môn': [2, 3, 8, 9],      // Miếu tại Dần, Mão, Thân, Dậu
+      'Thiên Tướng': [0, 1, 2, 7, 8], // Miếu tại Tý, Sửu, Dần, Mùi, Thân
+      'Thiên Lương': [0, 2, 3, 6, 8, 9], // Miếu tại Tý, Dần, Mão, Ngọ, Thân, Dậu
+      'Thất Sát': [0, 1, 2, 6, 7, 8],    // Miếu tại Tý, Sửu, Dần, Ngọ, Mùi, Thân
+      'Phá Quân': [0, 6],          // Miếu tại Tý, Ngọ
+    };
+    if (brightMap[star]?.includes(bIdx)) return 'Miếu';
+    if ([2, 4, 6, 8].includes(bIdx)) return 'Vượng';
+    if ([1, 5, 7, 11].includes(bIdx)) return 'Đắc';
+    return 'Hãm';
+  };
+
+  const placeMainStar = (starName: string, bIdx: number) => {
     const p = palaces.find(x => DIA_CHI.indexOf(x.branch) === bIdx);
     if (p) {
       p.mainStars.push({
         name: starName,
-        type,
+        type: 'Chánh Tinh',
         element: MAIN_STAR_ELEMENTS[starName] ?? 'Kim',
-        brightness: 'Vượng',
+        brightness: getStarBrightness(starName, bIdx),
+      });
+    }
+  };
+
+  const placeSubStar = (
+    starName: string,
+    bIdx: number,
+    type: 'Cát Tinh' | 'Sát Tinh' | 'Tứ Hóa' | 'Vòng Sao',
+    element: NguhanhType = 'Kim',
+    brightness?: 'Miếu' | 'Vượng' | 'Đắc' | 'Hãm'
+  ) => {
+    const p = palaces.find(x => DIA_CHI.indexOf(x.branch) === bIdx);
+    if (p) {
+      p.subStars.push({
+        name: starName,
+        type,
+        element,
+        brightness,
       });
     }
   };
 
   // Group Tử Vi
-  placeStar('Tử Vi', tuViBranchIdx, 'Chánh Tinh');
-  placeStar('Thiên Cơ', (tuViBranchIdx - 1 + 12) % 12, 'Chánh Tinh');
-  placeStar('Thái Dương', (tuViBranchIdx - 3 + 12) % 12, 'Chánh Tinh');
-  placeStar('Vũ Khúc', (tuViBranchIdx - 4 + 12) % 12, 'Chánh Tinh');
-  placeStar('Thiên Đồng', (tuViBranchIdx - 5 + 12) % 12, 'Chánh Tinh');
-  placeStar('Liêm Trinh', (tuViBranchIdx - 8 + 12) % 12, 'Chánh Tinh');
+  placeMainStar('Tử Vi', tuViBranchIdx);
+  placeMainStar('Thiên Cơ', (tuViBranchIdx - 1 + 12) % 12);
+  placeMainStar('Thái Dương', (tuViBranchIdx - 3 + 12) % 12);
+  placeMainStar('Vũ Khúc', (tuViBranchIdx - 4 + 12) % 12);
+  placeMainStar('Thiên Đồng', (tuViBranchIdx - 5 + 12) % 12);
+  placeMainStar('Liêm Trinh', (tuViBranchIdx - 8 + 12) % 12);
 
-  // Group Thiên Phủ (symmetric across Dần - Thân axis: sum = 4)
+  // Group Thiên Phủ
   const thienPhuBranchIdx = (4 - tuViBranchIdx + 12) % 12;
-  placeStar('Thiên Phủ', thienPhuBranchIdx, 'Chánh Tinh');
-  placeStar('Thái Âm', (thienPhuBranchIdx + 1) % 12, 'Chánh Tinh');
-  placeStar('Tham Lang', (thienPhuBranchIdx + 2) % 12, 'Chánh Tinh');
-  placeStar('Cự Môn', (thienPhuBranchIdx + 3) % 12, 'Chánh Tinh');
-  placeStar('Thiên Tướng', (thienPhuBranchIdx + 4) % 12, 'Chánh Tinh');
-  placeStar('Thiên Lương', (thienPhuBranchIdx + 5) % 12, 'Chánh Tinh');
-  placeStar('Thất Sát', (thienPhuBranchIdx + 6) % 12, 'Chánh Tinh');
-  placeStar('Phá Quân', (thienPhuBranchIdx + 10) % 12, 'Chánh Tinh');
+  placeMainStar('Thiên Phủ', thienPhuBranchIdx);
+  placeMainStar('Thái Âm', (thienPhuBranchIdx + 1) % 12);
+  placeMainStar('Tham Lang', (thienPhuBranchIdx + 2) % 12);
+  placeMainStar('Cự Môn', (thienPhuBranchIdx + 3) % 12);
+  placeMainStar('Thiên Tướng', (thienPhuBranchIdx + 4) % 12);
+  placeMainStar('Thiên Lương', (thienPhuBranchIdx + 5) % 12);
+  placeMainStar('Thất Sát', (thienPhuBranchIdx + 6) % 12);
+  placeMainStar('Phá Quân', (thienPhuBranchIdx + 10) % 12);
+
+  // [A] Lục Cát Tinh
+  // Tả Phù (từ Thìn khởi tháng 1 đi thuận) & Hữu Bật (từ Tuất khởi tháng 1 đi nghịch)
+  placeSubStar('Tả Phù', (4 + (lMonth - 1)) % 12, 'Cát Tinh', 'Thổ');
+  placeSubStar('Hữu Bật', (10 - (lMonth - 1) + 12) % 12, 'Cát Tinh', 'Thổ');
+
+  // Văn Xương (từ Tuất khởi Tý đi nghịch) & Văn Khúc (từ Thìn khởi Tý đi thuận)
+  placeSubStar('Văn Xương', (10 - hourBranchIdx + 12) % 12, 'Cát Tinh', 'Kim');
+  placeSubStar('Văn Khúc', (4 + hourBranchIdx) % 12, 'Cát Tinh', 'Thủy');
+
+  // Thiên Khôi & Thiên Việt
+  const khoiVietMap: Record<ThienCan, [number, number]> = {
+    Giáp: [1, 7], Mậu: [1, 7], Canh: [1, 7],
+    Ất: [0, 8], Kỷ: [0, 8],
+    Bính: [11, 9], Đinh: [11, 9],
+    Tân: [6, 2],
+    Nhâm: [3, 5], Quý: [3, 5],
+  };
+  const [khoiIdx, vietIdx] = khoiVietMap[yearStem] || [1, 7];
+  placeSubStar('Thiên Khôi', khoiIdx, 'Cát Tinh', 'Hỏa');
+  placeSubStar('Thiên Việt', vietIdx, 'Cát Tinh', 'Hỏa');
+
+  // [B] Lục Sát Tinh & Lộc Tồn
+  // Lộc Tồn theo Can Năm
+  const locTonMap: Record<ThienCan, number> = {
+    Giáp: 2, Ất: 3, Bính: 5, Đinh: 6, Mậu: 5, Kỷ: 6, Canh: 8, Tân: 9, Nhâm: 11, Quý: 0,
+  };
+  const locTonIdx = locTonMap[yearStem] ?? 2;
+  placeSubStar('Lộc Tồn', locTonIdx, 'Cát Tinh', 'Thổ', 'Miếu');
+
+  // Kình Dương (tiến 1) & Đà La (lùi 1)
+  placeSubStar('Kình Dương', (locTonIdx + 1) % 12, 'Sát Tinh', 'Kim', 'Đắc');
+  placeSubStar('Đà La', (locTonIdx - 1 + 12) % 12, 'Sát Tinh', 'Kim', 'Đắc');
+
+  // Địa Không & Địa Kiếp
+  placeSubStar('Địa Không', (11 - hourBranchIdx + 12) % 12, 'Sát Tinh', 'Hỏa', 'Hãm');
+  placeSubStar('Địa Kiếp', (11 + hourBranchIdx) % 12, 'Sát Tinh', 'Hỏa', 'Hãm');
+
+  // Hỏa Tinh & Linh Tinh
+  const yearBranchIdx = DIA_CHI.indexOf(yearBranch);
+  const hoaKhoiMap: Record<number, [number, number]> = {
+    2: [1, 3], 6: [1, 3], 10: [1, 3],  // Dần Ngọ Tuất
+    8: [2, 10], 0: [2, 10], 4: [2, 10], // Thân Tý Thìn
+    5: [3, 10], 9: [3, 10], 1: [3, 10], // Tỵ Dậu Sửu
+    11: [9, 10], 3: [9, 10], 7: [9, 10],// Hợi Mão Mùi
+  };
+  const [hoaStart, linhStart] = hoaKhoiMap[yearBranchIdx] || [1, 3];
+  placeSubStar('Hỏa Tinh', (hoaStart + hourBranchIdx) % 12, 'Sát Tinh', 'Hỏa', 'Đắc');
+  placeSubStar('Linh Tinh', (linhStart + hourBranchIdx) % 12, 'Sát Tinh', 'Hỏa', 'Đắc');
+
+  // [C] Các Phụ Tinh Cát Khánh: Thiên Mã, Đào Hoa, Hồng Loan, Thiên Hỷ
+  // Thiên Mã (theo Chi Năm)
+  const maMap: Record<number, number> = { 2: 8, 6: 8, 10: 8, 8: 2, 0: 2, 4: 2, 5: 11, 9: 11, 1: 11, 11: 5, 3: 5, 7: 5 };
+  placeSubStar('Thiên Mã', maMap[yearBranchIdx] ?? 8, 'Cát Tinh', 'Hỏa');
+
+  // Đào Hoa
+  const daoHoaMap: Record<number, number> = { 2: 3, 6: 3, 10: 3, 8: 9, 0: 9, 4: 9, 5: 6, 9: 6, 1: 6, 11: 0, 3: 0, 7: 0 };
+  placeSubStar('Đào Hoa', daoHoaMap[yearBranchIdx] ?? 3, 'Cát Tinh', 'Mộc');
+
+  // Hồng Loan & Thiên Hỷ
+  const hongLoanIdx = (3 - yearBranchIdx + 12) % 12;
+  placeSubStar('Hồng Loan', hongLoanIdx, 'Cát Tinh', 'Thủy');
+  placeSubStar('Thiên Hỷ', (hongLoanIdx + 6) % 12, 'Cát Tinh', 'Thủy');
+
+  // Thiên Khốc & Thiên Hư
+  placeSubStar('Thiên Khốc', (6 - yearBranchIdx + 12) % 12, 'Sát Tinh', 'Thủy');
+  placeSubStar('Thiên Hư', (6 + yearBranchIdx) % 12, 'Sát Tinh', 'Thủy');
+
+  // Long Trì & Phượng Các
+  placeSubStar('Long Trì', (4 + yearBranchIdx) % 12, 'Cát Tinh', 'Thủy');
+  placeSubStar('Phượng Các', (10 - yearBranchIdx + 12) % 12, 'Cát Tinh', 'Thổ');
+  placeSubStar('Giải Thần', (10 - yearBranchIdx + 12) % 12, 'Cát Tinh', 'Mộc');
+
+  // [D] Vòng Thái Tuế (12 sao)
+  const thaiTueNames = [
+    'Thái Tuế', 'Thiếu Dương', 'Tang Môn', 'Thiếu Âm',
+    'Quan Phù', 'Tử Phù', 'Tuế Phá', 'Long Đức',
+    'Bạch Hổ', 'Phúc Đức', 'Điếu Khách', 'Trực Phù'
+  ];
+  thaiTueNames.forEach((star, idx) => {
+    placeSubStar(star, (yearBranchIdx + idx) % 12, 'Vòng Sao', 'Kim');
+  });
+
+  // [E] Vòng Bác Sĩ (12 sao từ Lộc Tồn)
+  // Dương Nam (Giáp, Bính, Mậu, Canh, Nhâm + Nam) hoặc Âm Nữ (Ất, Đinh, Kỷ, Tân, Quý + Nữ) -> Thuận; Ngược lại -> Nghịch
+  const isDuongCan = ['Giáp', 'Bính', 'Mậu', 'Canh', 'Nhâm'].includes(yearStem);
+  const isThuan = (isDuongCan && gender) || (!isDuongCan && !gender);
+  const bacSiNames = [
+    'Bác Sĩ', 'Lực Sĩ', 'Thanh Long', 'Tiểu Hao',
+    'Tướng Quân', 'Tấu Thư', 'Phi Liêm', 'Hỷ Thần',
+    'Bệnh Phù', 'Đại Hao', 'Phục Binh', 'Quan Phủ'
+  ];
+  bacSiNames.forEach((star, idx) => {
+    const bIdx = isThuan ? (locTonIdx + idx) % 12 : (locTonIdx - idx + 12) % 12;
+    placeSubStar(star, bIdx, 'Vòng Sao', 'Thổ');
+  });
+
+  // [F] Vòng Tràng Sinh (12 sao)
+  const trangSinhStarts: Record<number, number> = { 2: 8, 5: 8, 3: 11, 4: 5, 6: 2 };
+  const trangSinhStart = trangSinhStarts[cucNum] ?? 8;
+  const trangSinhNames = [
+    'Tràng Sinh', 'Mộc Dục', 'Quan Đới', 'Lâm Quan',
+    'Đế Vượng', 'Suy', 'Bệnh', 'Tử', 'Mộ', 'Tuyệt', 'Thai', 'Dưỡng'
+  ];
+  trangSinhNames.forEach((star, idx) => {
+    const bIdx = isThuan ? (trangSinhStart + idx) % 12 : (trangSinhStart - idx + 12) % 12;
+    placeSubStar(star, bIdx, 'Vòng Sao', 'Thủy');
+  });
+
+  // [G] Tuần Trung & Triệt Lộ Không Vong
+  const trietPairs: Record<ThienCan, [number, number]> = {
+    Giáp: [8, 9], Kỷ: [8, 9],
+    Ất: [6, 7], Canh: [6, 7],
+    Bính: [4, 5], Tân: [4, 5],
+    Đinh: [2, 3], Nhâm: [2, 3],
+    Mậu: [0, 1], Quý: [0, 1],
+  };
+  const trietBranches = trietPairs[yearStem] || [8, 9];
+
+  const tuanOffset = (yearBranchIdx - yearCanIdx + 12) % 12;
+  const tuanBranchPair = [ (10 - tuanOffset + 12) % 12, (11 - tuanOffset + 12) % 12 ];
+
+  palaces.forEach(p => {
+    const bIdx = DIA_CHI.indexOf(p.branch);
+    const marks: string[] = [];
+    if (trietBranches.includes(bIdx)) marks.push('Triệt');
+    if (tuanBranchPair.includes(bIdx)) marks.push('Tuần');
+    if (marks.length > 0) p.tuanTriet = marks;
+  });
 
   // 5. Tứ Hóa
   const tuHoa = TU_HOA_MAP[yearStem];
   if (tuHoa) {
     palaces.forEach(p => {
       p.mainStars.forEach(s => {
+        if (s.name === tuHoa.loc) s.name += ' (Hóa Lộc)';
+        if (s.name === tuHoa.quyen) s.name += ' (Hóa Quyền)';
+        if (s.name === tuHoa.khoa) s.name += ' (Hóa Khoa)';
+        if (s.name === tuHoa.ky) s.name += ' (Hóa Kỵ)';
+      });
+      p.subStars.forEach(s => {
         if (s.name === tuHoa.loc) s.name += ' (Hóa Lộc)';
         if (s.name === tuHoa.quyen) s.name += ' (Hóa Quyền)';
         if (s.name === tuHoa.khoa) s.name += ' (Hóa Khoa)';

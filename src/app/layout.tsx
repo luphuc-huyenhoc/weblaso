@@ -8,10 +8,10 @@ import { getCurrentUser } from '@/server/auth';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Lữ Phúc | Bát Tự Phúc Sơn — Gieo Phúc - Gặt Phước',
+  title: 'Lữ Phúc | Bát Tự Lữ Phúc — Gieo Phúc - Gặt Phước',
   description:
-    'Lữ Phúc — Gieo Phúc - Gặt Phước. Lập lá số Bát Tự Phúc Sơn, Tứ Trụ phong thủy cải vận bổ khuyết, luận giải hiện tại tương lai quá khứ, lá số tử vi, quẻ dịch lục hào và phong thủy bát trạch.',
-  keywords: ['bát tự', 'bát tự phúc sơn', 'phúc sơn', 'lữ phúc', 'gieo phúc gặt phước', 'tứ trụ', 'ngũ hành', 'tử vi', 'lục hào', 'quẻ dịch', 'bát trạch'],
+    'Lữ Phúc — Gieo Phúc - Gặt Phước. Lập lá số Bát Tự Lữ Phúc, Tứ Trụ phong thủy cải vận bổ khuyết, luận giải hiện tại tương lai quá khứ, lá số tử vi, quẻ dịch lục hào và phong thủy bát trạch.',
+  keywords: ['bát tự', 'bát tự lữ phúc', 'lữ phúc', 'gieo phúc gặt phước', 'tứ trụ', 'ngũ hành', 'tử vi', 'lục hào', 'quẻ dịch', 'bát trạch', 'huyền không phi tinh'],
   authors: [{ name: 'Lữ Phúc' }],
 };
 

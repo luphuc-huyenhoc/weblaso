@@ -10,6 +10,32 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ## [Unreleased]
 
 ### Added
+- **Đổi mới bộ nhận diện thương hiệu & Logo hoàng kim Bát Tự Lữ Phúc:**
+  - Chuyển đổi tên thương hiệu chính thức từ "Bát Tự Phúc Sơn" $\rightarrow$ **"Bát Tự Lữ Phúc"** trên toàn hệ thống (Header, Footer, Bát Tự, Tử Vi, Quẻ Dịch, Phong Thủy, Liên Hệ, Metadata).
+  - Thiết kế huy hiệu Logo hoàng kim đế vương với đĩa Thái Cực Bát Quái, chữ viết tắt **LP** và danh hiệu **BÁT TỰ LỮ PHÚC** tinh xảo, uy nghiêm.
+- **Quy chuẩn kích thước lá số Bát Tự 750 x 1056 px & Khắc phục sao chép trên điện thoại (`[UI-BAZI-DOCUMENT]`):**
+  - Căn chỉnh chiều rộng tiêu chuẩn lá số Bát Tự là **750px** và chiều cao tối thiểu **1056px** tạo dáng thuôn dài trang nhã chuẩn tỷ lệ vàng.
+  - Tự động co giãn (auto-scale zoom) theo chiều rộng màn hình thiết bị di động giúp lá số luôn hiển thị trọn vẹn 100% không bị tràn mép hay vỡ khung.
+  - Khắc phục triệt để lỗi không sao chép được ảnh trên điện thoại: Tích hợp Web Share API cho phép 1 chạm chia sẻ/lưu ảnh trực tiếp vào Thư viện ảnh/Zalo/Messenger; bổ sung nút và cửa sổ xem trước **"📱 Xem ảnh lá số"** với hướng dẫn nhấn giữ 1-2s để sao chép hình ảnh.
+- **Tối ưu hiển thị và sao chép Quẻ Dịch trên điện thoại (`[UI-ICHING-RESULT]`):**
+  - Tự động co giãn kích thước quẻ dịch Lục Hào và Quẻ Dịch Ngẫu Nhiên vừa khít màn hình di động, không bị tràn lề ngang hay mất quẻ biến.
+  - Hỗ trợ thanh chuyển đổi chế độ xem linh hoạt "Thu nhỏ vừa màn hình" và "Phóng to 100% (Vuốt ngang)".
+  - Tích hợp Web Share API và cửa sổ xem trước **"📱 Xem ảnh quẻ"** giúp người dùng điện thoại nhấn giữ sao chép hoặc lưu vào máy dễ dàng.
+- **Động cơ Huyền Không Phi Tinh & Giao diện Cửu Cung 24 Sơn Hướng (`[UI-COMPASS-24]`, `[PAGE-COMPASS]`):**
+  - Xây dựng động cơ `flyingStars.ts` hoàn chỉnh: Tính toán Tinh bàn Cửu Cung 3x3 theo Lạc Thư cho Tam Nguyên Cửu Vận (từ Vận 1 đến Vận 9, đặc biệt là Hạ Nguyên Vận 9: 2024 - 2043), 24 Sơn Hướng, Tam Nguyên Long (Địa, Thiên, Nhân), phi tinh Vận bàn, Sơn bàn, Hướng bàn, Lưu Niên tinh, Nguyệt tinh.
+  - Nhận diện tự động 4 đại cách cục kiến trúc kinh điển: Vượng Sơn Vượng Hướng (Đinh tài lưỡng đắc), Song Tinh Hội Hướng (Vượng tài tổn đinh), Song Tinh Hội Tọa (Vượng đinh tổn tài), Thượng Sơn Hạ Thủy (Tổn đinh phá tài), cùng cách cục Âm Dương Hợp Thập.
+  - Xây dựng bảng hiển thị Cửu Cung trực quan, sinh động (`FlyingStarsTable.tsx`) tích hợp vào La Bàn 24 Sơn Hướng khi người dùng xoay hoặc chọn độ số, hiển thị chi tiết Sơn tinh, Hướng tinh, Vận tinh, Niên tinh cùng khuyến nghị kích hoạt cung vị.
+- **Nâng cấp Hệ Thống Sao & Tối ưu Giao Diện Lá Số Tử Vi (`[CORE-ZIWEI]`, `[UI-ZIWEI-RESULT]`):**
+  - Bổ sung tính toán đắc hãm (Miếu, Vượng, Đắc, Hãm) cho 14 Chính Tinh.
+  - Bổ sung an Lục Cát Tinh (Tả Phù, Hữu Bật, Văn Xương, Văn Khúc, Thiên Khôi, Thiên Việt), Lục Sát Tinh (Kình Dương, Đà La, Địa Không, Địa Kiếp, Hỏa Tinh, Linh Tinh), Vòng Lộc Tồn / Bác Sĩ (12 sao thuận nghịch), Vòng Thái Tuế (12 sao), Vòng Tràng Sinh (12 sao), Tuần Trung & Triệt Lộ Không Vong, các Phụ tinh quan trọng (Thiên Mã, Đào Hoa, Hồng Loan, Thiên Hỷ, Thiên Khốc, Thiên Hư, Long Trì, Phượng Các, Giải Thần).
+  - Tinh chỉnh giao diện 12 cung Tử Vi: Phân màu trực quan theo tính chất sao (Chính tinh đỏ đậm đắc hãm, Tứ Hóa tím nổi bật, Cát tinh xanh dương, Sát tinh nâu đỏ, Vòng sao xám thanh nhã).
+  - Tự động co giãn (auto-scale) vừa vặn màn hình điện thoại di động, tích hợp nút "📱 Xem ảnh lá số", hỗ trợ Web Share API và sao chép ảnh trên di động.
+- **Bổ sung Cẩm Nang Kiến Thức Phong Thủy Chuyên Sâu (`src/app/phong-thuy/page.tsx`):**
+  - Mở rộng trang Hub Phong Thủy với cẩm nang tri thức thực chiến:
+    1. Bát Trạch Minh Cảnh & 8 Hướng Cát Hung (Sinh Khí, Thiên Y, Diên Niên, Phục Vị, Tuyệt Mệnh, Ngũ Quỷ, Lục Sát, Họa Hại).
+    2. Huyền Không Phi Tinh & Hạ Nguyên Vận 9 (2024 - 2043) cùng 4 đại cách cục kiến trúc.
+    3. Phân Kim 24 Sơn Hướng & Bí Quyết Tránh Tuyến Đại Không Vong, Tiểu Không Vong.
+    4. Bố cục "Tam Yếu Dương Trạch": Môn (Cửa chính), Táo (Bếp "Tọa Hung Hướng Cát"), Chủ (Phòng ngủ gia chủ).
 - **Hỗ trợ sao chép hình ảnh trực tiếp (Copy Image) cho Lá số và Quẻ Dịch (`[UI-BAZI-DOCUMENT]`, `[UI-ICHING-RESULT]`, `[UI-ZIWEI-RESULT]`):**
   - Tích hợp lớp phủ ảnh trong suốt chuẩn nét cao (2x DPI) lên toàn bộ vùng lá số Bát Tự, Quẻ Dịch Lục Hào và Lá số Tử Vi, cho phép người dùng nhấp chuột phải trực tiếp để hiện menu ngữ cảnh trình duyệt: **"Sao chép hình ảnh"** (Copy image), **"Lưu hình ảnh thành..."** (Save image as...), **"Mở hình ảnh trong thẻ mới"**.
   - Hỗ trợ đầy đủ trên thiết bị di động (iOS Safari, Android Chrome): Nhấn giữ (long-press) vào lá số hoặc quẻ dịch để chọn **"Sao chép"** hoặc **"Lưu vào Ảnh"**.
@@ -18,9 +44,9 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 - Xuất tài liệu cẩm nang phương pháp luận chi tiết cách tính Tiết Khí, Đại Vận và Lưu Niên (`docs/CACH_TINH_DAI_VAN_LUU_NIEN_TIET_KHI.md`).
 
 ### Changed
-- Cập nhật định danh thương hiệu: Thay thế toàn bộ "Bát Tự Manh Phái" thành "Bát Tự Phúc Sơn".
+- Cập nhật định danh thương hiệu: Thay thế toàn bộ "Bát Tự Manh Phái" và "Bát Tự Phúc Sơn" thành **"Bát Tự Lữ Phúc"**.
 - Cập nhật khẩu hiệu thương hiệu (Slogan) trên toàn bộ hệ thống: **Lữ Phúc — Gieo Phúc - Gặt Phước**.
-- Bổ sung và đồng bộ thông tin liên hệ chính thức trên Header, Footer và trang Liên hệ (`/lien-he`): Email `khotailieuquy2206@gmail.com`, Zalo/Hotline `0374436921`, TikTok `Huyền Học Lữ Phúc`.
+- Bổ sung và đồng bộ thông tin liên hệ chính thức trên Header, Footer và trang Liên hệ (`/lien-he`): Zalo/Hotline `0374436921`, TikTok `Huyền Học Lữ Phúc`.
 - Chuyển đổi toàn bộ phông chữ hệ thống sang **DM Sans** (hỗ trợ đầy đủ bộ ký tự tiếng Việt với đầy đủ độ dày nét).
 - Điều chỉnh tông màu nền giao diện website sang sắc ấm nhẹ nhàng (`#f9f5ec` - vàng ngà dịu mắt, hài hòa với thẻ gỗ sẫm màu).
 - Cập nhật giao diện khung nhập liệu lập lá số Bát Tự (`BaziForm.tsx`) sang phong cách thẻ gỗ sẫm màu sang trọng với điểm nhấn vàng caramel, các ô chọn bo tròn thanh lịch và nút "MỞ LÁ SỐ" chuẩn theo mẫu thiết kế (`ChatGPT Image Sep 22, 2026, 08_19_14 AM`).

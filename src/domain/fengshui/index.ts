@@ -1,5 +1,7 @@
 import { NguhanhType } from '../calendar/index';
 
+export * from './flyingStars';
+
 export type QuaiMenh =
   | 'Khảm'
   | 'Ly'

@@ -237,7 +237,7 @@ export function Navbar() {
               : 'bg-gray-800/80 text-gray-300 hover:text-white'
           }`}
         >
-          Bát Tự Phúc Sơn
+          Bát Tự Lữ Phúc
         </Link>
         <Link
           href="/la-so-tu-vi"

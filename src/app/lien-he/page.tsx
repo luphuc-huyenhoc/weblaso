@@ -7,7 +7,7 @@ export default function LienHePage() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [category, setCategory] = useState('Tư vấn Bát Tự Phúc Sơn');
+  const [category, setCategory] = useState('Tư vấn Bát Tự Lữ Phúc');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
@@ -24,10 +24,10 @@ export default function LienHePage() {
           Lữ Phúc — Gieo Phúc - Gặt Phước
         </span>
         <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 uppercase">
-          Liên Hệ & Đặt Lịch Tư Vấn Bát Tự Phúc Sơn
+          Liên Hệ & Đặt Lịch Tư Vấn Bát Tự Lữ Phúc
         </h1>
         <p className="text-sm text-gray-600 max-w-xl mx-auto">
-          Đội ngũ chuyên gia Lữ Phúc sẵn sàng hỗ trợ giải đáp mọi thắc mắc về Bát Tự Phúc Sơn, Tử Vi, phong thủy nhà ở và vật phẩm hộ mệnh.
+          Đội ngũ chuyên gia Lữ Phúc sẵn sàng hỗ trợ giải đáp mọi thắc mắc về Bát Tự Lữ Phúc, Tử Vi, phong thủy nhà ở và vật phẩm hộ mệnh.
         </p>
       </div>
 

@@ -28,10 +28,11 @@ export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentPro
           id="bazi-printable-chart"
           className="relative mx-auto border-2 border-[#1c4a78] shadow-md font-sans select-text text-gray-900 overflow-hidden scroll-mt-24 transition-transform"
           style={{
-            width: isScaled ? '720px' : '100%',
-            maxWidth: isScaled ? '720px' : '860px',
-            minWidth: isScaled ? '720px' : '680px',
-            zoom: isScaled ? zoom : undefined,
+            width: '750px',
+            minWidth: '750px',
+            maxWidth: '750px',
+            minHeight: '1056px',
+            zoom: isScaled ? zoom : 1,
             backgroundColor: '#fefdf9',
           }}
         >
@@ -78,7 +79,8 @@ export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentPro
             <img
               src={chartImageUrl}
               alt={`Lá số Bát Tự - ${personal.fullName}`}
-              className="absolute inset-0 w-full h-full object-contain opacity-0 z-30 pointer-events-auto cursor-pointer select-none"
+              className="absolute inset-0 w-full h-full object-contain opacity-[0.001] z-30 pointer-events-auto cursor-pointer"
+              style={{ WebkitTouchCallout: 'default' }}
               title="Nhấp chuột phải chọn 'Sao chép hình ảnh' hoặc nhấn giữ để lưu ảnh"
             />
           )}

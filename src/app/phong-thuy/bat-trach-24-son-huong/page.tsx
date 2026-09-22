@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { MOUNTAINS_24, evaluateMountainDegree } from '@/domain/fengshui';
 import { Compass, AlertTriangle, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { FlyingStarsTable } from '@/components/fengshui/FlyingStarsTable';
 
 export default function BatTrach24SonHuongPage() {
   const [degree, setDegree] = useState<number>(0);
@@ -95,6 +96,9 @@ export default function BatTrach24SonHuongPage() {
             {evaluation.status}
           </span>
         </div>
+
+        {/* Huyền Không Phi Tinh Cửu Cung & Cách Cục Kiến Trúc theo độ số */}
+        <FlyingStarsTable degree={degree} onDegreeChange={handleDegreeChange} />
 
         {/* Theoretical Notes on Khong Vong */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">

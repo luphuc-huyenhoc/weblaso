@@ -17,7 +17,7 @@ export default function HomePage() {
           <div className="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center mx-auto text-[#c8860a]">
             <Compass className="w-6 h-6" />
           </div>
-          <h3 className="font-bold text-gray-900 text-sm">Bát Tự Phúc Sơn</h3>
+          <h3 className="font-bold text-gray-900 text-sm">Bát Tự Lữ Phúc</h3>
           <p className="text-xs text-gray-500 leading-relaxed">
             Hệ thống lý thuyết Tứ Trụ chuẩn xác, phân tích chi tiết thân vượng nhược, tàng can và thập thần.
           </p>

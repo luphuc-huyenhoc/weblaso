@@ -16,7 +16,7 @@ export function Footer() {
             </div>
             <p className="text-gray-400 leading-relaxed text-[11px]">
               Bát Tự (Tứ Trụ) là một trong những phát minh quan trọng trong mệnh lý học truyền thống,
-              được đúc kết qua hàng nghìn năm lịch sử. Hệ thống lý luận Bát Tự Phúc Sơn & Dịch Học
+              được đúc kết qua hàng nghìn năm lịch sử. Hệ thống lý luận Bát Tự Lữ Phúc & Dịch Học
               hỗ trợ phân tích điểm vượng suy, ngũ hành khuyết thiếu để ứng dụng phong thủy cải vận bổ khuyết.
             </p>
           </div>
@@ -29,7 +29,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link href="/la-so-bat-tu" className="hover:text-[#c8860a] transition">
-                  Lập lá số Bát Tự Phúc Sơn
+                  Lập lá số Bát Tự Lữ Phúc
                 </Link>
               </li>
               <li>

@@ -8,10 +8,11 @@ import { IChingLegend } from './IChingLegend';
 
 export interface LucHaoResultDocumentProps {
   envelope: IchingEnvelope;
+  zoom?: number;
 }
 
 export const LucHaoResultDocument = forwardRef<HTMLDivElement, LucHaoResultDocumentProps>(
-  ({ envelope }, ref) => {
+  ({ envelope, zoom = 1 }, ref) => {
     const { calculation } = envelope;
     const internalRef = useRef<HTMLDivElement>(null);
     const [chartImageUrl, setChartImageUrl] = useState<string | null>(null);
@@ -42,8 +43,10 @@ export const LucHaoResultDocument = forwardRef<HTMLDivElement, LucHaoResultDocum
       };
     }, [calculation]);
 
+    const isScaled = zoom && zoom < 1;
+
     return (
-      <div className="w-full overflow-x-auto py-2">
+      <div className={`w-full ${isScaled ? 'overflow-visible flex justify-center' : 'overflow-x-auto'} py-2`}>
         <div
           ref={(node) => {
             (internalRef as any).current = node;
@@ -54,11 +57,12 @@ export const LucHaoResultDocument = forwardRef<HTMLDivElement, LucHaoResultDocum
             }
           }}
           id="prtQueDich"
-          className="relative mx-auto border-2 border-[#3182ce] shadow-md font-sans select-text text-gray-900 overflow-hidden"
+          className="relative mx-auto border-2 border-[#3182ce] shadow-md font-sans select-text text-gray-900 overflow-hidden transition-transform"
           style={{
-            width: '100%',
-            maxWidth: '920px',
-            minWidth: '640px',
+            width: isScaled ? '720px' : '100%',
+            maxWidth: isScaled ? '720px' : '920px',
+            minWidth: isScaled ? '720px' : '640px',
+            zoom: isScaled ? zoom : undefined,
             backgroundImage: "url('/BACKGROUND.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
@@ -105,7 +109,8 @@ export const LucHaoResultDocument = forwardRef<HTMLDivElement, LucHaoResultDocum
             <img
               src={chartImageUrl}
               alt={`Quẻ Dịch ${calculation.originalHexagram.name}`}
-              className="absolute inset-0 w-full h-full object-contain opacity-0 z-20 pointer-events-auto cursor-pointer select-none"
+              className="absolute inset-0 w-full h-full object-contain opacity-[0.001] z-20 pointer-events-auto cursor-pointer"
+              style={{ WebkitTouchCallout: 'default' }}
               title="Nhấp chuột phải chọn 'Sao chép hình ảnh' hoặc nhấn giữ để lưu ảnh"
             />
           )}

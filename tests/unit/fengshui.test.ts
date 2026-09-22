@@ -3,6 +3,7 @@ import {
   calculateQuaiMenh,
   calculateBatTrach,
   getMountainByDegree,
+  calculateFlyingStars,
 } from '../../src/domain/fengshui';
 
 describe('Phong Thủy Bát Trạch Domain Engine', () => {
@@ -37,5 +38,25 @@ describe('Phong Thủy Bát Trạch Domain Engine', () => {
     expect(mNorth1?.mountain).toBe('Tý');
     expect(mNorth2?.mountain).toBe('Tý');
     expect(mNorth3?.mountain).toBe('Tý');
+  });
+
+  it('correctly computes Huyền Không Phi Tinh for Period 9', () => {
+    // Period 9, Facing Tý (0°), Sitting Ngọ (180°)
+    const chart = calculateFlyingStars(9, 0);
+    expect(chart.van).toBe(9);
+    expect(chart.huongMountain.name).toBe('Tý');
+    expect(chart.toaMountain.name).toBe('Ngọ');
+    expect(chart.grid.length).toBe(3);
+    expect(chart.grid[0].length).toBe(3);
+
+    // Center palace has vanTinh = 9
+    const center = chart.flatPalaces[5];
+    expect(center).toBeDefined();
+    expect(center.vanTinh).toBe(9);
+
+    // Architectural pattern is recognized
+    expect(chart.cachCuc).toBeDefined();
+    expect(chart.cachCuc.name).toBeTruthy();
+    expect(chart.detailsByPalace.length).toBeGreaterThan(0);
   });
 });

@@ -11,6 +11,7 @@ import {
   evaluateMountainDegree,
 } from '@/domain/fengshui';
 import { Compass, RotateCw, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { FlyingStarsTable } from './FlyingStarsTable';
 
 interface Compass24MountainsProps {
   quaiMenh: QuaiMenh;
@@ -445,6 +446,9 @@ export function Compass24Mountains({
           })}
         </div>
       </div>
+
+      {/* Tinh Bàn & Kết Quả Huyền Không Phi Tinh theo độ số la bàn */}
+      <FlyingStarsTable degree={degree} onDegreeChange={onDegreeChange} />
     </div>
   );
 }

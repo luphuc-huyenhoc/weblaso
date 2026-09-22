@@ -18,6 +18,8 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
   const [chartImageUrl, setChartImageUrl] = useState<string | null>(null);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copying' | 'copied' | 'error'>('idle');
 
+  const [showImageModal, setShowImageModal] = useState(false);
+
   const { calculation: calc, interpretation: interp } = envelope;
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
       if (containerRef.current) {
         // Measure the container's available clientWidth
         const width = containerRef.current.clientWidth - 4;
-        const targetBaseWidth = 720;
+        const targetBaseWidth = 750;
         if (width > 0 && width < targetBaseWidth) {
           setScale(width / targetBaseWidth);
         } else {
@@ -88,16 +90,36 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
 
       const res = await fetch(dataUrl);
       const blob = await res.blob();
+      const cleanName = calc.personal.fullName.trim().replace(/\s+/g, '_');
+      const file = new File([blob], `LaSoBatTu_${cleanName}.png`, { type: 'image/png' });
+
+      // If mobile supports Web Share API with files (iOS Safari, Android Chrome)
+      if (typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: `Lá số Bát Tự - ${calc.personal.fullName}`,
+          text: `Lá số Bát Tự Lữ Phúc - ${calc.personal.fullName}`,
+        });
+        setCopyStatus('copied');
+        setTimeout(() => setCopyStatus('idle'), 3000);
+        return;
+      }
+
+      // Standard desktop clipboard
       await navigator.clipboard.write([
         new ClipboardItem({ 'image/png': blob }),
       ]);
       setCopyStatus('copied');
       setTimeout(() => setCopyStatus('idle'), 3000);
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.name === 'AbortError') {
+        setCopyStatus('idle');
+        return;
+      }
       console.error('Copy image error:', err);
-      setCopyStatus('error');
-      setTimeout(() => setCopyStatus('idle'), 3000);
-      alert('Đã sẵn sàng ảnh. Bạn có thể nhấp chuột phải (hoặc nhấn giữ trên điện thoại) vào lá số và chọn "Sao chép hình ảnh".');
+      setCopyStatus('idle');
+      // On mobile or when clipboard write is blocked, open the image modal directly
+      setShowImageModal(true);
     }
   };
 
@@ -261,12 +283,76 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
           >
             In lá số
           </button>
+          {chartImageUrl && (
+            <button
+              type="button"
+              onClick={() => setShowImageModal(true)}
+              className="flex-1 sm:flex-initial bg-[#8c451a] hover:bg-[#6e3513] text-white text-xs sm:text-sm font-bold px-4 py-2.5 sm:py-1.5 rounded-lg shadow-2xs transition cursor-pointer text-center"
+            >
+              📱 Xem ảnh lá số
+            </button>
+          )}
         </div>
 
         {/* Helpful Tip */}
         <div className="text-[11px] sm:text-xs text-gray-500 text-center mt-1.5 px-2 no-print">
           💡 Mẹo: Bạn có thể <strong>nhấp chuột phải</strong> (hoặc <strong>nhấn giữ trên điện thoại</strong>) trực tiếp vào lá số để chọn <strong>"Sao chép hình ảnh"</strong> gửi qua Zalo, Messenger.
         </div>
+
+        {/* Mobile Image Preview & Long-press Modal */}
+        {showImageModal && chartImageUrl && (
+          <div
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex flex-col items-center justify-center p-3 sm:p-6 no-print overflow-y-auto"
+            onClick={() => setShowImageModal(false)}
+          >
+            <div
+              className="bg-white rounded-xl max-w-lg w-full p-4 space-y-3 shadow-2xl relative my-auto text-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b pb-2">
+                <div className="text-left">
+                  <h4 className="font-extrabold text-sm text-gray-900">Ảnh Lá Số Bát Tự Lữ Phúc</h4>
+                  <p className="text-[11px] text-amber-700 font-semibold">
+                    👉 Nhấn giữ ngón tay vào ảnh bên dưới để chọn &ldquo;Sao chép&rdquo; hoặc &ldquo;Lưu vào Ảnh&rdquo;
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowImageModal(false)}
+                  className="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-bold"
+                >
+                  ✕ Đóng
+                </button>
+              </div>
+
+              <div className="max-h-[70vh] overflow-y-auto rounded-lg border border-gray-200 bg-gray-50 p-1">
+                <img
+                  src={chartImageUrl}
+                  alt={`Lá số ${calc.personal.fullName}`}
+                  className="w-full h-auto object-contain select-auto rounded"
+                  style={{ WebkitTouchCallout: 'default' }}
+                />
+              </div>
+
+              <div className="flex gap-2 justify-center pt-1">
+                <button
+                  type="button"
+                  onClick={handleDownloadPng}
+                  className="bg-[#0e8c62] hover:bg-[#0a7552] text-white text-xs font-bold px-4 py-2 rounded-lg"
+                >
+                  Tải về máy (PNG)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowImageModal(false)}
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold px-4 py-2 rounded-lg"
+                >
+                  Đóng
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Supplementary Astrological Interpretation & Remedies (Outside the printed document sheet) */}
@@ -348,7 +434,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
         </div>
 
         <div className="pt-2 text-xs text-gray-500 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-          <span>Hệ thống: Bát Tự Phúc Sơn & Tử Bình Toàn Thư</span>
+          <span>Hệ thống: Bát Tự Lữ Phúc & Tử Bình Toàn Thư</span>
           <span className="font-semibold text-gray-700">Đại Vận & Lưu Niên Timeline</span>
         </div>
       </div>
