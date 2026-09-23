@@ -19,16 +19,58 @@ export async function captureChartImage(
 ): Promise<string> {
   const { width, height } = options;
 
-  // 1. Deep clone the element to preserve on-screen interactive DOM
+  // 1. Filter and ensure all non-overlay images in the live DOM are loaded
+  const isOverlayImg = (img: HTMLImageElement) =>
+    img.hasAttribute('data-chart-overlay') ||
+    img.getAttribute('title')?.includes('Sao chép') ||
+    img.className.includes('opacity-[0.001]') ||
+    img.className.includes('opacity-0');
+
+  const liveImages = Array.from(element.querySelectorAll('img')).filter((img) => !isOverlayImg(img));
+
+  await Promise.all(
+    liveImages.map((img) => {
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+      return new Promise<void>((resolve) => {
+        img.addEventListener('load', () => resolve(), { once: true });
+        img.addEventListener('error', () => resolve(), { once: true });
+        setTimeout(resolve, 2000);
+      });
+    })
+  );
+
+  // 2. Deep clone the element to preserve on-screen interactive DOM
   const clone = element.cloneNode(true) as HTMLElement;
 
-  // 2. Remove any invisible touch/click overlays from the clone
+  // 3. Remove any invisible touch/click overlays from the clone
   const overlays = clone.querySelectorAll(
     'img[title*="Sao chép"], img[class*="opacity-0"], img[class*="opacity-\\[0"], [data-chart-overlay="true"], img[data-chart-overlay]'
   );
   overlays.forEach((img) => img.remove());
 
-  // 3. Reset layout styles on the clone to pristine desktop metrics
+  // 4. In the clone, convert every <img> to an inline base64 Data URL from the live DOM.
+  // This completely eliminates network fetches, CORS, or foreignObject missing image bugs!
+  const cloneImages = Array.from(clone.querySelectorAll('img'));
+  for (let i = 0; i < cloneImages.length; i++) {
+    const liveImg = liveImages[i];
+    const cloneImg = cloneImages[i];
+    if (liveImg && liveImg.complete && liveImg.naturalWidth > 0) {
+      try {
+        const c = document.createElement('canvas');
+        c.width = liveImg.naturalWidth;
+        c.height = liveImg.naturalHeight;
+        const ctx = c.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(liveImg, 0, 0);
+          cloneImg.src = c.toDataURL('image/png');
+        }
+      } catch (err) {
+        console.warn('Canvas conversion skipped:', err);
+      }
+    }
+  }
+
+  // 5. Reset layout styles on the clone to pristine desktop metrics
   clone.style.display = 'block';
   clone.style.visibility = 'visible';
   clone.style.zoom = '1';
@@ -53,7 +95,7 @@ export async function captureChartImage(
     clone.style.minHeight = 'auto';
   }
 
-  // 4. Create an isolated offscreen mounting host attached to document.body
+  // 6. Create an isolated offscreen mounting host attached to document.body
   const host = document.createElement('div');
   host.id = 'chart-capture-sandbox';
   host.style.position = 'fixed';
@@ -71,17 +113,6 @@ export async function captureChartImage(
   document.body.appendChild(host);
 
   try {
-    // 5. Ensure all images inside clone are ready
-    const images = Array.from(clone.querySelectorAll('img'));
-    await Promise.all(
-      images.map((img) => {
-        if (img.complete) return Promise.resolve();
-        return new Promise((resolve) => {
-          img.onload = resolve;
-          img.onerror = resolve;
-        });
-      })
-    );
 
     // Force reflow and wait a tick for fonts/layout to settle
     void clone.offsetHeight;

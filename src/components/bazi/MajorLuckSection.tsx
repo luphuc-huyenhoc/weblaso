@@ -78,7 +78,7 @@ export function MajorLuckSection({
         </div>
 
         {/* 10 Major Luck Columns */}
-        <div className="grid grid-cols-10 border-t-[1.5px] border-[#3182ce] text-center min-h-[70px] items-stretch">
+        <div className="grid grid-cols-10 border-t-[1.5px] border-[#3182ce] text-center min-h-[76px] items-stretch">
           {pillars.slice(0, 10).map((p, idx) => {
             const isActive = idx === activePillarIndex;
             const stemColor = getStemColor(p.stem);
@@ -89,20 +89,20 @@ export function MajorLuckSection({
             return (
               <div
                 key={p.index || idx}
-                className={`flex-1 flex flex-col justify-between py-1 px-0 text-[10px] transition-colors ${
+                className={`flex-1 flex flex-col justify-between py-1.5 px-0 text-[10px] transition-colors ${
                   idx < 9 ? 'border-r-[1.5px] border-[#3182ce]' : ''
                 } ${isActive ? 'bg-[#fff2d4] font-bold' : 'hover:bg-amber-50/40'}`}
               >
                 {/* Stem & Branch */}
                 <div className="leading-tight">
                   <div
-                    className="text-xs font-black uppercase tracking-tight"
+                    className="text-[12.5px] font-black uppercase tracking-tight"
                     style={{ color: stemColor }}
                   >
                     {p.stem}
                   </div>
                   <div
-                    className="text-xs font-black uppercase tracking-tight mt-0.5"
+                    className="text-[12.5px] font-black uppercase tracking-tight mt-0.5"
                     style={{ color: branchColor }}
                   >
                     {p.branch}
@@ -110,7 +110,7 @@ export function MajorLuckSection({
                 </div>
 
                 {/* Age Interval & Start Year */}
-                <div className="text-[9.5px] text-[#0a1c8f] font-bold leading-tight mt-0.5">
+                <div className="text-[10px] text-[#0a1c8f] font-bold leading-tight mt-0.5">
                   <div>
                     {p.startAge}-{p.endAge}t
                   </div>

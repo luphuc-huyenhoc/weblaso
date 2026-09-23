@@ -28,9 +28,12 @@ export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentPro
           id="bazi-printable-chart"
           className="relative mx-auto border-2 border-[#1c4a78] shadow-md font-sans select-text text-gray-900 overflow-hidden scroll-mt-24 transition-transform"
           style={{
-            width: '720px',
-            minWidth: '720px',
-            maxWidth: '720px',
+            width: '750px',
+            minWidth: '750px',
+            maxWidth: '750px',
+            height: '1000px',
+            minHeight: '1000px',
+            maxHeight: '1000px',
             zoom: isScaled ? zoom : 1,
             backgroundColor: '#ffffff',
           }}
@@ -39,7 +42,7 @@ export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentPro
           <BaziChartWatermark />
 
           {/* Foreground Structured Layout (Z-Index 10 with semi-translucent backdrop for legibility) */}
-          <div className="relative z-10 w-full flex flex-col bg-white/50">
+          <div className="relative z-10 w-full h-full flex flex-col justify-between bg-white/40">
             {/* [A] Header / Personal Metadata */}
             <BaziChartHeader
               fullName={personal.fullName}

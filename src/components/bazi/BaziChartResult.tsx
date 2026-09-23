@@ -26,7 +26,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
     function calculateScale() {
       if (containerRef.current) {
         const width = containerRef.current.clientWidth - 4;
-        const targetBaseWidth = 720;
+        const targetBaseWidth = 750;
         if (width > 0 && width < targetBaseWidth) {
           setScale(width / targetBaseWidth);
         } else {
@@ -46,7 +46,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
     const generateImage = async () => {
       if (!chartRef.current) return;
       try {
-        const url = await captureChartImage(chartRef.current, { width: 720 });
+        const url = await captureChartImage(chartRef.current, { width: 750, height: 1000 });
         if (isMounted) {
           setChartImageUrl(url);
         }
@@ -70,8 +70,8 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
       const birthDate = `${envelope.input.year}-${envelope.input.month}-${envelope.input.day}`;
       const res = await copyChartImage(chartImageUrl || chartRef.current!, {
         fileName: `LaSoBatTu_${cleanName}_${birthDate}`,
-        width: 720,
-        height: 0,
+        width: 750,
+        height: 1000,
         title: `Lá số Bát Tự - ${calc.personal.fullName}`,
       });
 
@@ -116,8 +116,8 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
       const birthDate = `${envelope.input.year}-${envelope.input.month}-${envelope.input.day}`;
       await downloadChartImage(chartImageUrl || chartRef.current!, {
         fileName: `LaSoBatTu_${cleanName}_${birthDate}`,
-        width: 720,
-        height: 0,
+        width: 750,
+        height: 1000,
         title: `Lá số Bát Tự - ${calc.personal.fullName}`,
       });
     } catch (err) {
@@ -200,7 +200,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
             <img
               src={chartImageUrl}
               alt={`Lá số Bát Tự - ${calc.personal.fullName}`}
-              className="w-full h-auto max-w-[720px] rounded-xs border-2 border-[#1c4a78] shadow-md cursor-pointer block select-auto"
+              className="w-full h-auto max-w-[750px] rounded-xs border-2 border-[#1c4a78] shadow-md cursor-pointer block select-auto"
               style={{ WebkitTouchCallout: 'default' }}
             />
           </div>
@@ -232,7 +232,7 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
             type="button"
             onClick={async () => {
               if (!chartImageUrl && chartRef.current) {
-                const url = await captureChartImage(chartRef.current, { width: 720 });
+                const url = await captureChartImage(chartRef.current, { width: 750, height: 1000 });
                 setChartImageUrl(url);
               }
               setShowImageModal(true);

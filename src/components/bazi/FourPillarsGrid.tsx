@@ -18,17 +18,17 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
     <div className="w-full text-[#112244] border-b-[1.5px] border-[#3182ce]">
       {/* 1. DƯƠNG LỊCH ROW */}
       <div
-        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[34px] items-stretch text-center"
+        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[36px] items-stretch text-center"
         style={{ display: 'grid', gridTemplateColumns: '12% 22% 22% 22% 22%' }}
       >
-        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[11px] tracking-wider uppercase bg-blue-50/20 py-1">
+        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[11.5px] tracking-wider uppercase bg-blue-50/20 py-1">
           <span>DƯƠNG</span>
           <span>LỊCH</span>
         </div>
         {pList.map((p, idx) => (
           <div
             key={`solar-${idx}`}
-            className={`h-full flex items-center justify-center font-bold text-[13px] text-[#112244] py-1 ${
+            className={`h-full flex items-center justify-center font-bold text-[13.5px] text-[#112244] py-1 ${
               idx < 3 ? 'border-r-[1.5px] border-[#3182ce]' : ''
             }`}
           >
@@ -39,10 +39,10 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
 
       {/* 2. CHỦ TINH ROW */}
       <div
-        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[36px] items-stretch text-center"
+        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[38px] items-stretch text-center"
         style={{ display: 'grid', gridTemplateColumns: '12% 22% 22% 22% 22%' }}
       >
-        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[11px] tracking-wider uppercase bg-blue-50/20 py-1">
+        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[11.5px] tracking-wider uppercase bg-blue-50/20 py-1">
           <span>CHỦ</span>
           <span>TINH</span>
         </div>
@@ -51,12 +51,12 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
           return (
             <div
               key={`main-god-${idx}`}
-              className={`h-full flex items-center justify-center font-bold text-[12px] text-[#112244] py-1 ${
+              className={`h-full flex items-center justify-center font-bold text-[12.5px] text-[#112244] py-1 ${
                 idx < 3 ? 'border-r-[1.5px] border-[#3182ce]' : ''
               }`}
             >
               {isDay ? (
-                <div className="leading-tight font-black uppercase text-[#112244] text-[11.5px]">
+                <div className="leading-tight font-black uppercase text-[#112244] text-[12px]">
                   <div>NHẬT</div>
                   <div>CHỦ</div>
                 </div>
@@ -70,7 +70,7 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
 
       {/* 3. BÁT TỰ ROW — Refined balanced typography with Ngũ Hành Colors */}
       <div
-        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[90px] items-stretch text-center bg-transparent"
+        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[96px] items-stretch text-center bg-transparent"
         style={{ display: 'grid', gridTemplateColumns: '12% 22% 22% 22% 22%' }}
       >
         <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-black text-xs tracking-widest uppercase bg-blue-50/20 py-2">
@@ -83,18 +83,18 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
           return (
             <div
               key={`battu-cell-${idx}`}
-              className={`h-full flex flex-col justify-center items-center py-2 space-y-1 ${
+              className={`h-full flex flex-col justify-center items-center py-2 space-y-1.5 ${
                 idx < 3 ? 'border-r-[1.5px] border-[#3182ce]' : ''
               }`}
             >
               <div
-                className="text-[22px] font-black uppercase tracking-wider leading-none"
+                className="text-[24px] font-black uppercase tracking-wider leading-none"
                 style={{ color: stemColor }}
               >
                 {p.stem}
               </div>
               <div
-                className="text-[22px] font-black uppercase tracking-wider leading-none"
+                className="text-[24px] font-black uppercase tracking-wider leading-none"
                 style={{ color: branchColor }}
               >
                 {p.branch}
@@ -106,10 +106,10 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
 
       {/* 4. TÀNG ẨN ROW */}
       <div
-        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[34px] items-stretch text-center"
+        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[36px] items-stretch text-center"
         style={{ display: 'grid', gridTemplateColumns: '12% 22% 22% 22% 22%' }}
       >
-        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[11px] tracking-wider uppercase bg-blue-50/20 py-1">
+        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[11.5px] tracking-wider uppercase bg-blue-50/20 py-1">
           <span>TÀNG</span>
           <span>ẨN</span>
         </div>
@@ -123,7 +123,7 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
             {p.hiddenStems.map((h, hIdx) => (
               <span
                 key={hIdx}
-                className="font-bold text-[12.5px] px-0.5"
+                className="font-bold text-[13px] px-0.5"
                 style={{ color: getElementColor(h.element) }}
               >
                 {h.stem}
@@ -135,17 +135,17 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
 
       {/* 5. PHÓ TINH ROW */}
       <div
-        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[34px] items-stretch text-center"
+        className="w-full border-b-[1.5px] border-[#3182ce] min-h-[36px] items-stretch text-center"
         style={{ display: 'grid', gridTemplateColumns: '12% 22% 22% 22% 22%' }}
       >
-        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[11px] tracking-wider uppercase bg-blue-50/20 py-1">
+        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[11.5px] tracking-wider uppercase bg-blue-50/20 py-1">
           <span>PHÓ</span>
           <span>TINH</span>
         </div>
         {pList.map((p, idx) => (
           <div
             key={`pho-tinh-${idx}`}
-            className={`h-full flex items-center justify-around px-1 py-1 text-[11px] font-bold text-[#112244] ${
+            className={`h-full flex items-center justify-around px-1 py-1 text-[11.5px] font-bold text-[#112244] ${
               idx < 3 ? 'border-r-[1.5px] border-[#3182ce]' : ''
             }`}
           >
@@ -158,17 +158,17 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
 
       {/* 6. THẦN SÁT ROW */}
       <div
-        className="w-full min-h-[75px] items-stretch text-center"
+        className="w-full min-h-[85px] items-stretch text-center"
         style={{ display: 'grid', gridTemplateColumns: '12% 22% 22% 22% 22%' }}
       >
-        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[11px] tracking-wider uppercase bg-blue-50/20 py-2">
+        <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-bold text-[11.5px] tracking-wider uppercase bg-blue-50/20 py-2">
           <span>THẦN</span>
           <span>SÁT</span>
         </div>
         {pList.map((p, idx) => (
           <div
             key={`than-sat-${idx}`}
-            className={`h-full flex flex-col justify-start items-center py-2 px-1 space-y-0.5 text-[11px] font-semibold text-[#112244] leading-snug ${
+            className={`h-full flex flex-col justify-start items-center py-2 px-1 space-y-0.5 text-[11.5px] font-semibold text-[#112244] leading-snug ${
               idx < 3 ? 'border-r-[1.5px] border-[#3182ce]' : ''
             }`}
           >
