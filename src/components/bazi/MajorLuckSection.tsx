@@ -44,9 +44,9 @@ export function MajorLuckSection({
       </div>
 
       {/* Right Content Area: Metadata & 10-Column Grid */}
-      <div className="flex flex-col justify-between h-full">
+      <div className="flex flex-col h-full">
         {/* Top Metadata Header */}
-        <div className="px-3.5 py-1.5 space-y-0.5 h-[60px] flex flex-col justify-center box-border">
+        <div className="px-3.5 py-1.5 space-y-0.5 h-[60px] flex-shrink-0 flex flex-col justify-center box-border">
           <div className="font-black text-[14.5px] text-[#112244]">
             Đại vận lưu niên
           </div>
@@ -78,7 +78,7 @@ export function MajorLuckSection({
         </div>
 
         {/* 10 Major Luck Columns */}
-        <div className="grid grid-cols-10 border-t-[1.5px] border-[#3182ce] text-center h-[116px] items-stretch box-border">
+        <div className="grid grid-cols-10 border-t-[1.5px] border-[#3182ce] text-center h-[116px] flex-shrink-0 items-stretch box-border">
           {pillars.slice(0, 10).map((p, idx) => {
             const isActive = idx === activePillarIndex;
             const stemColor = getStemColor(p.stem);

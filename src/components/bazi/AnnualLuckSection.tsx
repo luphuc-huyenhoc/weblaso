@@ -32,11 +32,11 @@ export function AnnualLuckSection({
   }
 
   return (
-    <div className="w-full h-[220px] flex-shrink-0 text-[#112244] box-border">
+    <div className="w-full h-[220px] flex-shrink-0 text-[#112244] box-border flex flex-col">
       {displayedPillars.map((pillar, pIdx) => (
         <div
           key={pillar.index || pIdx}
-          className="w-full border-b-[1.5px] border-[#3182ce] h-[110px] items-stretch text-center box-border"
+          className="w-full border-b-[1.5px] border-[#3182ce] h-[110px] flex-shrink-0 items-stretch text-center box-border"
           style={{ display: 'grid', gridTemplateColumns: '86px 1fr' }}
         >
           {/* Left Vertical Label: LƯU NIÊN */}

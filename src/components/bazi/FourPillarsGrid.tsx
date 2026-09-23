@@ -15,7 +15,7 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
   const pList = [pillars.year, pillars.month, pillars.day, pillars.hour];
 
   return (
-    <div className="w-full h-[450px] flex-shrink-0 text-[#112244] border-b-[1.5px] border-[#3182ce] box-border">
+    <div className="w-full h-[450px] flex-shrink-0 text-[#112244] box-border flex flex-col">
       {/* 1. DƯƠNG LỊCH ROW */}
       <div
         className="w-full border-b-[1.5px] border-[#3182ce] h-[46px] items-stretch text-center"
@@ -158,7 +158,7 @@ export function FourPillarsGrid({ pillars }: FourPillarsGridProps) {
 
       {/* 6. THẦN SÁT ROW */}
       <div
-        className="w-full h-[118px] items-stretch text-center"
+        className="w-full border-b-[1.5px] border-[#3182ce] h-[118px] items-stretch text-center"
         style={{ display: 'grid', gridTemplateColumns: '86px repeat(4, 1fr)' }}
       >
         <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-black text-[12px] tracking-wider uppercase bg-blue-50/20 text-[#1b3b6f]">
