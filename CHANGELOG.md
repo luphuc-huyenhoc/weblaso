@@ -9,6 +9,11 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 
 ## [Unreleased]
 
+### Changed
+- **Tăng kích thước chữ & căn chỉnh khung lá số Bát Tự vuông vắn (`[UI-BAZI-DOCUMENT]`):**
+  - **Tăng kích thước chữ và số:** Tăng cỡ chữ Can Chi Bát Tự lên 28px font-black, số Dương Lịch 16px, Chủ Tinh 14.5px, Tàng Can 15px, Phó Tinh 13px, Thần Sát 12.5px; Đại Vận và Lưu Niên Can Chi 15px, Tuổi/Năm 12px; Tiêu đề lá số 20px, metadata thông tin cá nhân 13.5-15px.
+  - **Căn chỉnh khung viền liền mạch vuông vắn:** Đồng bộ độ rộng cột tiêu đề bên trái thành cố định `86px` (`86px repeat(4, 1fr)` và `86px 1fr`), triệt tiêu độ lệch subpixel giữa các bảng; loại bỏ khoảng cách dọc (`justify-between`), cố định chiều cao chính xác từng phần khớp hoàn hảo 1000px, đảm bảo tất cả đường kẻ ngang dọc thẳng hàng, vuông vắn và không bị ngắt quãng.
+
 ### Added
 - **Cơ chế Offscreen Sandbox Clone xuất ảnh chuẩn mực (`src/lib/chartExport.ts`):**
   - Tách biệt hoàn toàn quá trình kết xuất ảnh khỏi DOM hiển thị thực tế: Nhân bản cây DOM độc lập (`cloneNode`), đưa vào Sandbox Host ẩn với chiều rộng pixel chuẩn (`720px`), loại bỏ toàn bộ ảnh hưởng của CSS `zoom`, `transform` hay co giãn màn hình điện thoại.

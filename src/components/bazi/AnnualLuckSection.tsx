@@ -32,21 +32,21 @@ export function AnnualLuckSection({
   }
 
   return (
-    <div className="w-full text-[#112244]">
+    <div className="w-full h-[220px] flex-shrink-0 text-[#112244] box-border">
       {displayedPillars.map((pillar, pIdx) => (
         <div
           key={pillar.index || pIdx}
-          className="w-full border-b-[1.5px] border-[#3182ce] min-h-[72px] items-stretch text-center"
-          style={{ display: 'grid', gridTemplateColumns: '12% 88%' }}
+          className="w-full border-b-[1.5px] border-[#3182ce] h-[110px] items-stretch text-center box-border"
+          style={{ display: 'grid', gridTemplateColumns: '86px 1fr' }}
         >
           {/* Left Vertical Label: LƯU NIÊN */}
-          <div className="border-r-[1.5px] border-[#3182ce] flex flex-col justify-center items-center font-black text-xs tracking-widest uppercase bg-blue-50/20 py-1">
+          <div className="border-r-[1.5px] border-[#3182ce] h-full flex flex-col justify-center items-center font-black text-[12px] tracking-wider uppercase bg-blue-50/20 text-[#1b3b6f] py-1">
             <span>LƯU</span>
             <span>NIÊN</span>
           </div>
 
           {/* 10 Annual Years in this Decade */}
-          <div className="grid grid-cols-10 items-stretch">
+          <div className="grid grid-cols-10 h-full items-stretch">
             {pillar.annualYears.map((ay, yIdx) => {
               const isFocus = focusYear ? ay.year === focusYear : ay.isFocusYear;
               const stemColor = getStemColor(ay.stem);
@@ -55,12 +55,12 @@ export function AnnualLuckSection({
               return (
                 <div
                   key={ay.year}
-                  className={`flex-1 flex flex-col justify-between py-1.5 px-0 transition-colors ${
+                  className={`flex-1 flex flex-col justify-between py-2 px-0 transition-colors ${
                     yIdx < 9 ? 'border-r-[1.5px] border-[#3182ce]' : ''
                   } ${isFocus ? 'bg-[#fff2d4] font-bold' : 'hover:bg-amber-50/30'}`}
                 >
                   {/* Stem & Branch */}
-                  <div className="text-[12px] font-black leading-tight">
+                  <div className="text-[14.5px] font-black leading-tight">
                     <div style={{ color: stemColor }}>{ay.stem}</div>
                     <div className="mt-0.5" style={{ color: branchColor }}>
                       {ay.branch}
@@ -68,8 +68,8 @@ export function AnnualLuckSection({
                   </div>
 
                   {/* Year & Age */}
-                  <div className="text-[10px] leading-tight mt-0.5">
-                    <div className="font-mono text-gray-800 font-semibold">
+                  <div className="text-[12px] leading-tight mt-1">
+                    <div className="font-mono text-gray-900 font-bold">
                       {ay.year}
                     </div>
                     <div className="text-[#138808] font-black mt-0.5">
