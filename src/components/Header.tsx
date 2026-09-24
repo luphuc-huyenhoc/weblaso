@@ -198,47 +198,53 @@ export function Header({ user }: { user?: { fullName: string; role: string; emai
       </div>
 
       {/* Main Brand & Banner Area */}
-      <div className="max-w-site mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-        <Link href="/" className="flex items-center space-x-3.5 group">
-          {/* Official Lữ Phúc Logo */}
-          <div className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center filter drop-shadow-md group-hover:scale-105 transition-transform duration-300">
-            <img src="/logo.png" alt="Lữ Phúc" className="w-full h-full object-contain" />
+      <div className="max-w-site mx-auto px-4 py-3 sm:py-4 flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
+        <Link href="/" className="flex items-center space-x-3 sm:space-x-4 group">
+          {/* Logo only - No redundant 'Lữ Phúc' text */}
+          <div className="relative w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 flex items-center justify-center filter drop-shadow-md group-hover:scale-105 transition-transform duration-300">
+            <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <div>
-            <div className="text-2xl font-black tracking-tight text-[#1e293b] flex items-center space-x-1.5">
-              <span>LỮ PHÚC</span>
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#c8860a]"></span>
-            </div>
-            <div className="text-xs text-[#c8860a] font-extrabold tracking-wider uppercase">
+            <div className="text-base sm:text-lg font-black text-[#c8860a] tracking-wider uppercase">
               Gieo Phúc - Gặt Phước
             </div>
-            <div className="text-[11px] text-gray-500 tracking-wide font-medium">
-              Bát Tự Lữ Phúc & Dịch Học Cổ Truyền
+            <div className="text-xs sm:text-sm text-gray-600 font-medium tracking-tight">
+              Cải Vận Bổ Khuyết · Bát Tự & Dịch Học Cổ Truyền
             </div>
           </div>
         </Link>
 
-        {/* Promotional Banner Area */}
-        <div className="w-full md:w-auto bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shadow-xs">
-          <div className="pr-0 sm:pr-4">
-            <span className="bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
-              Khóa Học Bát Tự Lữ Phúc
-            </span>
-            <div className="text-xs sm:text-sm font-bold text-gray-900 mt-1">
-              Giải Mã Vận Mệnh Từ Ngày Giờ Sinh
+        {/* Harmonious Hotline / Contact Area */}
+        <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-3 bg-gradient-to-r from-amber-50/90 via-orange-50/50 to-amber-50/90 border border-amber-200/80 rounded-2xl px-4 py-2 sm:py-2.5 shadow-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-[#c8860a] flex items-center justify-center text-white shadow-xs flex-shrink-0">
+              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24 11.72 11.72 0 003.68.59 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.72 11.72 0 00.59 3.68 1 1 0 01-.24 1.02l-2.23 2.09z" />
+              </svg>
             </div>
-            <div className="text-[11px] text-gray-600 flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
-              <span>Zalo/Hotline: <strong className="text-gray-900 font-bold">0374436921</strong></span>
-              <span className="hidden sm:inline">·</span>
-              <span>TikTok: <strong className="text-gray-900 font-bold">Huyền Học Lữ Phúc</strong></span>
+            <div>
+              <div className="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase tracking-wider">
+                Hotline / Zalo Hỗ Trợ
+              </div>
+              <a
+                href="https://zalo.me/0374436921"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-base sm:text-lg font-black text-[#27303f] hover:text-[#c8860a] transition tracking-wide block"
+              >
+                0374436921
+              </a>
             </div>
           </div>
-          <Link
-            href="/lien-he"
-            className="w-full sm:w-auto text-center bg-[#c8860a] hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition whitespace-nowrap"
+          <a
+            href="https://zalo.me/0374436921"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 bg-[#c8860a] hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs transition whitespace-nowrap"
           >
-            Đăng Ký Học →
-          </Link>
+            <span>Nhắn Zalo</span>
+            <span aria-hidden="true">→</span>
+          </a>
         </div>
       </div>
     </header>

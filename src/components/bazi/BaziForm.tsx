@@ -135,7 +135,7 @@ export function BaziForm({
         <div className="bg-[#3e2c1f] text-[#ede3d5] rounded-[20px] sm:rounded-[32px] p-4 sm:p-10 md:p-12 shadow-[0_20px_50px_rgba(30,18,10,0.35)] border border-[#523c2d]/50 select-none">
           {/* Form Header / Title */}
           <div className="text-center mb-6 sm:mb-8">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl text-[#fdf7f0] font-medium tracking-normal font-['Lora','Playfair_Display',Georgia,serif]">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl text-[#fdf7f0] font-semibold tracking-normal">
               {title}
             </h2>
             <div className="w-16 h-[2.5px] bg-[#9e7d58] mx-auto mt-2.5 sm:mt-3 rounded-full" />

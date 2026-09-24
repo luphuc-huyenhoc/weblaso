@@ -6,7 +6,20 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"DM Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        sans: [
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"San Francisco"',
+          '"SF Pro Text"',
+          '"SF Pro Display"',
+          '"SF Pro"',
+          'system-ui',
+          '"Segoe UI"',
+          'Roboto',
+          'Helvetica',
+          'Arial',
+          'sans-serif',
+        ],
       },
       colors: {
         nguhanh: {

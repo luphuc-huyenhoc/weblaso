@@ -9,12 +9,16 @@ export function Footer() {
           {/* Brand & Introduction */}
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
-              <img src="/logo.png" alt="Lữ Phúc" className="w-8 h-8 object-contain" />
-              <div className="text-lg font-bold text-white tracking-wide flex items-center space-x-2">
-                <span>LỮ PHÚC</span>
-                <span className="text-xs text-[#c8860a] font-normal border border-[#c8860a]/50 px-2 py-0.5 rounded">
+              <div className="relative w-12 h-12 flex-shrink-0 flex items-center justify-center filter drop-shadow">
+                <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+              </div>
+              <div>
+                <div className="text-sm font-black text-[#c8860a] tracking-wider uppercase">
                   Gieo Phúc - Gặt Phước
-                </span>
+                </div>
+                <div className="text-[11px] text-gray-400 font-medium">
+                  Cải Vận Bổ Khuyết · Bát Tự & Dịch Học
+                </div>
               </div>
             </div>
             <p className="text-gray-400 leading-relaxed text-[11px]">
@@ -87,21 +91,30 @@ export function Footer() {
             <div className="text-sm font-bold text-white uppercase tracking-wider mb-3">
               Kênh Liên Hệ
             </div>
-            <ul className="space-y-2.5 text-gray-400 text-[11px]">
-              {/* Zalo / Hotline */}
-              <li className="flex flex-col">
-                <span className="text-gray-500 uppercase text-[10px] font-bold">Zalo / Hotline:</span>
-                <a href="https://zalo.me/0374436921" target="_blank" rel="noopener noreferrer" className="text-amber-400 font-bold hover:underline">
-                  0374436921
-                </a>
-              </li>
-              <li className="flex flex-col">
-                <span className="text-gray-500 uppercase text-[10px] font-bold">TikTok:</span>
-                <span className="text-amber-400 font-semibold">
-                  Huyền Học Lữ Phúc
-                </span>
-              </li>
-            </ul>
+            <div className="bg-gray-800/60 border border-amber-500/30 rounded-xl p-3 space-y-2.5">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-8 h-8 rounded-full bg-[#c8860a]/20 flex items-center justify-center text-[#c8860a] flex-shrink-0">
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24 11.72 11.72 0 003.68.59 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.72 11.72 0 00.59 3.68 1 1 0 01-.24 1.02l-2.23 2.09z" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-gray-400 uppercase text-[10px] font-bold">Hotline / Zalo:</div>
+                  <a
+                    href="https://zalo.me/0374436921"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-amber-400 text-sm font-black hover:underline tracking-wide block"
+                  >
+                    0374436921
+                  </a>
+                </div>
+              </div>
+              <div className="text-[11px] text-gray-400 pt-1.5 border-t border-gray-700/50 flex justify-between items-center">
+                <span className="text-gray-400 text-[10px] font-semibold uppercase">TikTok:</span>
+                <span className="text-gray-200 font-medium">Huyền Học Lữ Phúc</span>
+              </div>
+            </div>
           </div>
         </div>
 
