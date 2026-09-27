@@ -22,10 +22,13 @@ export const MENU_ITEMS: MenuItem[] = [
     ],
   },
   {
-    title: 'Lá số tử vi',
+    title: 'Lá số Tử Vi',
     href: '/la-so-tu-vi',
+  },
+  {
+    title: 'Lịch Âm Dương',
+    href: '/la-so-tu-vi/lich-am-duong',
     children: [
-      { title: 'Xem sao hạn', href: '/la-so-tu-vi/xem-sao-han' },
       { title: 'Lịch âm dương', href: '/la-so-tu-vi/lich-am-duong' },
       { title: 'Đổi lịch âm dương', href: '/la-so-tu-vi/doi-lich-am-duong' },
       { title: 'Lịch ngày tốt xấu', href: '/lich-ngay-tot-xau' },
@@ -100,7 +103,16 @@ export function Navbar() {
     if (!pathname) return false;
     if (item.href === '/') return pathname === '/';
     if (item.href === '/la-so-tu-vi') {
-      return pathname.startsWith('/la-so-tu-vi') || pathname.startsWith('/lich-ngay-tot-xau');
+      return pathname === '/la-so-tu-vi' || pathname === '/la-so-tu-vi/xem-sao-han';
+    }
+    if (item.title === 'Lịch Âm Dương' || item.href === '/la-so-tu-vi/lich-am-duong') {
+      return (
+        pathname.startsWith('/la-so-tu-vi/lich-am-duong') ||
+        pathname.startsWith('/la-so-tu-vi/doi-lich-am-duong') ||
+        pathname.startsWith('/lich-ngay-tot-xau') ||
+        pathname.startsWith('/lich-am-duong') ||
+        pathname.startsWith('/doi-lich-am-duong')
+      );
     }
     if (item.href === '/phong-thuy') {
       return pathname.startsWith('/phong-thuy');
@@ -148,7 +160,7 @@ export function Navbar() {
                 <div className="flex items-center">
                   <Link
                     href={item.href}
-                    className={`px-3 py-3 text-xs xl:text-sm font-semibold uppercase tracking-wide transition flex items-center space-x-1 ${
+                    className={`px-2 xl:px-3 py-3 text-xs xl:text-sm font-semibold uppercase tracking-wide transition flex items-center space-x-1 ${
                       active
                         ? 'text-[#c8860a] bg-[#1a222e] border-b-2 border-[#c8860a]'
                         : 'text-gray-100 hover:bg-[#1a222e] hover:text-[#c8860a]'
@@ -242,12 +254,26 @@ export function Navbar() {
         <Link
           href="/la-so-tu-vi"
           className={`px-3 py-1 rounded-full font-medium transition ${
-            pathname?.startsWith('/la-so-tu-vi')
+            pathname === '/la-so-tu-vi' || pathname === '/la-so-tu-vi/xem-sao-han'
               ? 'bg-[#c8860a] text-white font-bold'
               : 'bg-gray-800/80 text-gray-300 hover:text-white'
           }`}
         >
           Tử Vi
+        </Link>
+        <Link
+          href="/la-so-tu-vi/lich-am-duong"
+          className={`px-3 py-1 rounded-full font-medium transition ${
+            pathname?.startsWith('/la-so-tu-vi/lich-am-duong') ||
+            pathname?.startsWith('/la-so-tu-vi/doi-lich-am-duong') ||
+            pathname?.startsWith('/lich-ngay-tot-xau') ||
+            pathname?.startsWith('/lich-am-duong') ||
+            pathname?.startsWith('/doi-lich-am-duong')
+              ? 'bg-[#c8860a] text-white font-bold'
+              : 'bg-gray-800/80 text-gray-300 hover:text-white'
+          }`}
+        >
+          Lịch Âm Dương
         </Link>
         <Link
           href="/que-dich/luc-hao"

@@ -50,6 +50,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/la-so-tu-vi/lich-am-duong" className="hover:text-[#c8860a] transition">
+                  Lịch âm dương & Vạn niên
+                </Link>
+              </li>
+              <li>
                 <Link href="/que-dich/luc-hao" className="hover:text-[#c8860a] transition">
                   Gieo quẻ Lục Hào
                 </Link>

@@ -77,11 +77,13 @@ Khi cần bảo trì, sửa lỗi hoặc nâng cấp, bạn chỉ cần gửi y�
 | `[PAGE-BAZI-THOIVAN]` | `/la-so-bat-tu/xem-thoi-van` | `src/app/la-so-bat-tu/xem-thoi-van/page.tsx` |
 | `[PAGE-BAZI-REMEDY]` | `/la-so-bat-tu/xem-vat-pham-cai-van` | `src/app/la-so-bat-tu/xem-vat-pham-cai-van/page.tsx` |
 | `[PAGE-BAZI-REVERSE]`| `/la-so-bat-tu/tim-ngay-sinh-theo-tu-tru`| `src/app/la-so-bat-tu/tim-ngay-sinh-theo-tu-tru/page.tsx` |
-| `[PAGE-TUVI]` | `/la-so-tu-vi` | `src/app/la-so-tu-vi/page.tsx` |
-| `[PAGE-TUVI-SAOHAN]` | `/la-so-tu-vi/xem-sao-han` | `src/app/la-so-tu-vi/xem-sao-han/page.tsx` |
-| `[PAGE-CALENDAR-VIEW]`| `/la-so-tu-vi/lich-am-duong` | `src/app/la-so-tu-vi/lich-am-duong/page.tsx` |
-| `[PAGE-CALENDAR-CONV]`| `/la-so-tu-vi/doi-lich-am-duong` | `src/app/la-so-tu-vi/doi-lich-am-duong/page.tsx` |
-| `[PAGE-ALMANAC]` | `/lich-ngay-tot-xau` | `src/app/lich-ngay-tot-xau/page.tsx` |
+| **--- Nhóm Tử Vi ---** | | |
+| `[PAGE-TUVI]` | `/la-so-tu-vi` | `src/app/la-so-tu-vi/page.tsx` (Chỉ gồm lập lá số Tử Vi) |
+| `[PAGE-TUVI-SAOHAN]` | `/la-so-tu-vi/xem-sao-han` | `src/app/la-so-tu-vi/xem-sao-han/page.tsx` (Tra cứu sao hạn) |
+| **--- Nhóm Lịch Âm Dương ---** | | |
+| `[PAGE-CALENDAR-VIEW]`| `/la-so-tu-vi/lich-am-duong` hoặc `/lich-am-duong` | `src/app/la-so-tu-vi/lich-am-duong/page.tsx` (Xem lịch tháng) |
+| `[PAGE-CALENDAR-CONV]`| `/la-so-tu-vi/doi-lich-am-duong` hoặc `/doi-lich-am-duong` | `src/app/la-so-tu-vi/doi-lich-am-duong/page.tsx` (Đổi lịch âm dương) |
+| `[PAGE-ALMANAC]` | `/lich-ngay-tot-xau` | `src/app/lich-ngay-tot-xau/page.tsx` (Lịch ngày tốt xấu & thông thư) |
 | `[PAGE-ICHING-INDEX]`| `/que-dich` | `src/app/que-dich/page.tsx` |
 | `[PAGE-ICHING-LUCHAO]`| `/que-dich/luc-hao` | `src/app/que-dich/luc-hao/page.tsx` |
 | `[PAGE-ICHING-RANDOM]`| `/que-dich/ngau-nhien` | `src/app/que-dich/ngau-nhien/page.tsx` |
