@@ -10,6 +10,8 @@ import {
   getCanChiMonth,
   getCanChiYear,
   getCanChiHour,
+  getSolarTerm,
+  getSunLongitude,
 } from '../calendar/index';
 export type { NguhanhType } from '../calendar/index';
 import crypto from 'crypto';
@@ -71,9 +73,26 @@ export interface HexagramInfo {
   lines: HexagramLineDetail[];
 }
 
+export interface TheDungInfo {
+  theQuai: string;
+  theElement: NguhanhType;
+  dungQuai: string;
+  dungElement: NguhanhType;
+  isUpperThe: boolean;
+  relation: 'Dụng sinh Thể' | 'Thể Dụng Tỷ Hòa' | 'Thể khắc Dụng' | 'Thể sinh Dụng' | 'Dụng khắc Thể';
+  evaluation: 'Đại Cát' | 'Hanh Thông' | 'Tiểu Cát' | 'Hao Tổn' | 'Bất Lợi';
+  description: string;
+  movingLineIndex?: number;
+  upperSum?: number;
+  lowerSum?: number;
+  totalSum?: number;
+}
+
 export interface IchingCalculationResult {
   title: string;
-  method: 'Lục Hào' | 'Ngẫu Nhiên' | 'Số Điện Thoại';
+  method: 'Lục Hào' | 'Ngẫu Nhiên' | 'Số Điện Thoại' | 'Seri Tiền';
+  querentName?: string;
+  seriNumber?: string;
   castTime: string;
   solarDateStr: string;
   lunarDateStr: string;
@@ -95,6 +114,7 @@ export interface IchingCalculationResult {
     quyNhan: string[];
     daoHoa: string;
   };
+  theDung?: TheDungInfo;
 }
 
 export interface IchingEnvelope {
@@ -941,22 +961,158 @@ export function castPhoneHexagram(phoneNumber: string): IchingLineInput[] {
   return lines;
 }
 
+export interface SeriHexagramCastResult {
+  lines: IchingLineInput[];
+  upperRem: number;
+  lowerRem: number;
+  movingLine: number;
+  upperPart: string;
+  lowerPart: string;
+  sumUpper: number;
+  sumLower: number;
+  totalSum: number;
+  theDung: TheDungInfo;
+}
+
+/**
+ * Banknote Serial Number Divination Algorithm (Mai Hoa Dịch Số Seri Tiền)
+ * Strictly conforms to Vietnamese Dịch Học & simkinhdich.com methodology
+ */
+export function castSeriHexagram(seriNumber: string): SeriHexagramCastResult {
+  const digits = seriNumber.replace(/\D/g, '');
+  if (!digits || digits.length === 0) {
+    throw new Error('Dãy số seri tiền không hợp lệ. Vui lòng nhập ít nhất một chữ số.');
+  }
+
+  const mid = Math.ceil(digits.length / 2);
+  const upperPart = digits.slice(0, mid);
+  const lowerPart = digits.slice(mid);
+
+  const sumUpper = upperPart.split('').reduce((a, b) => a + parseInt(b, 10), 0);
+  const sumLower = lowerPart.length > 0 ? lowerPart.split('').reduce((a, b) => a + parseInt(b, 10), 0) : 0;
+  const totalSum = digits.split('').reduce((a, b) => a + parseInt(b, 10), 0);
+
+  const upperRem = sumUpper % 8 === 0 ? 8 : sumUpper % 8;
+  const lowerRem = sumLower === 0 ? 8 : sumLower % 8 === 0 ? 8 : sumLower % 8;
+  const movingLine = totalSum % 6 === 0 ? 6 : totalSum % 6; // 1 to 6 (1: Sơ, 6: Thượng)
+
+  const trigramBinByRem: Record<number, string> = {
+    1: '111', // Càn
+    2: '011', // Đoài
+    3: '101', // Ly
+    4: '001', // Chấn
+    5: '110', // Tốn
+    6: '010', // Khảm
+    7: '100', // Cấn
+    8: '000', // Khôn
+  };
+
+  const lowerBin = trigramBinByRem[lowerRem];
+  const upperBin = trigramBinByRem[upperRem];
+
+  const lines: IchingLineInput[] = [
+    { lineIndex: 0, polarity: lowerBin[2] === '1' ? 'Dương' : 'Âm', movement: movingLine === 1 ? 'Động' : 'Tĩnh' },
+    { lineIndex: 1, polarity: lowerBin[1] === '1' ? 'Dương' : 'Âm', movement: movingLine === 2 ? 'Động' : 'Tĩnh' },
+    { lineIndex: 2, polarity: lowerBin[0] === '1' ? 'Dương' : 'Âm', movement: movingLine === 3 ? 'Động' : 'Tĩnh' },
+    { lineIndex: 3, polarity: upperBin[2] === '1' ? 'Dương' : 'Âm', movement: movingLine === 4 ? 'Động' : 'Tĩnh' },
+    { lineIndex: 4, polarity: upperBin[1] === '1' ? 'Dương' : 'Âm', movement: movingLine === 5 ? 'Động' : 'Tĩnh' },
+    { lineIndex: 5, polarity: upperBin[0] === '1' ? 'Dương' : 'Âm', movement: movingLine === 6 ? 'Động' : 'Tĩnh' },
+  ];
+
+  // Thể - Dụng logic:
+  // Hào động nằm ở quái nào thì quái đó là Dụng, quái còn lại là Thể.
+  const upperTri = TRIGRAMS[upperBin] ?? TRIGRAMS['111'];
+  const lowerTri = TRIGRAMS[lowerBin] ?? TRIGRAMS['111'];
+  const isUpperMoving = movingLine >= 4; // Hào 4, 5, 6 thuộc Thượng quái
+  const isUpperThe = !isUpperMoving; // Thể là quái không có hào động
+
+  const theTri = isUpperThe ? upperTri : lowerTri;
+  const dungTri = isUpperThe ? lowerTri : upperTri;
+
+  const theElement = theTri.element;
+  const dungElement = dungTri.element;
+
+  const generates: Record<NguhanhType, NguhanhType> = {
+    Mộc: 'Hỏa', Hỏa: 'Thổ', Thổ: 'Kim', Kim: 'Thủy', Thủy: 'Mộc'
+  };
+  const overcomes: Record<NguhanhType, NguhanhType> = {
+    Mộc: 'Thổ', Thổ: 'Thủy', Thủy: 'Hỏa', Hỏa: 'Kim', Kim: 'Mộc'
+  };
+
+  let relation: 'Dụng sinh Thể' | 'Thể Dụng Tỷ Hòa' | 'Thể khắc Dụng' | 'Thể sinh Dụng' | 'Dụng khắc Thể' = 'Thể Dụng Tỷ Hòa';
+  let evaluation: 'Đại Cát' | 'Hanh Thông' | 'Tiểu Cát' | 'Hao Tổn' | 'Bất Lợi' = 'Hanh Thông';
+  let description = '';
+
+  if (generates[dungElement] === theElement) {
+    relation = 'Dụng sinh Thể';
+    evaluation = 'Đại Cát';
+    description = `Dụng quái (${dungTri.name} - ${dungElement}) tương sinh cho Thể quái (${theTri.name} - ${theElement}). Mọi sự hanh thông, có ngoại lực tương trợ, mưu sự đại cát đại lợi, công việc tiến triển thuận lợi vượt bậc.`;
+  } else if (theElement === dungElement) {
+    relation = 'Thể Dụng Tỷ Hòa';
+    evaluation = 'Hanh Thông';
+    description = `Thể quái (${theTri.name}) và Dụng quái (${dungTri.name}) cùng ngũ hành ${theElement} (Tỷ hòa). Đồng thanh tương ứng, bạn bè đối tác tương trợ, nội ngoại hòa thuận, công việc bình ổn và vững chắc.`;
+  } else if (overcomes[theElement] === dungElement) {
+    relation = 'Thể khắc Dụng';
+    evaluation = 'Tiểu Cát';
+    description = `Thể quái (${theTri.name} - ${theElement}) khắc chế Dụng quái (${dungTri.name} - ${dungElement}). Cần nỗ lực vượt qua trở ngại, tự lực cánh sinh, nhưng cuối cùng nắm thế chủ động và đạt kết quả mong muốn.`;
+  } else if (generates[theElement] === dungElement) {
+    relation = 'Thể sinh Dụng';
+    evaluation = 'Hao Tổn';
+    description = `Thể quái (${theTri.name} - ${theElement}) sinh xuất cho Dụng quái (${dungTri.name} - ${dungElement}). Hao tổn tâm sức tiền của giúp đỡ người khác hoặc đầu tư chưa thu hồi ngay, nên thận trọng quản lý tài chính.`;
+  } else if (overcomes[dungElement] === theElement) {
+    relation = 'Dụng khắc Thể';
+    evaluation = 'Bất Lợi';
+    description = `Dụng quái (${dungTri.name} - ${dungElement}) khắc chế Thể quái (${theTri.name} - ${theElement}). Áp lực ngoại cảnh lớn, dễ gặp trắc trở hoặc thị phi, nên giữ thái độ ẩn nhẫn, phòng thủ và chờ thời cơ tốt hơn.`;
+  }
+
+  return {
+    lines,
+    upperRem,
+    lowerRem,
+    movingLine,
+    upperPart,
+    lowerPart,
+    sumUpper,
+    sumLower,
+    totalSum,
+    theDung: {
+      theQuai: theTri.name,
+      theElement,
+      dungQuai: dungTri.name,
+      dungElement,
+      isUpperThe,
+      relation,
+      evaluation,
+      description,
+      movingLineIndex: movingLine,
+      upperSum: sumUpper,
+      lowerSum: sumLower,
+      totalSum,
+    },
+  };
+}
+
 /** Main Lục Hào Calculation Engine */
 export function calculateIching(params: {
   title: string;
-  method: 'Lục Hào' | 'Ngẫu Nhiên' | 'Số Điện Thoại';
+  method: 'Lục Hào' | 'Ngẫu Nhiên' | 'Số Điện Thoại' | 'Seri Tiền';
   lines?: IchingLineInput[];
   phoneNumber?: string;
+  seriNumber?: string;
+  querentName?: string;
+  isTietKhi?: boolean;
   day: number;
   month: number;
   year: number;
   hour: number;
   minute: number;
 }): IchingEnvelope {
-  const { title, method, phoneNumber, day, month, year, hour, minute } = params;
+  const { title, method, phoneNumber, seriNumber, querentName, isTietKhi, day, month, year, hour, minute } = params;
 
-  // 1. Establish 6 input lines
+  // 1. Establish 6 input lines & Thể Dụng info if Seri Tiền
   let activeLines: IchingLineInput[] = [];
+  let theDungData: TheDungInfo | undefined = undefined;
+
   if (method === 'Ngẫu Nhiên') {
     activeLines = Array.from({ length: 6 }, (_, i) => {
       const rolled = rollThreeCoins();
@@ -964,6 +1120,10 @@ export function calculateIching(params: {
     });
   } else if (method === 'Số Điện Thoại' && phoneNumber) {
     activeLines = castPhoneHexagram(phoneNumber);
+  } else if (method === 'Seri Tiền' && seriNumber) {
+    const cast = castSeriHexagram(seriNumber);
+    activeLines = cast.lines;
+    theDungData = cast.theDung;
   } else if (params.lines && params.lines.length === 6) {
     activeLines = params.lines;
   } else {
@@ -980,10 +1140,31 @@ export function calculateIching(params: {
   const lunar = solarToLunar(year, month, day);
   const canChiDayStr = getCanChiDay(jdn);
   const [dayStem, dayBranch] = canChiDayStr.split(' ');
-  const canChiMonthStr = getCanChiMonth(year, lunar.month);
-  const [, monthBranch] = canChiMonthStr.split(' ');
-  const canChiYearStr = getCanChiYear(lunar.year);
 
+  // Month determination: Solar Terms (Tiết khí) or Lunar Calendar
+  const useTietKhi = isTietKhi !== false;
+  let canChiMonthStr = getCanChiMonth(year, lunar.month);
+  let monthBranch = canChiMonthStr.split(' ')[1] as DiaChi;
+
+  if (useTietKhi) {
+    const birthJdn = gregorianToJdn(year, month, day) + (hour + minute / 60 - 7.0) / 24;
+    const sunLong = getSunLongitude(birthJdn);
+    let astroYear = year;
+    if (month <= 2 && sunLong < 315) {
+      astroYear = year - 1;
+    }
+    const yearCanIndex = (astroYear + 6) % 10;
+    let angleFromLapXuan = sunLong - 315;
+    if (angleFromLapXuan < 0) angleFromLapXuan += 360;
+    const monthOrderIndex = Math.floor(angleFromLapXuan / 30);
+    const MONTH_BRANCHES: DiaChi[] = ['Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi', 'Tý', 'Sửu'];
+    monthBranch = MONTH_BRANCHES[monthOrderIndex];
+    const monthStartCan = ((yearCanIndex % 5) * 2 + 2) % 10;
+    const monthStem = THIEN_CAN[(monthStartCan + monthOrderIndex) % 10];
+    canChiMonthStr = `${monthStem} ${monthBranch}`;
+  }
+
+  const canChiYearStr = getCanChiYear(lunar.year);
   const hourBranchIdx = Math.floor(((hour + 1) % 24) / 2);
   const canChiHourStr = getCanChiHour(THIEN_CAN.indexOf(dayStem as ThienCan), hourBranchIdx);
 
@@ -1038,6 +1219,7 @@ export function calculateIching(params: {
 
   const tuanKhong = getTuanKhong(jdn);
   const pad = (n: number) => n.toString().padStart(2, '0');
+  const solarTerm = getSolarTerm(jdn);
 
   const castId = `HEX-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
   const inputHash = crypto.createHash('sha256').update(JSON.stringify(params)).digest('hex');
@@ -1045,6 +1227,8 @@ export function calculateIching(params: {
   const calculation: IchingCalculationResult = {
     title,
     method,
+    querentName,
+    seriNumber,
     castTime: `${pad(hour)}:${pad(minute)}:00 - ${pad(day)}/${pad(month)}/${year}`,
     solarDateStr: `${pad(day)}/${pad(month)}/${year}`,
     lunarDateStr: `Ngày ${pad(lunar.day)} tháng ${pad(lunar.month)} năm ${lunar.year}`,
@@ -1054,13 +1238,14 @@ export function calculateIching(params: {
       month: canChiMonthStr,
       year: canChiYearStr,
     },
-    solarTerm: 'Bạch Lộ',
+    solarTerm,
     nhatThan: `${dayBranch}-${BRANCH_ELEMENTS[dayBranch as DiaChi]}`,
     nguyetLenh: `${monthBranch}-${BRANCH_ELEMENTS[monthBranch as DiaChi]}`,
     tuanKhong,
     originalHexagram: originalHex,
     changedHexagram: changedHex,
     spiritDeities,
+    theDung: theDungData,
   };
 
   return {

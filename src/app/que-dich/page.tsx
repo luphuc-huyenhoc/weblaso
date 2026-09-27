@@ -1,10 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
-import { BookOpen, Coins, Phone, Compass, ArrowRight } from 'lucide-react';
+import { BookOpen, Coins, Phone, Banknote, ArrowRight } from 'lucide-react';
 
 export default function QueDichHubPage() {
   return (
-    <div className="max-w-5xl mx-auto space-y-10">
+    <div className="max-w-6xl mx-auto space-y-10">
       {/* Hero Header */}
       <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-xs text-center">
         <span className="text-xs uppercase font-bold tracking-widest px-3 py-1 bg-amber-50 text-[#c8860a] border border-amber-200 rounded-full">
@@ -18,8 +18,8 @@ export default function QueDichHubPage() {
         </p>
       </div>
 
-      {/* 3 Core Divination Workflows */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* 4 Core Divination Workflows */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Method 1: Lục Hào */}
         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-xs hover:shadow-md transition flex flex-col justify-between">
           <div className="space-y-4">
@@ -80,7 +80,29 @@ export default function QueDichHubPage() {
               href="/que-dich/so-dien-thoai"
               className="w-full inline-flex items-center justify-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded text-xs uppercase tracking-wide transition shadow-2xs"
             >
-              <span>Tra Cứu Phong Thủy Sim</span>
+              <span>Tra Cứu Sim Dịch</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Method 4: Lập quẻ bằng series tiền */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <Banknote className="w-6 h-6" />
+            </div>
+            <h2 className="text-lg font-bold text-gray-900">Lập quẻ bằng series tiền</h2>
+            <p className="text-xs text-gray-500 leading-relaxed">
+              Gieo quẻ Mai Hoa Dịch Số từ số seri trên tờ tiền, định Thể – Dụng, nạp can chi ngày giờ để xem cát hung, công việc và hành sự.
+            </p>
+          </div>
+          <div className="pt-6">
+            <Link
+              href="/que-dich/seri-tien"
+              className="w-full inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded text-xs uppercase tracking-wide transition shadow-2xs"
+            >
+              <span>Lập Quẻ Seri Tiền</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>

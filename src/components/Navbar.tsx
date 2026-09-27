@@ -41,6 +41,7 @@ export const MENU_ITEMS: MenuItem[] = [
       { title: 'Lục hào', href: '/que-dich/luc-hao' },
       { title: 'Ngẫu nhiên', href: '/que-dich/ngau-nhien' },
       { title: 'Số điện thoại', href: '/que-dich/so-dien-thoai' },
+      { title: 'Seri tiền', href: '/que-dich/seri-tien' },
     ],
   },
   {

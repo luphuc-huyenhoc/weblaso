@@ -55,6 +55,7 @@ Khi cần bảo trì, sửa lỗi hoặc nâng cấp, bạn chỉ cần gửi y�
 | `[UI-ICHING-DOC]` | **Bản hiển thị Quẻ Thuần & Biến** | `src/components/iching/LucHaoResultDocument.tsx`<br>`src/components/iching/LucHaoResultTable.tsx` | Bảng nạp giáp, lục thân, hào thế ứng, phục thần, lục thú. |
 | `[UI-ICHING-VIZ]` | **Đồ họa hào âm dương & quẻ tượng**| `src/components/iching/HexagramLine.tsx`<br>`src/components/iching/HexagramVisualizer.tsx` | Vẽ nét liền (Dương), nét đứt (Âm), đánh dấu hào động (O, X). |
 | `[UI-SIM-FORM]` | **Giao diện tra quẻ số điện thoại** | `src/components/sim/SimForm.tsx`<br>`src/components/sim/SimResultView.tsx` | Ô nhập số điện thoại, hiển thị quẻ chủ, quẻ hỗ, quẻ biến. |
+| `[UI-SERI-FORM]` | **Biểu mẫu lập quẻ seri tiền** | `src/components/iching/SeriTienForm.tsx` | Ô nhập số seri tờ tiền, việc cần xem, ngày giờ lập quẻ, lịch tiết khí. |
 
 ### 2.3. Giao diện Phong Thủy & Bố Cục Chung
 | Mã Danh Mục | Tên Thành Phần | Tệp Tin Phụ Trách | Chức Năng |
@@ -88,6 +89,7 @@ Khi cần bảo trì, sửa lỗi hoặc nâng cấp, bạn chỉ cần gửi y�
 | `[PAGE-ICHING-LUCHAO]`| `/que-dich/luc-hao` | `src/app/que-dich/luc-hao/page.tsx` |
 | `[PAGE-ICHING-RANDOM]`| `/que-dich/ngau-nhien` | `src/app/que-dich/ngau-nhien/page.tsx` |
 | `[PAGE-ICHING-PHONE]`| `/que-dich/so-dien-thoai` | `src/app/que-dich/so-dien-thoai/page.tsx` |
+| `[PAGE-ICHING-SERI]` | `/que-dich/seri-tien` | `src/app/que-dich/seri-tien/page.tsx` |
 | `[PAGE-FENGSHUI]` | `/phong-thuy/bat-trach` | `src/app/phong-thuy/bat-trach/page.tsx` |
 | `[PAGE-COMPASS]` | `/phong-thuy/bat-trach-24-son-huong` | `src/app/phong-thuy/bat-trach-24-son-huong/page.tsx` |
 | `[PAGE-ITEMS]` | `/vat-pham` | `src/app/vat-pham/page.tsx` |

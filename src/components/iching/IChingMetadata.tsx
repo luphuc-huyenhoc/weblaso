@@ -16,10 +16,21 @@ export function IChingMetadata({ calculation }: IChingMetadataProps) {
     nhatThan,
     nguyetLenh,
     method,
+    querentName,
+    seriNumber,
   } = calculation;
 
   return (
     <div className="relative w-full p-4 sm:p-6 border-b-[1.5px] border-[#3182ce] bg-transparent text-gray-900">
+      {/* Top Querent Name (Red centered text, matching reference layout) */}
+      {querentName && (
+        <div className="text-center pb-2">
+          <span className="text-red-600 font-bold text-base tracking-wide uppercase">
+            {querentName}
+          </span>
+        </div>
+      )}
+
       {/* Top-Right Traditional Three Coins Emblem (SVG) */}
       <div className="absolute top-3 right-5 opacity-85 block pointer-events-none">
         <svg width="90" height="60" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -70,11 +81,19 @@ export function IChingMetadata({ calculation }: IChingMetadataProps) {
           </div>
         </div>
 
-        <div>
-          <span className="font-semibold text-gray-700">Phương pháp lập quẻ: </span>
-          <span className="font-bold text-gray-800">
-            {method === 'Lục Hào' ? 'An quẻ lục hào' : method}
-          </span>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <div>
+            <span className="font-semibold text-gray-700">Phương pháp lập quẻ: </span>
+            <span className="font-bold text-gray-800">
+              {method === 'Lục Hào' ? 'An quẻ lục hào' : method === 'Seri Tiền' ? 'Lập quẻ bằng Serial Tiền' : method}
+            </span>
+          </div>
+          {seriNumber && (
+            <div>
+              <span className="font-semibold text-gray-700">Số Seri: </span>
+              <span className="font-bold font-mono text-[#034687]">{seriNumber}</span>
+            </div>
+          )}
         </div>
 
         <div className="pt-1">

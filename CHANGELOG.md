@@ -9,6 +9,15 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 
 ## [Unreleased]
 
+### Added
+- **Tính năng Lập Quẻ Dịch Bằng Seri Tiền (`[PAGE-ICHING-SERI]`, `[UI-SERI-FORM]`, `[CORE-ICHING]`):**
+  - Bổ sung công cụ lập quẻ Kinh Dịch Mai Hoa Dịch Số dựa trên dãy số seri in trên tờ tiền theo đúng giao diện và thuật toán của `simkinhdich.com/boi-dich/gieo-que-seri`.
+  - Thuật toán Dịch học chuẩn mực: Tách nửa đầu xác định Thượng Quái (chia 8 lấy dư), nửa sau xác định Hạ Quái (chia 8 lấy dư), tổng tất cả các chữ số xác định Hào Động (chia 6 lấy dư).
+  - Phân định chuẩn xác Thể Quái (quái tĩnh - chủ thể) và Dụng Quái (quái động - sự vụ), luận giải chi tiết ngũ hành tương sinh tương khắc (Dụng sinh Thể: Đại Cát; Thể Dụng Tỷ Hòa: Hanh Thông; Thể khắc Dụng: Tiểu Cát; Thể sinh Dụng: Hao Tổn; Dụng khắc Thể: Bất Lợi).
+  - Tích hợp nạp Can Chi Giờ Ngày Tháng Năm (hỗ trợ tùy chọn dùng lịch tiết khí), Nhật Thần, Nguyệt Lệnh, Tuần Không, Lục Thú, Thần Sát và trình bày trên khung bản đồ lá số quẻ dịch truyền thống chất lượng cao `LucHaoResultDocument`.
+  - Cung cấp nút tải ảnh trực tiếp về máy ("Tải ảnh về máy để xin luận giải"), sao chép hình ảnh vào bộ nhớ tạm và mở modal xem trước ảnh nét cao để nhấn giữ lưu ảnh trên điện thoại.
+  - Thêm danh mục "Lập quẻ bằng series tiền" vào trang danh mục Quẻ Dịch (`[PAGE-ICHING-INDEX]`) và menu điều hướng Navbar (`[UI-LAYOUT-NAV]`).
+
 ### Changed
 - **Tăng kích thước chữ & căn chỉnh khung lá số Bát Tự vuông vắn (`[UI-BAZI-DOCUMENT]`):**
   - **Tăng kích thước chữ và số:** Tăng cỡ chữ Can Chi Bát Tự lên 28px font-black, số Dương Lịch 16px, Chủ Tinh 14.5px, Tàng Can 15px, Phó Tinh 13px, Thần Sát 12.5px; Đại Vận và Lưu Niên Can Chi 15px, Tuổi/Năm 12px; Tiêu đề lá số 20px, metadata thông tin cá nhân 13.5-15px.

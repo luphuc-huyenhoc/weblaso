@@ -10,9 +10,12 @@ const lineSchema = z.object({
 
 const ichingRequestSchema = z.object({
   title: z.string().default('Gieo quẻ sự vụ'),
-  method: z.enum(['Lục Hào', 'Ngẫu Nhiên', 'Số Điện Thoại']),
+  method: z.enum(['Lục Hào', 'Ngẫu Nhiên', 'Số Điện Thoại', 'Seri Tiền']),
   lines: z.array(lineSchema).length(6).optional(),
   phoneNumber: z.string().optional(),
+  seriNumber: z.string().optional(),
+  querentName: z.string().optional(),
+  isTietKhi: z.boolean().default(true).optional(),
   day: z.number().int().min(1).max(31).default(() => new Date().getDate()),
   month: z.number().int().min(1).max(12).default(() => new Date().getMonth() + 1),
   year: z.number().int().min(1900).max(2100).default(() => new Date().getFullYear()),
@@ -30,6 +33,9 @@ export async function POST(req: Request) {
       method: validated.method,
       lines: validated.lines as IchingLineInput[] | undefined,
       phoneNumber: validated.phoneNumber,
+      seriNumber: validated.seriNumber,
+      querentName: validated.querentName,
+      isTietKhi: validated.isTietKhi,
       day: validated.day,
       month: validated.month,
       year: validated.year,

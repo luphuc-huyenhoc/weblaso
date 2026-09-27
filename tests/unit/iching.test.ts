@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateIching, rollThreeCoins, castPhoneHexagram } from '../../src/domain/iching';
+import { calculateIching, rollThreeCoins, castPhoneHexagram, castSeriHexagram } from '../../src/domain/iching';
 
 describe('Quẻ Dịch & Lục Hào Domain Engine', () => {
   it('correctly calculates manual Lục Hào hexagram', () => {
@@ -123,5 +123,57 @@ describe('Quẻ Dịch & Lục Hào Domain Engine', () => {
     const lines = castPhoneHexagram('0916889131');
     expect(lines.length).toBe(6);
     expect(lines.some((l) => l.movement === 'Động')).toBe(true);
+  });
+
+  it('correctly calculates banknote serial divination (castSeriHexagram)', () => {
+    // 12345678: 1+2+3+4=10%8=2 (Đoài), 5+6+7+8=26%8=2 (Đoài), sum=36%6=6 (Hào 6 Động)
+    const seri1 = castSeriHexagram('12345678');
+    expect(seri1.upperRem).toBe(2);
+    expect(seri1.lowerRem).toBe(2);
+    expect(seri1.movingLine).toBe(6);
+    expect(seri1.lines[5].movement).toBe('Động');
+    expect(seri1.lines[0].movement).toBe('Tĩnh');
+    // Thể - Dụng: Hào 6 động -> Thượng quái là Dụng, Hạ quái là Thể
+    expect(seri1.theDung.isUpperThe).toBe(false);
+    expect(seri1.theDung.theQuai).toBe('Đoài');
+    expect(seri1.theDung.dungQuai).toBe('Đoài');
+    expect(seri1.theDung.relation).toBe('Thể Dụng Tỷ Hòa');
+
+    // With prefix letters: AA12345678
+    const seriWithLetters = castSeriHexagram('AA12345678');
+    expect(seriWithLetters.upperRem).toBe(2);
+    expect(seriWithLetters.lowerRem).toBe(2);
+    expect(seriWithLetters.movingLine).toBe(6);
+
+    // 1234567 (7 digits): upper '1234' (10%8=2), lower '567' (18%8=2), sum=28%6=4 (Hào 4 Động)
+    const seriOdd = castSeriHexagram('1234567');
+    expect(seriOdd.upperRem).toBe(2);
+    expect(seriOdd.lowerRem).toBe(2);
+    expect(seriOdd.movingLine).toBe(4);
+    expect(seriOdd.lines[3].movement).toBe('Động');
+
+    // Full calculation envelope check
+    const res = calculateIching({
+      title: 'Hỏi kinh doanh buôn bán',
+      method: 'Seri Tiền',
+      seriNumber: '12345678',
+      querentName: 'Lữ Phúc',
+      isTietKhi: true,
+      day: 27,
+      month: 9,
+      year: 2026,
+      hour: 15,
+      minute: 30,
+    });
+
+    expect(res.calculation.originalHexagram.name).toBe('Thuần Đoài');
+    expect(res.calculation.changedHexagram?.name).toBe('Thiên Trạch Lý');
+    expect(res.calculation.method).toBe('Seri Tiền');
+    expect(res.calculation.querentName).toBe('Lữ Phúc');
+    expect(res.calculation.seriNumber).toBe('12345678');
+    expect(res.calculation.solarTerm).toBe('Thu phân');
+    expect(res.calculation.canChi.month).toContain('Dậu');
+    expect(res.calculation.theDung).toBeDefined();
+    expect(res.calculation.theDung?.relation).toBe('Thể Dụng Tỷ Hòa');
   });
 });
