@@ -65,6 +65,8 @@ Khi cần bảo trì, sửa lỗi hoặc nâng cấp, bạn chỉ cần gửi y�
 | `[UI-LAYOUT-NAV]` | **Thanh Menu Điều Hướng (Navbar)** | `src/components/Navbar.tsx` | Hệ thống menu đa cấp (Bát Tự, Tử Vi, Quẻ Dịch, Phong Thủy, Vật Phẩm...). |
 | `[UI-LAYOUT-HEAD]` | **Header & Đăng Nhập / Profile** | `src/components/Header.tsx` | Logo thương hiệu, thanh tìm kiếm nhanh, icon tài khoản người dùng. |
 | `[UI-LAYOUT-FOOT]` | **Footer & Thông Tin Liên Hệ** | `src/components/Footer.tsx` | Bản quyền, địa chỉ, liên kết hữu ích và mạng xã hội. |
+| `[UI-LAYOUT-BOTTOMNAV]` | **Thanh điều hướng đáy di động (Bottom Nav)** | `src/components/BottomNav.tsx` | Thanh điều hướng 5 tab chuẩn App Mobile (Trang chủ, Bát Tự, Tử Vi, Quẻ Dịch, Menu mở rộng). |
+| `[UI-PWA-BANNER]` | **Banner cài đặt ứng dụng Web App (PWA)** | `src/components/pwa/PWAInstallBanner.tsx` | Banner và modal hướng dẫn cài đặt app lên màn hình chính cho Android/iOS. |
 
 ---
 
@@ -149,6 +151,7 @@ Khi cần bảo trì, sửa lỗi hoặc nâng cấp, bạn chỉ cần gửi y�
 | `[CFG-NEXT]` | **Cấu hình Next.js** | `next.config.mjs` | Thiết lập Next.js 15, tối ưu hình ảnh, redirects. |
 | `[CFG-RULES]` | **Quy chuẩn Dự Án** | `AGENTS.md`<br>`GEMINI.md` | Quy tắc phân nhánh Git Flow, chuẩn Conventional Commits, tiêu chuẩn PR. |
 | `[CFG-CHANGELOG]` | **Nhật Ký Thay Đổi** | `CHANGELOG.md` | Lịch sử các phiên bản phát hành theo chuẩn Keep a Changelog. |
+| `[CFG-PWA]` | **Cấu hình Progressive Web App (PWA)** | `src/app/manifest.ts`<br>`public/sw.js` | Web App Manifest, Service Worker offline cache và bộ icon app đa kích thước. |
 | `[DOC-METHODOLOGY]` | **Phương Pháp Luận Bát Tự** | `docs/CACH_TINH_DAI_VAN_LUU_NIEN_TIET_KHI.md` | Cẩm nang tính toán chi tiết Tiết Khí, Đại Vận và Lưu Niên. |
 
 ---

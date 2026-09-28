@@ -3,6 +3,9 @@ import './globals.css';
 import { Header } from '@/components/Header';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { BottomNav } from '@/components/BottomNav';
+import { PWARegister } from '@/components/pwa/PWARegister';
+import { PWAInstallBanner } from '@/components/pwa/PWAInstallBanner';
 import { getCurrentUser } from '@/server/auth';
 
 export const dynamic = 'force-dynamic';
@@ -13,12 +16,24 @@ export const metadata: Metadata = {
     'Lữ Phúc — Gieo Phúc - Gặt Phước. Lập lá số Bát Tự Lữ Phúc, Tứ Trụ phong thủy cải vận bổ khuyết, luận giải hiện tại tương lai quá khứ, lá số tử vi, quẻ dịch lục hào và phong thủy bát trạch.',
   keywords: ['bát tự', 'bát tự lữ phúc', 'lữ phúc', 'gieo phúc gặt phước', 'tứ trụ', 'ngũ hành', 'tử vi', 'lục hào', 'quẻ dịch', 'bát trạch', 'huyền không phi tinh'],
   authors: [{ name: 'Lữ Phúc' }],
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Bát Tự Lữ Phúc',
+  },
+  icons: {
+    icon: '/icon-192.png',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
+  viewportFit: 'cover',
+  themeColor: '#27303f',
 };
 
 export default async function RootLayout({
@@ -30,13 +45,16 @@ export default async function RootLayout({
 
   return (
     <html lang="vi">
-      <body className="min-h-screen flex flex-col justify-between bg-[#f9f5ec] text-gray-800">
+      <body className="min-h-screen flex flex-col justify-between bg-[#f9f5ec] text-gray-800 pb-16 md:pb-0">
+        <PWARegister />
+        <PWAInstallBanner />
         <div>
           <Header user={user ? { fullName: user.fullName, role: user.role } : null} />
           <Navbar />
           <main className="max-w-site mx-auto px-4 py-6 w-full">{children}</main>
         </div>
         <Footer />
+        <BottomNav />
       </body>
     </html>
   );

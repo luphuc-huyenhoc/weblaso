@@ -10,6 +10,13 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ## [Unreleased]
 
 ### Added
+- **Nền Tảng Ứng Dụng Web App (PWA) Bát Tự Lữ Phúc (`[CFG-PWA]`, `[UI-LAYOUT-BOTTOMNAV]`, `[UI-PWA-BANNER]`):**
+  - **Chuyển đổi toàn diện sang Progressive Web App (PWA):** Cho phép người dùng cài đặt website thành App độc lập trên màn hình chính của điện thoại (iOS / Android) và máy tính (Windows / Mac). Ứng dụng chạy toàn màn hình (`display: standalone`), không thanh địa chỉ trình duyệt, khởi động cực nhanh và trải nghiệm mượt mà như app gốc.
+  - **Cấu hình Web App Manifest chuẩn mực (`src/app/manifest.ts`):** Khai báo đầy đủ tên thương hiệu "Bát Tự Lữ Phúc — Huyền Học & Mệnh Lý", theme color `#27303f`, background `#f9f5ec`, viewportFit `cover` chuẩn tai thỏ / Dynamic Island iPhone, cùng hệ thống icon đa kích thước (`icon-192.png`, `icon-512.png`, `icon-maskable-192.png`, `icon-maskable-512.png`, `apple-touch-icon.png`).
+  - **Service Worker & Caching thông minh (`public/sw.js`, `PWARegister.tsx`):** Tự động lưu cache các tài nguyên tĩnh, logo và hình nền; áp dụng chiến lược Network-first cho trang điều hướng và Stale-while-revalidate cho tài nguyên hình ảnh giúp tải trang tức thì và hỗ trợ xem lá số offline.
+  - **Thanh Điều Hướng Đáy Chuẩn Mobile App (`[UI-LAYOUT-BOTTOMNAV]`, `BottomNav.tsx`):** Tích hợp thanh bottom bar cố định ở đáy màn hình di động gồm 5 tab trọng tâm (Trang chủ, Bát Tự, Tử Vi, Quẻ Dịch, và Menu mở rộng), kèm hiệu ứng kính mờ (glassmorphism backdrop blur) sang trọng và chỉ báo tab đang hoạt động.
+  - **Ngăn Kéo Menu Tiện Ích Mở Rộng (Slide-up Drawer):** Hỗ trợ truy cập nhanh 1 chạm đến toàn bộ công cụ: Lịch âm dương tháng, Đổi lịch âm dương, Lịch ngày tốt xấu, Quẻ Seri tiền, Bói Sim số, Quẻ Lục hào, Tung đồng xu, Bát trạch cung mệnh, La bàn 24 sơn hướng, Vật phẩm phong thủy và Đăng nhập / Tài khoản.
+  - **Banner & Modal Hướng Dẫn Cài Đặt Thông Minh (`[UI-PWA-BANNER]`, `PWAInstallBanner.tsx`):** Tự động phát hiện thiết bị: Kích hoạt hộp thoại cài đặt 1 chạm trên Android / Chrome / Edge; hiển thị modal hướng dẫn trực quan 3 bước "Chia sẻ -> Thêm vào MH chính" trên iPhone / iPad Safari.
 - **Tính năng Lập Quẻ Dịch Bằng Seri Tiền (`[PAGE-ICHING-SERI]`, `[UI-SERI-FORM]`, `[CORE-ICHING]`):**
   - Bổ sung công cụ lập quẻ Kinh Dịch Mai Hoa Dịch Số dựa trên dãy số seri in trên tờ tiền theo đúng giao diện và thuật toán của `simkinhdich.com/boi-dich/gieo-que-seri`.
   - Thuật toán Dịch học chuẩn mực: Tách nửa đầu xác định Thượng Quái (chia 8 lấy dư), nửa sau xác định Hạ Quái (chia 8 lấy dư), tổng tất cả các chữ số xác định Hào Động (chia 6 lấy dư).
