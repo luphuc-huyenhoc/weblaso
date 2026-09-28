@@ -1,0 +1,75 @@
+name: Build Android APK (Bát Tự Lữ Phúc)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - 'capacitor.config.ts'
+      - 'public/**'
+      - '.github/workflows/build-apk.yml'
+  workflow_dispatch:
+    inputs:
+      app_url:
+        description: 'URL Website Production (ví dụ: https://luphuc.vn). Để trống để dùng mặc định.'
+        required: false
+        default: ''
+
+jobs:
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Setup Java 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Configure Server URL (if provided)
+        run: |
+          if [ -n "${{ github.event.inputs.app_url }}" ]; then
+            echo "Setting CAPACITOR_SERVER_URL to ${{ github.event.inputs.app_url }}"
+            echo "CAPACITOR_SERVER_URL=${{ github.event.inputs.app_url }}" >> $GITHUB_ENV
+          fi
+
+      - name: Generate Android Icons & Sync Capacitor
+        run: |
+          node scripts/generate-android-icons.js
+          npx cap sync android
+
+      - name: Grant Execute Permission to Gradlew
+        run: chmod +x ./android/gradlew
+
+      - name: Build Android Debug APK
+        run: |
+          cd android
+          ./gradlew assembleDebug --stacktrace --no-daemon
+
+      - name: Prepare APK Artifact
+        run: |
+          mkdir -p build-output
+          cp android/app/build/outputs/apk/debug/app-debug.apk build-output/BatTuLuPhuc-v1.0-debug.apk
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BatTuLuPhuc-APK
+          path: build-output/BatTuLuPhuc-v1.0-debug.apk
+          retention-days: 30

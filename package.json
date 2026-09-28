@@ -14,12 +14,16 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "cap:sync": "node scripts/generate-android-icons.js && npx cap sync android",
+    "cap:open": "npx cap open android"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
     "@prisma/client": "^6.4.1",
     "bcryptjs": "^2.4.3",
     "clsx": "^2.1.1",
@@ -33,6 +37,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
     "@playwright/test": "^1.50.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.13.5",

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Bát Tự Lữ Phúc</title>
+  <meta name="theme-color" content="#27303f">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #1a2234;
+      color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+      text-align: center;
+    }
+    .logo-container {
+      width: 110px;
+      height: 110px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #b45309, #d97706);
+      padding: 4px;
+      box-shadow: 0 10px 25px -5px rgba(217, 119, 6, 0.4);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 24px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fbbf24;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    p.slogan {
+      font-size: 14px;
+      color: #94a3b8;
+      max-width: 320px;
+      line-height: 1.5;
+      margin-bottom: 32px;
+    }
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(251, 191, 36, 0.2);
+      border-top-color: #fbbf24;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .status-text {
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+    .retry-btn {
+      display: none;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #d97706;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-container">
+    <img src="logo.png" alt="Lữ Phúc" class="logo-img" onerror="this.src='icon-192.png'">
+  </div>
+  <h1>Bát Tự Lữ Phúc</h1>
+  <p class="slogan">Thấu hiểu Mệnh lý – Thuận theo Tự nhiên</p>
+
+  <div class="spinner" id="spinner"></div>
+  <div class="status-text" id="status">Đang kết nối ứng dụng...</div>
+  <button class="retry-btn" id="retryBtn" onclick="tryConnect()">Thử lại</button>
+
+  <script>
+    function tryConnect() {
+      const status = document.getElementById('status');
+      const spinner = document.getElementById('spinner');
+      const retryBtn = document.getElementById('retryBtn');
+      
+      status.innerText = "Đang kiểm tra kết nối mạng...";
+      spinner.style.display = "block";
+      retryBtn.style.display = "none";
+
+      // If this page is opened in a WebView or browser, check connectivity
+      fetch('/api/health', { method: 'HEAD', cache: 'no-store' })
+        .then(() => {
+          window.location.replace('/');
+        })
+        .catch(() => {
+          setTimeout(() => {
+            status.innerText = "Không thể kết nối máy chủ. Vui lòng kiểm tra Wi-Fi / 4G.";
+            spinner.style.display = "none";
+            retryBtn.style.display = "inline-block";
+          }, 2000);
+        });
+    }
+
+    // Auto-check after 1.2s
+    setTimeout(tryConnect, 1200);
+  </script>
+</body>
+</html>

@@ -152,6 +152,7 @@ Khi cần bảo trì, sửa lỗi hoặc nâng cấp, bạn chỉ cần gửi y�
 | `[CFG-RULES]` | **Quy chuẩn Dự Án** | `AGENTS.md`<br>`GEMINI.md` | Quy tắc phân nhánh Git Flow, chuẩn Conventional Commits, tiêu chuẩn PR. |
 | `[CFG-CHANGELOG]` | **Nhật Ký Thay Đổi** | `CHANGELOG.md` | Lịch sử các phiên bản phát hành theo chuẩn Keep a Changelog. |
 | `[CFG-PWA]` | **Cấu hình Progressive Web App (PWA)** | `src/app/manifest.ts`<br>`public/sw.js` | Web App Manifest, Service Worker offline cache và bộ icon app đa kích thước. |
+| `[CFG-APK]` | **Cấu hình Ứng dụng Android (Capacitor & Build APK)** | `capacitor.config.ts`<br>`android/`<br>`.github/workflows/build-apk.yml` | Cấu hình nền tảng Android gốc, icon launcher, và quy trình GitHub Actions build APK tự động. |
 | `[DOC-METHODOLOGY]` | **Phương Pháp Luận Bát Tự** | `docs/CACH_TINH_DAI_VAN_LUU_NIEN_TIET_KHI.md` | Cẩm nang tính toán chi tiết Tiết Khí, Đại Vận và Lưu Niên. |
 
 ---
