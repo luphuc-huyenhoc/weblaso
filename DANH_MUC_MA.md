@@ -42,7 +42,7 @@ Khi cần bảo trì, sửa lỗi hoặc nâng cấp, bạn chỉ cần gửi y�
 | :--- | :--- | :--- | :--- |
 | `[UI-BAZI-FORM]` | **Khung nhập liệu lập lá số Bát Tự** | `src/components/bazi/BaziForm.tsx` | Form gỗ nâu sang trọng, các ô chọn ngày/tháng/năm/giờ sinh, nút MỞ LÁ SỐ. |
 | `[UI-BAZI-DOCUMENT]` | **Tờ bản đồ lá số in ấn / xuất ảnh** | `src/components/bazi/BaziChartDocument.tsx` | Khung văn kiện truyền thống có nền hoa văn watermark in ấn. |
-| `[UI-BAZI-GRID]` | **Bảng lưới 4 Trụ (Five Column Grid)**| `src/components/bazi/FourPillarsGrid.tsx` | Bảng hiển thị Dương lịch, Chủ tinh, Bát tự, Tàng can, Phó tinh, Thần sát. |
+| `[UI-BAZI-GRID]` | **Bảng lưới 4 Trụ (Five Column Grid)**| `src/components/bazi/FourPillarsGrid.tsx` | Bảng hiển thị Dương lịch, Chủ tinh, Bát tự, Tàng can, Phó tinh, Thần sát, Tiểu vận. |
 | `[UI-BAZI-DAIVAN]` | **Khung hiển thị Đại Vận & Lưu Niên**| `src/components/bazi/MajorLuckSection.tsx`<br>`src/components/bazi/AnnualLuckSection.tsx` | Các thập kỷ đại vận và 10 năm lưu niên tương ứng. |
 | `[UI-BAZI-COLORS]` | **Màu sắc & Token Ngũ Hành Bát Tự** | `src/components/bazi/BaziChartColors.ts`<br>`src/components/bazi/FiveElementsLegend.tsx` | Bảng màu Kim (xám), Mộc (xanh lá), Thủy (xanh dương), Hỏa (đỏ), Thổ (vàng nâu). |
 | `[UI-BAZI-RESULT]` | **Khung bao kết quả & nút xuất PDF** | `src/components/bazi/BaziChartResult.tsx` | Nút lưu lá số vào tài khoản, tải ảnh PNG chất lượng cao, chia sẻ. |

@@ -11,6 +11,8 @@ import {
   getCanChiHour,
 } from '../calendar/index';
 import crypto from 'crypto';
+import { calculateMinorLuck, MinorLuckResult, MinorLuckItem } from './minorLuck';
+export * from './minorLuck';
 
 export interface BaziInput {
   fullName: string;
@@ -104,6 +106,7 @@ export interface BaziCalculationResult {
     startAgeMonths: number;
     pillars: MajorLuckPillar[];
   };
+  minorLuck?: import('./minorLuck').MinorLuckResult;
 }
 
 export interface BaziInterpretationResult {
@@ -796,6 +799,15 @@ export function calculateBazi(input: BaziInput): BaziEnvelope {
       startAgeMonths,
       pillars: majorLuckPillars,
     },
+    minorLuck: calculateMinorLuck({
+      gender,
+      yearStem,
+      hourStem,
+      hourBranch,
+      dayMaster,
+      birthYear: year,
+      focusYear,
+    }),
   };
 
   const interpretationResult: BaziInterpretationResult = {

@@ -53,7 +53,12 @@ export const BaziChartDocument = forwardRef<HTMLDivElement, BaziChartDocumentPro
             />
 
             {/* [B] Four Pillars 5-Column Grid */}
-            <FourPillarsGrid pillars={pillars} />
+            <FourPillarsGrid
+              pillars={pillars}
+              genderLabel={personal.genderLabel}
+              focusYear={focusYear}
+              minorLuck={calculation.minorLuck}
+            />
 
             {/* [C] Major Luck (Đại Vận) Section */}
             <MajorLuckSection

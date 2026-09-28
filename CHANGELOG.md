@@ -10,6 +10,13 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ## [Unreleased]
 
 ### Added
+- **Thuật Toán & Hiển Thị Hàng "Tiểu Vận" Khởi Từ Trụ Giờ (`[CORE-BAZI]`, `[UI-BAZI-GRID]`, `[UI-BAZI-DOCUMENT]`):**
+  - **Thuật toán tính Tiểu Vận Bát Tự (`src/domain/bazi/minorLuck.ts`):** Lấy Trụ Giờ làm mốc khởi vận (Tuổi 0 = Trụ Giờ). Xác định chiều tính theo nguyên tắc kinh điển: Dương Nam / Âm Nữ đi Thuận (`+1`), Âm Nam / Dương Nữ đi Nghịch (`-1`). Với tuổi $n$: `canIndex = (canIndex + dir * n) % 10`, `chiIndex = (chiIndex + dir * n) % 12`. Sau đúng 60 năm chu kỳ Hoa Giáp, Tiểu Vận quay lại đúng Can Chi của Trụ Giờ gốc.
+  - **Phân định Thập Thần của Tiểu Vận:** Tự động so sánh Thiên Can của Tiểu Vận với Nhật Can (Nhật Chủ) để xác định chính xác Thập Thần (Tỷ Kiên, Kiếp Tài, Thực Thần, Thương Quan, Thiên Tài, Chính Tài, Thất Sát, Chính Quan, Thiên Ấn, Chính Ấn).
+  - **Tách đôi dòng Thần Sát thành 2 hàng vuông vắn (`FourPillarsGrid.tsx`):**
+    - Hàng 6: **THẦN SÁT** (chiều cao 59px) hiển thị gọn gàng các sao cát hung của 4 trụ.
+    - Hàng 7: **TIỂU VẬN** (chiều cao 59px) gồm 4 cột đối xứng: Cột 1 hiển thị Chiều tính (`Thuận/Nghịch (+1/-1)` & `Dương Nam/Âm Nữ`); Cột 2 hiển thị Mốc khởi (`Can Chi Trụ Giờ - 0t`); Cột 3 hiển thị Can Chi Tiểu Vận năm xem (`Năm & Tuổi` với màu ngũ hành nổi bật); Cột 4 hiển thị Thập Thần đối chiếu Nhật Chủ.
+    - Giữ nguyên tuyệt đối tổng chiều cao 450px của khung 4 trụ và 1000px của toàn bộ văn kiện lá số 750x1000px.
 - **Đóng Gói Ứng Dụng Android APK Gốc (`[CFG-APK]`, `capacitor.config.ts`, `android/`, `.github/workflows/build-apk.yml`):**
   - **Tích hợp nền tảng Capacitor Native Android:** Tạo dự án gốc Android (`android/`) với Application ID `com.luphuc.battu`, tên hiển thị "Bát Tự Lữ Phúc", giao diện nền tối `#1a2234` chuẩn thương hiệu và cấu hình quyền mạng `INTERNET` & `ACCESS_NETWORK_STATE`.
   - **Hệ thống Icon Ứng Dụng Đa Độ Phân Giải Tự Động (`scripts/generate-android-icons.js`):** Tự động tạo toàn bộ bộ icon launcher Android (mdpi 48px, hdpi 72px, xhdpi 96px, xxhdpi 144px, xxxhdpi 192px) gồm cả icon chuẩn, icon tròn và icon thích ứng (Adaptive Icon) với logo Lữ Phúc nét cao.
