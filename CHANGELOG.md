@@ -10,6 +10,10 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ## [Unreleased]
 
 ### Changed
+- **Tối ưu hiển thị vừa khít 100% màn hình điện thoại cho chế độ "Lữ Phúc 7 Cột" (`[PAGE-BAZI-EMPIRICAL]`, `[UI-BAZI-EMPIRICAL]`):**
+  - **Không còn bị cắt hình 3 cột phụ:** Loại bỏ hoàn toàn giới hạn chiều rộng `min-w-[650px]`, chuyển sang `w-full min-w-0 grid-cols-7` giúp toàn bộ 7 cột (Trụ Năm, Trụ Tháng, Trụ Ngày, Trụ Giờ, Cột Đại Vận, Cột Lưu Niên, Cột Tiểu Vận) cùng cột nhãn Càn/Khôn hiển thị đồng loạt, trọn vẹn trong khung hình điện thoại mà không bị tràn mép hay che khuất.
+  - **Tỷ lệ co giãn vi mô hoàn hảo (Micro Fluid Typography):** Áp dụng tỷ lệ co giãn `clamp(12px, 3.6vw, baziFontSize)` cho Can Chi 7 cột, nhãn viết tắt linh hoạt (`Đ.VẬN`, `L.NIÊN`, `T.VẬN` trên mobile và đầy đủ trên desktop), nhãn Nhật Chủ tự động rút gọn thành `NHẬT` để đảm bảo vừa khít trong không gian cột ~48px.
+  - **Bố cục thẻ vi mô cân đối:** Tinh chỉnh Tàng Can (`text-[7px]`), Thần Sát (`text-[6px]`), Tràng Sinh & Nạp Âm (`text-[6.5px]`) với các khoảng đệm siêu gọn `p-0.5 sm:p-4`, giúp toàn bộ bảng 7 cột đạt độ thẩm mỹ, sắc nét và hài hòa với mọi kích cỡ màn hình smartphone.
 - **Tối ưu hiển thị responsive vừa khít màn hình điện thoại cho Bát Tự Thực Nghiệm (`[PAGE-BAZI-EMPIRICAL]`, `[UI-BAZI-EMPIRICAL]`):**
   - **Khung 4 trụ vừa vặn 100% màn hình:** Loại bỏ ràng buộc chiều rộng cứng `min-w-[700px]` ở chế độ Bát Tự (4 Cột), thay bằng `w-full min-w-0` giúp toàn bộ 4 trụ (Năm, Tháng, Ngày, Giờ) cùng cột nhãn Càn Tạo/Khôn Tạo hiển thị trọn vẹn, không bị tràn viền hay mất Trụ Giờ sang phải.
   - **Cỡ chữ linh hoạt theo độ rộng màn hình (Fluid Typography):** Áp dụng hàm `clamp(18px, 5.2vw, baziFontSize)` cho Can Chi cỡ lớn, kết hợp chữ số và nhãn co giãn tự nhiên (`text-[8.5px]` - `text-xs`) giúp chữ, số và khung đạt tỷ lệ hài hòa hoàn hảo trên mọi kích thước màn hình smartphone.

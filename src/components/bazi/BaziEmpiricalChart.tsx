@@ -1186,11 +1186,11 @@ export function BaziEmpiricalChart() {
           </div>
 
           {/* MAIN GRID: 4 NATAL PILLARS (+ 3 EXTRA COLUMNS IN LỮ PHÚC MODE) */}
-          <div className="overflow-x-auto no-scrollbar">
-            <div className={`flex border border-slate-200 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm bg-white ${isTuTru ? 'min-w-[650px]' : 'w-full min-w-0'}`}>
+          <div className="w-full overflow-hidden">
+            <div className="w-full flex border border-slate-200 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm bg-white min-w-0">
               {/* Vertical Side Label: CÀN TẠO / KHÔN TẠO */}
-              <div className="w-7 sm:w-12 bg-slate-50 border-r border-slate-200 flex items-center justify-center p-1 sm:p-2 text-center flex-shrink-0">
-                <span className="font-black tracking-widest text-[9px] sm:text-sm text-slate-800 writing-vertical uppercase select-none">
+              <div className={`${isTuTru ? 'w-5 sm:w-12' : 'w-7 sm:w-12'} bg-slate-50 border-r border-slate-200 flex items-center justify-center p-0.5 sm:p-2 text-center flex-shrink-0`}>
+                <span className={`font-black tracking-tighter sm:tracking-widest ${isTuTru ? 'text-[8px] sm:text-sm' : 'text-[9px] sm:text-sm'} text-slate-800 writing-vertical uppercase select-none`}>
                   {formData.gender === 'male' ? 'CÀN TẠO' : 'KHÔN TẠO'}
                 </span>
               </div>
@@ -1203,6 +1203,7 @@ export function BaziEmpiricalChart() {
                   pillar={baziData.pillars.year}
                   getStemBranchColor={getStemBranchColor}
                   baziFontSize={effectiveBaziFontSize}
+                  isTuTru={isTuTru}
                 />
 
                 {/* 2. Trụ Tháng */}
@@ -1211,6 +1212,7 @@ export function BaziEmpiricalChart() {
                   pillar={baziData.pillars.month}
                   getStemBranchColor={getStemBranchColor}
                   baziFontSize={effectiveBaziFontSize}
+                  isTuTru={isTuTru}
                 />
 
                 {/* 3. Trụ Ngày (Nhật Chủ) */}
@@ -1220,6 +1222,7 @@ export function BaziEmpiricalChart() {
                   isDayMaster
                   getStemBranchColor={getStemBranchColor}
                   baziFontSize={effectiveBaziFontSize}
+                  isTuTru={isTuTru}
                 />
 
                 {/* 4. Trụ Giờ */}
@@ -1228,6 +1231,7 @@ export function BaziEmpiricalChart() {
                   pillar={baziData.pillars.hour}
                   getStemBranchColor={getStemBranchColor}
                   baziFontSize={effectiveBaziFontSize}
+                  isTuTru={isTuTru}
                 />
 
                 {/* EXTRA 3 COLUMNS IN LỮ PHÚC MODE */}
@@ -1239,6 +1243,7 @@ export function BaziEmpiricalChart() {
                       return (
                         <ExtraPillarCard
                           badge="ĐẠI VẬN"
+                          shortBadge="Đ.VẬN"
                           title={`${curLuck?.age}t - ${curLuck?.year}`}
                           stem={curLuck?.stem || ''}
                           branch={curLuck?.branch || ''}
@@ -1247,6 +1252,7 @@ export function BaziEmpiricalChart() {
                           changSheng={curLuck?.changSheng || ''}
                           getStemBranchColor={getStemBranchColor}
                           baziFontSize={effectiveBaziFontSize}
+                          isTuTru={isTuTru}
                         />
                       );
                     })()}
@@ -1257,6 +1263,7 @@ export function BaziEmpiricalChart() {
                       return (
                         <ExtraPillarCard
                           badge="LƯU NIÊN"
+                          shortBadge="L.NIÊN"
                           title={`${curAnnual?.year}`}
                           stem={curAnnual?.stem || ''}
                           branch={curAnnual?.branch || ''}
@@ -1265,6 +1272,7 @@ export function BaziEmpiricalChart() {
                           changSheng=""
                           getStemBranchColor={getStemBranchColor}
                           baziFontSize={effectiveBaziFontSize}
+                          isTuTru={isTuTru}
                         />
                       );
                     })()}
@@ -1276,7 +1284,8 @@ export function BaziEmpiricalChart() {
                       return (
                         <ExtraPillarCard
                           badge="TIỂU VẬN"
-                          title={`${curTieuVan?.age} tuổi`}
+                          shortBadge="T.VẬN"
+                          title={`${curTieuVan?.age}t`}
                           stem={curTieuVan?.stem || ''}
                           branch={curTieuVan?.branch || ''}
                           tenGod={tvTenGod}
@@ -1284,6 +1293,7 @@ export function BaziEmpiricalChart() {
                           changSheng=""
                           getStemBranchColor={getStemBranchColor}
                           baziFontSize={effectiveBaziFontSize}
+                          isTuTru={isTuTru}
                         />
                       );
                     })()}
@@ -2002,40 +2012,42 @@ function PillarCard({
   pillar,
   isDayMaster = false,
   getStemBranchColor,
-  baziFontSize
+  baziFontSize,
+  isTuTru = false
 }: {
   label: string;
   pillar: any;
   isDayMaster?: boolean;
   getStemBranchColor: (c: string) => string;
   baziFontSize: number;
+  isTuTru?: boolean;
 }) {
   return (
-    <div className={`p-1 sm:p-4 flex flex-col justify-between text-center min-w-0 ${isDayMaster ? 'bg-amber-50/20' : 'bg-white'}`}>
+    <div className={`${isTuTru ? 'p-0.5 sm:p-4' : 'p-1 sm:p-4'} flex flex-col justify-between text-center min-w-0 overflow-hidden ${isDayMaster ? 'bg-amber-50/20' : 'bg-white'}`}>
       {/* 1. Header Label & Ten God */}
-      <div className="flex flex-col items-center justify-start h-11 sm:h-14">
-        <div className="text-[8.5px] sm:text-xs font-bold uppercase text-slate-500 tracking-wider truncate w-full">
+      <div className={`flex flex-col items-center justify-start ${isTuTru ? 'h-9 sm:h-14' : 'h-11 sm:h-14'}`}>
+        <div className={`${isTuTru ? 'text-[7px] sm:text-xs' : 'text-[8.5px] sm:text-xs'} font-bold uppercase text-slate-500 tracking-tighter sm:tracking-wider truncate w-full`}>
           {label}
         </div>
-        <div className="mt-0.5 sm:mt-1 h-5 sm:h-6 flex items-center justify-center w-full">
+        <div className="mt-0.5 sm:mt-1 h-4 sm:h-6 flex items-center justify-center w-full">
           <span
-            className={`text-[9px] sm:text-sm font-black uppercase tracking-wider px-1 sm:px-2 py-0.5 rounded truncate max-w-full ${
+            className={`${isTuTru ? 'text-[7.5px] sm:text-sm px-0.5 sm:px-2' : 'text-[9px] sm:text-sm px-1 sm:px-2'} font-black uppercase tracking-tighter sm:tracking-wider py-0.2 sm:py-0.5 rounded truncate max-w-full ${
               isDayMaster
                 ? 'text-amber-800 bg-amber-100/90 border border-amber-300'
                 : 'text-slate-800'
             }`}
           >
-            {isDayMaster ? 'NHẬT CHỦ' : pillar.tenGod}
+            {isDayMaster ? (isTuTru ? 'NHẬT' : 'NHẬT CHỦ') : pillar.tenGod}
           </span>
         </div>
       </div>
 
       {/* 2. Main Can Chi typography */}
-      <div className="my-1.5 sm:my-3 space-y-0.5 sm:space-y-1.5 flex flex-col items-center justify-center">
+      <div className={`${isTuTru ? 'my-1 sm:my-3 space-y-0 sm:space-y-1.5' : 'my-1.5 sm:my-3 space-y-0.5 sm:space-y-1.5'} flex flex-col items-center justify-center`}>
         <div
           className="font-black leading-none select-none tracking-tight"
           style={{
-            fontSize: `clamp(18px, 5.2vw, ${baziFontSize}px)`,
+            fontSize: isTuTru ? `clamp(12px, 3.6vw, ${baziFontSize}px)` : `clamp(18px, 5.2vw, ${baziFontSize}px)`,
             color: getStemBranchColor(pillar.stem)
           }}
         >
@@ -2044,7 +2056,7 @@ function PillarCard({
         <div
           className="font-black leading-none select-none tracking-tight"
           style={{
-            fontSize: `clamp(18px, 5.2vw, ${baziFontSize}px)`,
+            fontSize: isTuTru ? `clamp(12px, 3.6vw, ${baziFontSize}px)` : `clamp(18px, 5.2vw, ${baziFontSize}px)`,
             color: getStemBranchColor(pillar.branch)
           }}
         >
@@ -2054,11 +2066,11 @@ function PillarCard({
 
       {/* 3. Hidden Stems (Tàng Can) */}
       <div className="mt-1 sm:mt-2 pt-1 sm:pt-2 border-t border-slate-200">
-        <div className="flex items-center justify-center gap-0.5 sm:gap-1.5 flex-wrap min-h-5 sm:min-h-6">
+        <div className={`flex items-center justify-center ${isTuTru ? 'gap-0.2 sm:gap-1.5' : 'gap-0.5 sm:gap-1.5'} flex-wrap ${isTuTru ? 'min-h-4 sm:min-h-6' : 'min-h-5 sm:min-h-6'}`}>
           {pillar.hiddenStems.map((h: any, idx: number) => (
             <span
               key={idx}
-              className="text-[9px] sm:text-xs font-black px-1 sm:px-1.5 py-0.5 rounded bg-slate-50 border border-slate-200/80 shadow-2xs"
+              className={`${isTuTru ? 'text-[7px] sm:text-xs px-0.5 py-0.2' : 'text-[9px] sm:text-xs px-1 sm:px-1.5 py-0.5'} font-black rounded bg-slate-50 border border-slate-200/80 shadow-2xs leading-none`}
               style={{ color: getStemBranchColor(h.stem) }}
               title={h.tenGod}
             >
@@ -2069,11 +2081,11 @@ function PillarCard({
       </div>
 
       {/* 4. Shen Sha Stars (Thần Sát) */}
-      <div className="mt-1 sm:mt-2 min-h-8 sm:min-h-12 flex items-center justify-center flex-wrap gap-0.5 sm:gap-1 content-center">
-        {pillar.stars.slice(0, 3).map((star: string, idx: number) => (
+      <div className={`mt-1 sm:mt-2 ${isTuTru ? 'min-h-7 sm:min-h-12' : 'min-h-8 sm:min-h-12'} flex items-center justify-center flex-wrap gap-0.5 sm:gap-1 content-center`}>
+        {pillar.stars.slice(0, isTuTru ? 2 : 3).map((star: string, idx: number) => (
           <span
             key={idx}
-            className={`text-[7.5px] sm:text-[9.5px] px-1 sm:px-1.5 py-0.5 rounded border font-medium leading-tight truncate max-w-full ${
+            className={`${isTuTru ? 'text-[6px] sm:text-[9.5px] px-0.5 py-0.2' : 'text-[7.5px] sm:text-[9.5px] px-1 sm:px-1.5 py-0.5'} rounded border font-medium leading-tight truncate max-w-full ${
               isSpecialStar(star)
                 ? 'bg-amber-50 text-amber-900 border-amber-300'
                 : 'bg-slate-50 text-slate-700 border-slate-200'
@@ -2085,7 +2097,7 @@ function PillarCard({
       </div>
 
       {/* 5. Chang Sheng & Nap Am */}
-      <div className="mt-1 sm:mt-2 pt-1 sm:pt-2 border-t border-slate-200 text-[8.5px] sm:text-[11px] h-9 sm:h-12 flex flex-col justify-center space-y-0.5">
+      <div className={`mt-1 sm:mt-2 pt-1 sm:pt-2 border-t border-slate-200 ${isTuTru ? 'text-[6.5px] sm:text-[11px] h-7 sm:h-12' : 'text-[8.5px] sm:text-[11px] h-9 sm:h-12'} flex flex-col justify-center space-y-0.5`}>
         <div className="text-amber-800 font-bold truncate">{pillar.changSheng}</div>
         <div className="text-slate-600 truncate font-medium">{pillar.napAm}</div>
       </div>
@@ -2096,6 +2108,7 @@ function PillarCard({
 // Sub-component: Extra Pillar Card in 7-Column Lữ Phúc Mode
 function ExtraPillarCard({
   badge,
+  shortBadge,
   title,
   stem,
   branch,
@@ -2103,9 +2116,11 @@ function ExtraPillarCard({
   napAm,
   changSheng,
   getStemBranchColor,
-  baziFontSize
+  baziFontSize,
+  isTuTru = true
 }: {
   badge: string;
+  shortBadge?: string;
   title: string;
   stem: string;
   branch: string;
@@ -2114,30 +2129,32 @@ function ExtraPillarCard({
   changSheng: string;
   getStemBranchColor: (c: string) => string;
   baziFontSize: number;
+  isTuTru?: boolean;
 }) {
   return (
-    <div className="p-1 sm:p-4 flex flex-col justify-between text-center bg-indigo-50/20 min-w-0">
+    <div className="p-0.5 sm:p-4 flex flex-col justify-between text-center bg-indigo-50/20 min-w-0 overflow-hidden">
       {/* 1. Header Label & Ten God */}
-      <div className="flex flex-col items-center justify-start h-11 sm:h-14">
-        <div className="text-[8.5px] sm:text-xs font-black uppercase text-indigo-700 tracking-wider truncate w-full">
-          {badge}
+      <div className="flex flex-col items-center justify-start h-9 sm:h-14">
+        <div className="text-[7px] sm:text-xs font-black uppercase text-indigo-700 tracking-tighter sm:tracking-wider truncate w-full">
+          <span className="sm:hidden">{shortBadge || badge}</span>
+          <span className="hidden sm:inline">{badge}</span>
         </div>
-        <div className="text-[8.5px] sm:text-[10px] text-slate-500 font-medium leading-tight mt-0.5 truncate max-w-full">
+        <div className="text-[6.5px] sm:text-[10px] text-slate-500 font-medium leading-tight mt-0.5 truncate max-w-full">
           {title}
         </div>
-        <div className="mt-0.5 sm:mt-1 h-5 sm:h-6 flex items-center justify-center w-full">
-          <span className="text-[9px] sm:text-sm font-black uppercase tracking-wider text-indigo-950 bg-indigo-100/70 border border-indigo-200 rounded px-1 sm:px-2 py-0.5 truncate max-w-full">
+        <div className="mt-0.5 sm:mt-1 h-4 sm:h-6 flex items-center justify-center w-full">
+          <span className="text-[7.5px] sm:text-sm font-black uppercase tracking-tighter sm:tracking-wider text-indigo-950 bg-indigo-100/70 border border-indigo-200 rounded px-0.5 sm:px-2 py-0.2 sm:py-0.5 truncate max-w-full">
             {tenGod}
           </span>
         </div>
       </div>
 
       {/* 2. Main Can Chi typography */}
-      <div className="my-1.5 sm:my-3 space-y-0.5 sm:space-y-1.5 flex flex-col items-center justify-center">
+      <div className="my-1 sm:my-3 space-y-0 sm:space-y-1.5 flex flex-col items-center justify-center">
         <div
           className="font-black leading-none select-none tracking-tight"
           style={{
-            fontSize: `clamp(18px, 4.5vw, ${baziFontSize}px)`,
+            fontSize: `clamp(12px, 3.6vw, ${baziFontSize}px)`,
             color: getStemBranchColor(stem)
           }}
         >
@@ -2146,7 +2163,7 @@ function ExtraPillarCard({
         <div
           className="font-black leading-none select-none tracking-tight"
           style={{
-            fontSize: `clamp(18px, 4.5vw, ${baziFontSize}px)`,
+            fontSize: `clamp(12px, 3.6vw, ${baziFontSize}px)`,
             color: getStemBranchColor(branch)
           }}
         >
@@ -2156,27 +2173,30 @@ function ExtraPillarCard({
 
       {/* 3. Can Chi Text Badge */}
       <div className="mt-1 sm:mt-2 pt-1 sm:pt-2 border-t border-slate-200">
-        <div className="flex items-center justify-center min-h-5 sm:min-h-6">
-          <span className="text-[9px] sm:text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200/80 px-1 sm:px-2 py-0.5 rounded shadow-2xs truncate">
+        <div className="flex items-center justify-center min-h-4 sm:min-h-6">
+          <span className="text-[7px] sm:text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200/80 px-0.5 sm:px-2 py-0.2 sm:py-0.5 rounded shadow-2xs truncate">
             {stem} {branch}
           </span>
         </div>
       </div>
 
       {/* 4. Chang Sheng */}
-      <div className="mt-1 sm:mt-2 min-h-8 sm:min-h-12 flex items-center justify-center flex-wrap gap-0.5 sm:gap-1 content-center">
+      <div className="mt-1 sm:mt-2 min-h-7 sm:min-h-12 flex items-center justify-center flex-wrap gap-0.5 sm:gap-1 content-center">
         {changSheng ? (
-          <span className="text-[8px] sm:text-[10px] px-1 sm:px-2 py-0.5 rounded border border-indigo-200 bg-indigo-50/70 text-indigo-900 font-semibold truncate">
+          <span className="text-[6.5px] sm:text-[10px] px-0.5 sm:px-2 py-0.2 sm:py-0.5 rounded border border-indigo-200 bg-indigo-50/70 text-indigo-900 font-semibold truncate">
             {changSheng}
           </span>
         ) : (
-          <span className="text-[10px] sm:text-xs text-slate-400 font-bold">-</span>
+          <span className="text-[8px] sm:text-xs text-slate-400 font-bold">-</span>
         )}
       </div>
 
       {/* 5. Footer: Badge & Nap Am */}
-      <div className="mt-1 sm:mt-2 pt-1 sm:pt-2 border-t border-slate-200 text-[8.5px] sm:text-[11px] h-9 sm:h-12 flex flex-col justify-center space-y-0.5">
-        <div className="text-indigo-700 font-bold truncate">{badge}</div>
+      <div className="mt-1 sm:mt-2 pt-1 sm:pt-2 border-t border-slate-200 text-[6.5px] sm:text-[11px] h-7 sm:h-12 flex flex-col justify-center space-y-0.5">
+        <div className="text-indigo-700 font-bold truncate">
+          <span className="sm:hidden">{shortBadge || badge}</span>
+          <span className="hidden sm:inline">{badge}</span>
+        </div>
         <div className="text-slate-600 truncate font-medium">{napAm}</div>
       </div>
     </div>
