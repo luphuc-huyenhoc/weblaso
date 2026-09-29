@@ -14,9 +14,7 @@ import {
   COLORS,
   ELEMENTS,
   NAP_AM,
-  safeStorage,
-  CanType,
-  ChiType
+  safeStorage
 } from '@/domain/bazi/empiricalEngine';
 import {
   Calendar,
@@ -229,7 +227,7 @@ export const serializeChartNotes = (topics: Record<string, string>): string => {
 export function BaziEmpiricalChart() {
   const chartRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
-  const [activeChartMode, setActiveChartMode] = useState<'bazi' | 'tutru'>('bazi'); // 'tutru' is HOA SƠN mode
+  const [activeChartMode, setActiveChartMode] = useState<'bazi' | 'tutru'>('bazi'); // 'tutru' is LỮ PHÚC mode
 
   // Input state
   const [formData, setFormData] = useState({
@@ -317,8 +315,8 @@ export function BaziEmpiricalChart() {
   const [designConfig, setDesignConfig] = useState<EmpiricalDesignConfig>(() => {
     const saved = safeStorage.getItem('bazi_empirical_design_config');
     const defaults: EmpiricalDesignConfig = {
-      chartBgColor: '#0f172a',
-      cardBgColor: '#1e293b',
+      chartBgColor: '#ffffff',
+      cardBgColor: '#ffffff',
       accentColor: '#d97706',
       goldBorderColor: '#b45309',
       fontFamily: 'Inter',
@@ -327,7 +325,11 @@ export function BaziEmpiricalChart() {
     };
     if (saved) {
       try {
-        return { ...defaults, ...JSON.parse(saved) };
+        const parsed = JSON.parse(saved);
+        if (parsed.chartBgColor === '#0f172a') {
+          parsed.chartBgColor = '#ffffff';
+        }
+        return { ...defaults, ...parsed };
       } catch {}
     }
     return defaults;
@@ -355,7 +357,7 @@ export function BaziEmpiricalChart() {
     });
     setSelectedCycle(null);
     setSelectedAnnualYear(null);
-    showToast(`Đã an lá số ${mode === 'bazi' ? 'BÁT TỰ' : 'HOA SƠN'} thành công!`);
+    showToast(`Đã an lá số ${mode === 'bazi' ? 'BÁT TỰ' : 'LỮ PHÚC'} thành công!`);
   };
 
   const handlePrevChart = () => {
@@ -574,7 +576,7 @@ export function BaziEmpiricalChart() {
       const fn = format === 'png' ? toPng : toJpeg;
       const dataUrl = await fn(chartRef.current, {
         pixelRatio: 2.5,
-        backgroundColor: designConfig.chartBgColor,
+        backgroundColor: designConfig.chartBgColor || '#ffffff',
         cacheBust: true,
       });
       const link = document.createElement('a');
@@ -606,7 +608,7 @@ export function BaziEmpiricalChart() {
   const isTuTru = activeChartMode === 'tutru';
 
   return (
-    <div className="w-full min-h-screen bg-slate-950 text-slate-100 py-6 px-2 sm:px-4 md:px-6">
+    <div className="w-full min-h-screen bg-white text-slate-900 py-6 px-2 sm:px-4 md:px-6">
       {/* TOAST ALERT */}
       {toastMessage && (
         <div className="fixed top-20 right-4 z-50 bg-amber-500 text-slate-950 font-bold px-4 py-2.5 rounded-lg shadow-xl border border-amber-300 flex items-center gap-2 animate-bounce">
@@ -615,8 +617,8 @@ export function BaziEmpiricalChart() {
         </div>
       )}
 
-      {/* TOP CONTROL BAR */}
-      <div className="max-w-[1400px] mx-auto mb-4 bg-slate-900/90 border border-amber-600/30 rounded-xl p-3 sm:p-4 shadow-lg backdrop-blur-md">
+      {/* TOP CONTROL BAR (WHITE THEME) */}
+      <div className="max-w-[1400px] mx-auto mb-4 bg-slate-50 border border-slate-200/90 rounded-xl p-3 sm:p-4 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
           {/* Left Buttons: Presets, Customizer, Archive */}
           <div className="flex items-center gap-2 flex-wrap">
@@ -624,7 +626,7 @@ export function BaziEmpiricalChart() {
             <button
               type="button"
               onClick={() => showToast('Đã áp dụng cấu hình A!')}
-              className="px-3 py-1.5 rounded-full bg-slate-800 border border-amber-500/40 text-xs font-black text-amber-300 hover:bg-slate-700 transition"
+              className="px-3 py-1.5 rounded-full bg-white border border-amber-500/40 text-xs font-black text-amber-900 hover:bg-amber-50 transition shadow-2xs"
               title="Cấu hình Preset A"
             >
               A
@@ -632,7 +634,7 @@ export function BaziEmpiricalChart() {
             <button
               type="button"
               onClick={() => showToast('Đã áp dụng cấu hình B!')}
-              className="px-3 py-1.5 rounded-full bg-slate-800 border border-amber-500/40 text-xs font-black text-amber-300 hover:bg-slate-700 transition"
+              className="px-3 py-1.5 rounded-full bg-white border border-amber-500/40 text-xs font-black text-amber-900 hover:bg-amber-50 transition shadow-2xs"
               title="Cấu hình Preset B"
             >
               B
@@ -642,9 +644,9 @@ export function BaziEmpiricalChart() {
             <button
               type="button"
               onClick={() => setIsCustomizerOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-950/60 border border-amber-600/50 hover:bg-amber-900/70 text-xs font-bold text-amber-200 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-800 transition shadow-2xs"
             >
-              <Settings2 className="w-3.5 h-3.5 text-amber-400" />
+              <Settings2 className="w-3.5 h-3.5 text-amber-600" />
               <span>BÁT TỰ</span>
             </button>
 
@@ -652,12 +654,12 @@ export function BaziEmpiricalChart() {
             <button
               type="button"
               onClick={() => setIsArchiveModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 text-xs font-bold text-slate-200 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-800 transition shadow-2xs"
               title="Kho Lưu Trữ Mệnh Bàn"
             >
-              <FolderOpen className="w-4 h-4 text-amber-400" />
+              <FolderOpen className="w-4 h-4 text-amber-600" />
               <span className="hidden sm:inline">KHO LƯU TRỮ</span>
-              <span className="ml-1 px-1.5 py-0.2 text-[10px] rounded-full bg-amber-500/20 text-amber-300">
+              <span className="ml-1 px-1.5 py-0.2 text-[10px] rounded-full bg-amber-100 text-amber-900 font-bold border border-amber-300">
                 {savedCharts.length}
               </span>
             </button>
@@ -703,12 +705,12 @@ export function BaziEmpiricalChart() {
           {/* 1. Năm Card */}
           <div
             onClick={() => setQuickPickerType('year')}
-            className="bg-slate-800/90 hover:bg-slate-700/80 border border-slate-700 hover:border-amber-500/50 p-2 rounded-lg cursor-pointer transition text-center shadow"
+            className="bg-white hover:bg-amber-50/60 border border-slate-200 hover:border-amber-400 p-2 rounded-lg cursor-pointer transition text-center shadow-xs"
           >
-            <div className="text-xs sm:text-sm font-black text-slate-100">
+            <div className="text-xs sm:text-sm font-black text-slate-800">
               Năm {inputDateMetadata?.y}
             </div>
-            <div className="text-[11px] font-bold text-amber-400 mt-0.5">
+            <div className="text-[11px] font-bold text-amber-700 mt-0.5">
               {inputDateMetadata?.yearCanChi}
             </div>
           </div>
@@ -716,12 +718,12 @@ export function BaziEmpiricalChart() {
           {/* 2. Tháng Card */}
           <div
             onClick={() => setQuickPickerType('month')}
-            className="bg-slate-800/90 hover:bg-slate-700/80 border border-slate-700 hover:border-amber-500/50 p-2 rounded-lg cursor-pointer transition text-center shadow"
+            className="bg-white hover:bg-amber-50/60 border border-slate-200 hover:border-amber-400 p-2 rounded-lg cursor-pointer transition text-center shadow-xs"
           >
-            <div className="text-xs sm:text-sm font-black text-slate-100">
+            <div className="text-xs sm:text-sm font-black text-slate-800">
               Tháng {inputDateMetadata?.m ? inputDateMetadata.m.toString().padStart(2, '0') : ''}
             </div>
-            <div className="text-[11px] font-bold text-amber-400 mt-0.5">
+            <div className="text-[11px] font-bold text-amber-700 mt-0.5">
               {inputDateMetadata?.monthCanChi}
             </div>
           </div>
@@ -729,13 +731,13 @@ export function BaziEmpiricalChart() {
           {/* 3. Ngày Card */}
           <div
             onClick={() => setQuickPickerType('day')}
-            className="bg-slate-800/90 hover:bg-slate-700/80 border border-slate-700 hover:border-amber-500/50 p-2 rounded-lg cursor-pointer transition text-center shadow"
+            className="bg-white hover:bg-amber-50/60 border border-slate-200 hover:border-amber-400 p-2 rounded-lg cursor-pointer transition text-center shadow-xs"
           >
-            <div className="text-xs sm:text-sm font-black text-slate-100 flex items-center justify-center gap-1">
+            <div className="text-xs sm:text-sm font-black text-slate-800 flex items-center justify-center gap-1">
               <span>Ngày {inputDateMetadata?.d ? inputDateMetadata.d.toString().padStart(2, '0') : ''}</span>
-              <Calendar className="w-3 h-3 text-amber-400" />
+              <Calendar className="w-3 h-3 text-amber-600" />
             </div>
-            <div className="text-[11px] font-bold text-amber-400 mt-0.5">
+            <div className="text-[11px] font-bold text-amber-700 mt-0.5">
               {inputDateMetadata?.dayCanChi} (Â/{inputDateMetadata?.lunarDate?.split('-')[1]})
             </div>
           </div>
@@ -743,12 +745,12 @@ export function BaziEmpiricalChart() {
           {/* 4. Giờ Card */}
           <div
             onClick={() => setQuickPickerType('hour')}
-            className="bg-slate-800/90 hover:bg-slate-700/80 border border-slate-700 hover:border-amber-500/50 p-2 rounded-lg cursor-pointer transition text-center shadow"
+            className="bg-white hover:bg-amber-50/60 border border-slate-200 hover:border-amber-400 p-2 rounded-lg cursor-pointer transition text-center shadow-xs"
           >
-            <div className="text-xs sm:text-sm font-black text-slate-100">
+            <div className="text-xs sm:text-sm font-black text-slate-800">
               {inputData.time}
             </div>
-            <div className="text-[11px] font-bold text-amber-400 mt-0.5">
+            <div className="text-[11px] font-bold text-amber-700 mt-0.5">
               {inputDateMetadata?.hourCanChi}
             </div>
           </div>
@@ -760,8 +762,8 @@ export function BaziEmpiricalChart() {
               onClick={() => setInputData(prev => ({ ...prev, gender: 'male' }))}
               className={`py-2 rounded-lg font-bold text-xs sm:text-sm transition flex items-center justify-center ${
                 inputData.gender === 'male'
-                  ? 'bg-amber-600 text-slate-950 font-black shadow-md'
-                  : 'bg-slate-800 text-slate-300 border border-slate-700 hover:border-amber-500/40'
+                  ? 'bg-amber-500 text-slate-950 font-black shadow-sm'
+                  : 'bg-white text-slate-700 border border-slate-200 hover:border-amber-400'
               }`}
             >
               Nam
@@ -771,8 +773,8 @@ export function BaziEmpiricalChart() {
               onClick={() => setInputData(prev => ({ ...prev, gender: 'female' }))}
               className={`py-2 rounded-lg font-bold text-xs sm:text-sm transition flex items-center justify-center ${
                 inputData.gender === 'female'
-                  ? 'bg-emerald-600 text-slate-950 font-black shadow-md'
-                  : 'bg-slate-800 text-slate-300 border border-slate-700 hover:border-emerald-500/40'
+                  ? 'bg-emerald-600 text-white font-black shadow-sm'
+                  : 'bg-white text-slate-700 border border-slate-200 hover:border-emerald-400'
               }`}
             >
               Nữ
@@ -780,8 +782,8 @@ export function BaziEmpiricalChart() {
           </div>
         </div>
 
-        {/* ACTION ROW (Họ tên > Bát Tự > Hoa Sơn > Tải > Lưu > Tiến Lùi) */}
-        <div className="mt-3 pt-3 border-t border-slate-800 flex flex-col sm:flex-row items-center gap-2">
+        {/* ACTION ROW (Họ tên > Bát Tự > Lữ Phúc > Tải > Lưu > Tiến Lùi) */}
+        <div className="mt-3 pt-3 border-t border-slate-200 flex flex-col sm:flex-row items-center gap-2">
           {/* Name Input */}
           <div className="flex-1 w-full">
             <input
@@ -789,7 +791,7 @@ export function BaziEmpiricalChart() {
               value={inputData.name}
               onChange={e => setInputData(prev => ({ ...prev, name: e.target.value }))}
               placeholder="Nhập họ tên người lập lá số..."
-              className="w-full h-10 px-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 text-xs sm:text-sm font-bold focus:outline-none focus:border-amber-500 transition"
+              className="w-full h-10 px-3 rounded-lg bg-white border border-slate-300 text-slate-900 text-xs sm:text-sm font-bold focus:outline-none focus:border-amber-500 transition shadow-2xs placeholder:text-slate-400"
             />
           </div>
 
@@ -801,24 +803,24 @@ export function BaziEmpiricalChart() {
               onClick={() => handleAnLaSo('bazi')}
               className={`flex-1 sm:flex-initial h-10 px-4 rounded-lg font-black text-xs uppercase tracking-wider transition shadow cursor-pointer ${
                 activeChartMode === 'bazi'
-                  ? 'bg-emerald-700 text-white border border-emerald-500'
-                  : 'bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700'
+                  ? 'bg-emerald-700 text-white border border-emerald-600'
+                  : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
               }`}
             >
               BÁT TỰ
             </button>
 
-            {/* HOA SƠN (7 Columns) */}
+            {/* LỮ PHÚC (7 Columns - Trước đây là Hoa Sơn) */}
             <button
               type="button"
               onClick={() => handleAnLaSo('tutru')}
               className={`flex-1 sm:flex-initial h-10 px-4 rounded-lg font-black text-xs uppercase tracking-wider transition shadow cursor-pointer ${
                 activeChartMode === 'tutru'
-                  ? 'bg-indigo-700 text-white border border-indigo-500'
-                  : 'bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700'
+                  ? 'bg-indigo-600 text-white border border-indigo-500'
+                  : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
               }`}
             >
-              HOA SƠN
+              LỮ PHÚC
             </button>
 
             {/* TẢI ẢNH */}
@@ -827,9 +829,9 @@ export function BaziEmpiricalChart() {
               onClick={() => downloadImage('png')}
               disabled={isExporting}
               title="Tải ảnh lá số PNG độ phân giải cao"
-              className="h-10 px-3 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white font-bold flex items-center justify-center transition"
+              className="h-10 px-3 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold flex items-center justify-center transition shadow-2xs"
             >
-              <Download className="w-4 h-4 text-amber-400" />
+              <Download className="w-4 h-4 text-amber-600" />
             </button>
 
             {/* LƯU LÁ SỐ */}
@@ -837,10 +839,10 @@ export function BaziEmpiricalChart() {
               type="button"
               onClick={saveCurrentChart}
               title="Lưu vào Kho Lưu Trữ Mệnh Bàn"
-              className="h-10 px-3 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white font-bold flex items-center justify-center transition gap-1"
+              className="h-10 px-3 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold flex items-center justify-center transition gap-1 shadow-2xs"
             >
-              <Save className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs font-bold text-slate-200">LƯU</span>
+              <Save className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs font-bold text-slate-800">LƯU</span>
             </button>
 
             {/* TIẾN / LÙI LỊCH SỬ */}
@@ -851,8 +853,8 @@ export function BaziEmpiricalChart() {
                 disabled={historyIndex <= 0}
                 className={`h-10 w-9 rounded-lg border flex items-center justify-center transition ${
                   historyIndex > 0
-                    ? 'bg-slate-800 text-white border-slate-700 hover:bg-slate-700 cursor-pointer'
-                    : 'bg-slate-900 text-slate-600 border-slate-800 cursor-not-allowed opacity-50'
+                    ? 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100 cursor-pointer shadow-2xs'
+                    : 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-50'
                 }`}
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -863,8 +865,8 @@ export function BaziEmpiricalChart() {
                 disabled={historyIndex >= chartHistory.length - 1}
                 className={`h-10 w-9 rounded-lg border flex items-center justify-center transition ${
                   historyIndex < chartHistory.length - 1
-                    ? 'bg-slate-800 text-white border-slate-700 hover:bg-slate-700 cursor-pointer'
-                    : 'bg-slate-900 text-slate-600 border-slate-800 cursor-not-allowed opacity-50'
+                    ? 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100 cursor-pointer shadow-2xs'
+                    : 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-50'
                 }`}
               >
                 <ChevronRight className="w-4 h-4" />
@@ -874,43 +876,43 @@ export function BaziEmpiricalChart() {
         </div>
       </div>
 
-      {/* CHART CONTAINER TO CAPTURE */}
+      {/* CHART CONTAINER TO CAPTURE (WHITE BACKGROUND) */}
       <div className="max-w-[1400px] mx-auto overflow-hidden">
         <div
           ref={chartRef}
-          className="w-full bg-slate-950 border border-amber-600/40 rounded-2xl p-4 sm:p-6 shadow-2xl relative"
-          style={{ backgroundColor: designConfig.chartBgColor }}
+          className="w-full bg-white border border-amber-300/80 rounded-2xl p-4 sm:p-6 shadow-xl relative"
+          style={{ backgroundColor: designConfig.chartBgColor || '#ffffff' }}
         >
           {/* HEADER: Title & Info Banner */}
           <div className="text-center mb-5">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-widest text-amber-300 drop-shadow">
-              {isTuTru ? 'HOA SƠN BÁT TỰ (TỨ TRỤ 7 CỘT)' : 'TỨ TRỤ MỆNH BÀN'}
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-widest text-slate-900 drop-shadow-xs">
+              {isTuTru ? 'LỮ PHÚC BÁT TỰ (TỨ TRỤ 7 CỘT)' : 'TỨ TRỤ MỆNH BÀN'}
             </h1>
 
             {/* Info Pill Banner */}
-            <div className="mt-3 max-w-4xl mx-auto bg-slate-900/90 border border-amber-500/30 rounded-xl px-4 py-2 text-xs sm:text-sm text-slate-200 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 shadow">
-              <div><span className="text-slate-400 font-semibold">HỌ TÊN:</span> <span className="font-black text-amber-300">{formData.name.toUpperCase()}</span></div>
-              <div className="text-slate-600">|</div>
-              <div><span className="text-slate-400 font-semibold">GIỚI TÍNH:</span> <span className="font-bold text-white">{formData.gender === 'male' ? 'NAM' : 'NỮ'}</span></div>
-              <div className="text-slate-600">|</div>
-              <div><span className="text-slate-400 font-semibold">DƯƠNG:</span> <span className="font-bold text-white">{baziData.solarDateStr}</span></div>
-              <div className="text-slate-600">|</div>
-              <div><span className="text-slate-400 font-semibold">ÂM:</span> <span className="font-bold text-white">{baziData.lunarDateStr}</span></div>
-              <div className="text-slate-600">|</div>
-              <div><span className="text-slate-400 font-semibold">TUỔI:</span> <span className="font-black text-amber-300">{baziData.currentAgeMu}</span></div>
+            <div className="mt-3 max-w-4xl mx-auto bg-slate-50 border border-slate-200/90 rounded-xl px-4 py-2 text-xs sm:text-sm text-slate-700 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 shadow-xs">
+              <div><span className="text-slate-500 font-semibold">HỌ TÊN:</span> <span className="font-black text-amber-800">{formData.name.toUpperCase()}</span></div>
+              <div className="text-slate-300">|</div>
+              <div><span className="text-slate-500 font-semibold">GIỚI TÍNH:</span> <span className="font-bold text-slate-800">{formData.gender === 'male' ? 'NAM' : 'NỮ'}</span></div>
+              <div className="text-slate-300">|</div>
+              <div><span className="text-slate-500 font-semibold">DƯƠNG:</span> <span className="font-bold text-slate-800">{baziData.solarDateStr}</span></div>
+              <div className="text-slate-300">|</div>
+              <div><span className="text-slate-500 font-semibold">ÂM:</span> <span className="font-bold text-slate-800">{baziData.lunarDateStr}</span></div>
+              <div className="text-slate-300">|</div>
+              <div><span className="text-slate-500 font-semibold">TUỔI:</span> <span className="font-black text-amber-800">{baziData.currentAgeMu}</span></div>
             </div>
 
             {/* Khởi vận & Tiết Khí */}
-            <div className="mt-1 text-[11px] sm:text-xs text-amber-400/80 font-medium">
+            <div className="mt-1 text-[11px] sm:text-xs text-amber-800 font-semibold">
               KHỞI VẬN: {baziData.initiationInfo}
             </div>
           </div>
 
-          {/* MAIN GRID: 4 NATAL PILLARS (+ 3 EXTRA COLUMNS IN HOA SƠN MODE) */}
+          {/* MAIN GRID: 4 NATAL PILLARS (+ 3 EXTRA COLUMNS IN LỮ PHÚC MODE) */}
           <div className="overflow-x-auto no-scrollbar">
-            <div className="min-w-[700px] flex border border-amber-600/40 rounded-xl overflow-hidden shadow-lg bg-slate-900/60">
+            <div className="min-w-[700px] flex border border-slate-700 rounded-xl overflow-hidden shadow-lg bg-[#111827]">
               {/* Vertical Side Label: CÀN TẠO / KHÔN TẠO */}
-              <div className="w-10 sm:w-12 bg-slate-900 border-r border-amber-600/40 flex items-center justify-center p-2 text-center">
+              <div className="w-10 sm:w-12 bg-slate-950 border-r border-slate-700 flex items-center justify-center p-2 text-center">
                 <span className="font-black tracking-widest text-xs sm:text-sm text-amber-400 writing-vertical uppercase select-none">
                   {formData.gender === 'male' ? 'CÀN TẠO' : 'KHÔN TẠO'}
                 </span>
@@ -951,7 +953,7 @@ export function BaziEmpiricalChart() {
                   baziFontSize={designConfig.baziFontSize}
                 />
 
-                {/* EXTRA 3 COLUMNS IN HOA SƠN MODE */}
+                {/* EXTRA 3 COLUMNS IN LỮ PHÚC MODE */}
                 {isTuTru && (
                   <>
                     {/* 5. Cột Đại Vận */}
@@ -1014,15 +1016,15 @@ export function BaziEmpiricalChart() {
             </div>
           </div>
 
-          {/* LOWER SECTIONS: Đại Vận > Lưu Niên > Tiểu Vận > 12 Tháng */}
+          {/* LOWER SECTIONS: Đại Vận > Lưu Niên > Tiểu Vận > 12 Tháng (WHITE THEME) */}
           <div className="mt-5 space-y-4">
             {/* 1. ĐẠI VẬN TIMELINE */}
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 shadow">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 shadow-xs">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-black uppercase text-amber-300 tracking-wider">
+                <span className="text-xs font-black uppercase text-amber-800 tracking-wider">
                   ĐẠI VẬN (10 NĂM)
                 </span>
-                <span className="text-[11px] text-slate-400">
+                <span className="text-[11px] text-slate-500">
                   Nhấp vào một đại vận để xem chi tiết lưu niên & tiểu vận
                 </span>
               </div>
@@ -1038,17 +1040,17 @@ export function BaziEmpiricalChart() {
                       }}
                       className={`p-2 rounded-lg text-center cursor-pointer transition border ${
                         isSelected
-                          ? 'bg-amber-600/30 border-amber-400 text-amber-200 shadow-md scale-105'
-                          : 'bg-slate-800/80 border-slate-700/80 hover:border-amber-500/50 text-slate-300'
+                          ? 'bg-amber-100 border-2 border-amber-500 text-amber-950 font-bold shadow-sm scale-105'
+                          : 'bg-white border-slate-200 hover:border-amber-400 hover:bg-amber-50/50 text-slate-800 shadow-2xs'
                       }`}
                     >
-                      <div className="text-[10px] text-slate-400">{cyc.age} - {cyc.age + 9}t</div>
-                      <div className="text-xs font-bold text-amber-400 my-0.5">{cyc.tenGod}</div>
+                      <div className="text-[10px] text-slate-500">{cyc.age} - {cyc.age + 9}t</div>
+                      <div className="text-xs font-black text-amber-700 my-0.5">{cyc.tenGod}</div>
                       <div className="text-sm font-black flex items-center justify-center gap-1">
                         <span style={{ color: getStemBranchColor(cyc.stem) }}>{cyc.stem}</span>
                         <span style={{ color: getStemBranchColor(cyc.branch) }}>{cyc.branch}</span>
                       </div>
-                      <div className="text-[10px] text-slate-400 mt-0.5">{cyc.year}</div>
+                      <div className="text-[10px] text-slate-500 mt-0.5">{cyc.year}</div>
                     </div>
                   );
                 })}
@@ -1056,12 +1058,12 @@ export function BaziEmpiricalChart() {
             </div>
 
             {/* 2. LƯU NIÊN (ANNUAL YEARS) */}
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 shadow">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 shadow-xs">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">
+                <span className="text-xs font-black uppercase text-emerald-800 tracking-wider">
                   LƯU NIÊN
                 </span>
-                <span className="text-[11px] text-slate-400">
+                <span className="text-[11px] text-slate-500">
                   Năm đang chọn: {baziData.yearToViewMonthly}
                 </span>
               </div>
@@ -1075,22 +1077,22 @@ export function BaziEmpiricalChart() {
                       onClick={() => setSelectedAnnualYear(ann.year)}
                       className={`p-2 rounded-lg text-center cursor-pointer transition border relative ${
                         isSelected
-                          ? 'bg-emerald-600/30 border-emerald-400 text-emerald-200 shadow-md scale-105'
-                          : 'bg-slate-800/80 border-slate-700/80 hover:border-emerald-500/50 text-slate-300'
+                          ? 'bg-emerald-100 border-2 border-emerald-600 text-emerald-950 font-bold shadow-sm scale-105'
+                          : 'bg-white border-slate-200 hover:border-emerald-400 hover:bg-emerald-50/50 text-slate-800 shadow-2xs'
                       }`}
                     >
                       {isCurrent && (
-                        <span className="absolute -top-1 -right-1 px-1 py-0.2 bg-red-600 text-white text-[8px] font-black rounded-full">
+                        <span className="absolute -top-1 -right-1 px-1 py-0.2 bg-red-600 text-white text-[8px] font-black rounded-full shadow">
                           Hiện tại
                         </span>
                       )}
-                      <div className="text-xs font-black text-white">{ann.year}</div>
-                      <div className="text-[10px] text-emerald-400 my-0.5">{ann.tenGod}</div>
-                      <div className="text-xs font-bold flex items-center justify-center gap-1">
+                      <div className="text-xs font-black text-slate-900">{ann.year}</div>
+                      <div className="text-[10px] text-emerald-700 font-bold my-0.5">{ann.tenGod}</div>
+                      <div className="text-xs font-black flex items-center justify-center gap-1">
                         <span style={{ color: getStemBranchColor(ann.stem) }}>{ann.stem}</span>
                         <span style={{ color: getStemBranchColor(ann.branch) }}>{ann.branch}</span>
                       </div>
-                      <div className="text-[10px] text-slate-400 mt-0.5 truncate">{ann.napAm}</div>
+                      <div className="text-[10px] text-slate-500 mt-0.5 truncate">{ann.napAm}</div>
                     </div>
                   );
                 })}
@@ -1098,12 +1100,12 @@ export function BaziEmpiricalChart() {
             </div>
 
             {/* 3. TIỂU VẬN (CALCULATED BY HOUR PILLAR METHOD) */}
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 shadow">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 shadow-xs">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-black uppercase text-indigo-400 tracking-wider">
+                <span className="text-xs font-black uppercase text-indigo-800 tracking-wider">
                   TIỂU VẬN (KHỞI TỪ TRỤ GIỜ)
                 </span>
-                <span className="text-[11px] text-slate-400">
+                <span className="text-[11px] text-slate-500">
                   Dương Nam / Âm Nữ thuận; Âm Nam / Dương Nữ nghịch
                 </span>
               </div>
@@ -1116,17 +1118,17 @@ export function BaziEmpiricalChart() {
                       key={`tieuvan-${idx}`}
                       className={`p-2 rounded-lg text-center border transition ${
                         isSelected
-                          ? 'bg-indigo-600/30 border-indigo-400 text-indigo-200 shadow-md'
-                          : 'bg-slate-800/80 border-slate-700/80 text-slate-300'
+                          ? 'bg-indigo-100 border-2 border-indigo-600 text-indigo-950 font-bold shadow-sm'
+                          : 'bg-white border-slate-200 text-slate-800 shadow-2xs'
                       }`}
                     >
-                      <div className="text-[10px] text-slate-400">{tv.age} tuổi</div>
-                      <div className="text-[10px] text-indigo-400 my-0.5">{tvTenGod}</div>
-                      <div className="text-xs font-bold flex items-center justify-center gap-1">
+                      <div className="text-[10px] text-slate-500">{tv.age} tuổi</div>
+                      <div className="text-[10px] text-indigo-700 font-bold my-0.5">{tvTenGod}</div>
+                      <div className="text-xs font-black flex items-center justify-center gap-1">
                         <span style={{ color: getStemBranchColor(tv.stem) }}>{tv.stem}</span>
                         <span style={{ color: getStemBranchColor(tv.branch) }}>{tv.branch}</span>
                       </div>
-                      <div className="text-[10px] text-slate-400 mt-0.5 truncate">{tv.napAm}</div>
+                      <div className="text-[10px] text-slate-500 mt-0.5 truncate">{tv.napAm}</div>
                     </div>
                   );
                 })}
@@ -1134,12 +1136,12 @@ export function BaziEmpiricalChart() {
             </div>
 
             {/* 4. 12 THÁNG NGUYỆT LỆNH */}
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 shadow">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 shadow-xs">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-black uppercase text-amber-400 tracking-wider">
+                <span className="text-xs font-black uppercase text-amber-800 tracking-wider">
                   12 THÁNG NGUYỆT LỆNH (NĂM {baziData.yearToViewMonthly})
                 </span>
-                <span className="text-[11px] text-slate-400">
+                <span className="text-[11px] text-slate-500">
                   Tiết khí và Can Chi 12 tháng theo Ngũ Hổ Độn
                 </span>
               </div>
@@ -1149,15 +1151,15 @@ export function BaziEmpiricalChart() {
                   return (
                     <div
                       key={`month-${idx}`}
-                      className="p-1.5 rounded-lg bg-slate-800/80 border border-slate-700/80 text-center"
+                      className="p-1.5 rounded-lg bg-white border border-slate-200 text-center shadow-2xs"
                     >
-                      <div className="text-[10px] font-bold text-slate-400">{m.monthName}</div>
-                      <div className="text-[10px] text-amber-400">{mTenGod}</div>
+                      <div className="text-[10px] font-bold text-slate-600">{m.monthName}</div>
+                      <div className="text-[10px] text-amber-700 font-bold">{mTenGod}</div>
                       <div className="text-xs font-black flex items-center justify-center gap-0.5 my-0.5">
                         <span style={{ color: getStemBranchColor(m.stem) }}>{m.stem}</span>
                         <span style={{ color: getStemBranchColor(m.branch) }}>{m.branch}</span>
                       </div>
-                      <div className="text-[9px] text-slate-400 truncate">{m.solarTermName}</div>
+                      <div className="text-[9px] text-slate-500 truncate">{m.solarTermName}</div>
                     </div>
                   );
                 })}
@@ -1167,32 +1169,32 @@ export function BaziEmpiricalChart() {
         </div>
       </div>
 
-      {/* MODAL 1: KHO LƯU TRỮ MỆNH BÀN */}
+      {/* MODAL 1: KHO LƯU TRỮ MỆNH BÀN (WHITE THEME) */}
       {isArchiveModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3">
-          <div className="bg-slate-900 border border-amber-600/50 rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
             {/* Modal Header */}
-            <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
+            <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <FolderOpen className="w-5 h-5 text-amber-400" />
-                <h2 className="text-base sm:text-lg font-black text-amber-300 uppercase">
+                <FolderOpen className="w-5 h-5 text-amber-600" />
+                <h2 className="text-base sm:text-lg font-black text-slate-900 uppercase">
                   Kho Lưu Trữ Mệnh Bàn
                 </h2>
-                <span className="px-2 py-0.5 text-xs rounded-full bg-amber-500/20 text-amber-300 font-bold">
+                <span className="px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-900 font-bold border border-amber-300">
                   {savedCharts.length}
                 </span>
               </div>
               <button
                 type="button"
                 onClick={() => setIsArchiveModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Modal Body: Search & List */}
-            <div className="p-4 border-b border-slate-800 flex items-center gap-2">
+            <div className="p-4 border-b border-slate-200 flex items-center gap-2 bg-slate-50">
               <div className="relative flex-1">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
@@ -1200,13 +1202,13 @@ export function BaziEmpiricalChart() {
                   value={archiveSearchTerm}
                   onChange={e => setArchiveSearchTerm(e.target.value)}
                   placeholder="Tìm kiếm theo tên hoặc ngày sinh..."
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white border border-slate-300 rounded-lg pl-9 pr-3 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-amber-500 shadow-2xs"
                 />
               </div>
               <select
                 value={archiveSortBy}
                 onChange={e => setArchiveSortBy(e.target.value as any)}
-                className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none"
+                className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none shadow-2xs"
               >
                 <option value="date_desc">Mới lưu nhất</option>
                 <option value="date_asc">Cũ lưu nhất</option>
@@ -1218,7 +1220,7 @@ export function BaziEmpiricalChart() {
             {/* Saved Charts List */}
             <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
               {savedCharts.length === 0 ? (
-                <div className="text-center py-12 text-slate-500 text-sm">
+                <div className="text-center py-12 text-slate-400 text-sm">
                   Chưa có lá số nào được lưu vào kho lưu trữ.
                 </div>
               ) : (
@@ -1231,20 +1233,20 @@ export function BaziEmpiricalChart() {
                     <div
                       key={chart.id}
                       onClick={() => loadSavedChart(chart)}
-                      className="bg-slate-800/90 hover:bg-slate-750 border border-slate-700/80 hover:border-amber-500/50 p-3 rounded-xl flex items-center justify-between gap-3 cursor-pointer transition shadow"
+                      className="bg-slate-50 hover:bg-amber-50/50 border border-slate-200 hover:border-amber-400 p-3 rounded-xl flex items-center justify-between gap-3 cursor-pointer transition shadow-2xs"
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-black text-sm text-amber-300 truncate">
+                          <span className="font-black text-sm text-slate-900 truncate">
                             {chart.name}
                           </span>
-                          <span className={`px-2 py-0.2 text-[10px] font-bold rounded ${chart.gender === 'male' ? 'bg-amber-950 text-amber-300 border border-amber-500/30' : 'bg-emerald-950 text-emerald-300 border border-emerald-500/30'}`}>
+                          <span className={`px-2 py-0.2 text-[10px] font-bold rounded ${chart.gender === 'male' ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-emerald-100 text-emerald-900 border border-emerald-300'}`}>
                             {chart.gender === 'male' ? 'Nam' : 'Nữ'}
                           </span>
                         </div>
-                        <div className="text-xs text-slate-400 mt-1 flex items-center gap-3">
+                        <div className="text-xs text-slate-500 mt-1 flex items-center gap-3">
                           <span>{chart.date} {chart.time}</span>
-                          <span className="text-slate-600">•</span>
+                          <span className="text-slate-300">•</span>
                           <span>Lưu lúc: {chart.savedAt}</span>
                         </div>
                       </div>
@@ -1255,7 +1257,7 @@ export function BaziEmpiricalChart() {
                           type="button"
                           onClick={(e) => openNoteEditor(chart, e)}
                           title="Ghi chú 6 chủ đề"
-                          className="p-2 rounded-lg bg-slate-700 hover:bg-amber-600 text-slate-200 hover:text-slate-950 transition"
+                          className="p-2 rounded-lg bg-white border border-slate-300 hover:bg-amber-100 text-slate-700 hover:text-amber-900 transition shadow-2xs"
                         >
                           <Edit3 className="w-4 h-4" />
                         </button>
@@ -1263,7 +1265,7 @@ export function BaziEmpiricalChart() {
                           type="button"
                           onClick={(e) => deleteSavedChart(chart.id, e)}
                           title="Xóa lá số"
-                          className="p-2 rounded-lg bg-slate-700 hover:bg-red-600 text-slate-200 hover:text-white transition"
+                          className="p-2 rounded-lg bg-white border border-slate-300 hover:bg-red-100 text-slate-700 hover:text-red-700 transition shadow-2xs"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -1276,38 +1278,38 @@ export function BaziEmpiricalChart() {
         </div>
       )}
 
-      {/* MODAL 2: GHI CHÚ 6 CHỦ ĐỀ CHO LÁ SỐ */}
+      {/* MODAL 2: GHI CHÚ 6 CHỦ ĐỀ CHO LÁ SỐ (WHITE THEME) */}
       {editingNoteChart && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3">
-          <div className="bg-slate-900 border border-amber-600/50 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
             {/* Header */}
-            <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
+            <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
               <div>
-                <h3 className="text-base font-black text-amber-300">
+                <h3 className="text-base font-black text-slate-900">
                   Ghi Chú Mệnh Bàn: {editingNoteChart.name}
                 </h3>
-                <div className="text-xs text-slate-400 mt-0.5">
+                <div className="text-xs text-slate-500 mt-0.5">
                   Phân loại 6 chủ đề (Mệnh, Nhân Mạch, Sự nghiệp, Tình cảm, Sức khoẻ, Vận trình)
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setEditingNoteChart(null)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Topic Tabs */}
-            <div className="p-3 border-b border-slate-800 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+            <div className="p-3 border-b border-slate-200 flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-slate-50">
               <button
                 type="button"
                 onClick={() => setActiveNoteTab('all')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
                   activeNoteTab === 'all'
-                    ? 'bg-amber-500 text-slate-950 font-black'
-                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    ? 'bg-amber-500 text-slate-950 font-black shadow-xs'
+                    : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
                 }`}
               >
                 Tất cả (6 mục)
@@ -1319,8 +1321,8 @@ export function BaziEmpiricalChart() {
                   onClick={() => setActiveNoteTab(topic.id)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                     activeNoteTab === topic.id
-                      ? 'bg-amber-500 text-slate-950 font-black'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      ? 'bg-amber-500 text-slate-950 font-black shadow-xs'
+                      : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
                   }`}
                 >
                   <topic.icon className="w-3.5 h-3.5" />
@@ -1332,11 +1334,11 @@ export function BaziEmpiricalChart() {
             {/* Note Editor Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {NOTE_TOPICS.filter(t => activeNoteTab === 'all' || activeNoteTab === t.id).map(topic => (
-                <div key={topic.id} className="bg-slate-800/80 border border-slate-700 rounded-xl p-3 space-y-2">
+                <div key={topic.id} className="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <topic.icon className={`w-4 h-4 ${topic.color}`} />
-                      <span className="font-black text-sm text-slate-100">{topic.label}</span>
+                      <span className="font-black text-sm text-slate-900">{topic.label}</span>
                     </div>
 
                     {/* Format tools */}
@@ -1344,7 +1346,7 @@ export function BaziEmpiricalChart() {
                       <button
                         type="button"
                         onClick={() => applyTextFormatting(topic.id, 'bold')}
-                        className="p-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-200"
+                        className="p-1 rounded bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 shadow-2xs"
                         title="In đậm (**văn bản**)"
                       >
                         <Bold className="w-3.5 h-3.5" />
@@ -1352,7 +1354,7 @@ export function BaziEmpiricalChart() {
                       <button
                         type="button"
                         onClick={() => applyTextFormatting(topic.id, 'italic')}
-                        className="p-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-200"
+                        className="p-1 rounded bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 shadow-2xs"
                         title="In nghiêng (*văn bản*)"
                       >
                         <Italic className="w-3.5 h-3.5" />
@@ -1360,7 +1362,7 @@ export function BaziEmpiricalChart() {
                       <button
                         type="button"
                         onClick={() => applyTextFormatting(topic.id, 'list')}
-                        className="p-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-200"
+                        className="p-1 rounded bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 shadow-2xs"
                         title="Danh sách dấu chấm (•)"
                       >
                         <List className="w-3.5 h-3.5" />
@@ -1374,25 +1376,25 @@ export function BaziEmpiricalChart() {
                     onChange={e => setTopicNotes({ ...topicNotes, [topic.id]: e.target.value })}
                     placeholder={topic.placeholder}
                     rows={3}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-none focus:border-amber-500 font-mono"
+                    className="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-xs text-slate-900 focus:outline-none focus:border-amber-500 font-mono shadow-2xs"
                   />
                 </div>
               ))}
             </div>
 
             {/* Footer */}
-            <div className="p-3 border-t border-slate-800 flex items-center justify-end gap-2">
+            <div className="p-3 border-t border-slate-200 flex items-center justify-end gap-2 bg-slate-50">
               <button
                 type="button"
                 onClick={() => setEditingNoteChart(null)}
-                className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300"
+                className="px-4 py-2 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-700"
               >
                 Hủy bỏ
               </button>
               <button
                 type="button"
                 onClick={saveChartNotes}
-                className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-black text-slate-950"
+                className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-black text-white shadow-sm"
               >
                 Lưu ghi chú
               </button>
@@ -1403,10 +1405,10 @@ export function BaziEmpiricalChart() {
 
       {/* QUICK PICKER DIALOG (Năm, Tháng, Ngày, Giờ) */}
       {quickPickerType && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3">
-          <div className="bg-slate-900 border border-amber-600/50 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-base font-black text-amber-300 uppercase">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <h3 className="text-base font-black text-slate-900 uppercase">
                 {quickPickerType === 'year' && 'Chọn Năm Sinh'}
                 {quickPickerType === 'month' && 'Chọn Tháng Sinh'}
                 {quickPickerType === 'day' && 'Chọn Ngày Sinh'}
@@ -1415,7 +1417,7 @@ export function BaziEmpiricalChart() {
               <button
                 type="button"
                 onClick={() => setQuickPickerType(null)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-slate-700"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1425,7 +1427,7 @@ export function BaziEmpiricalChart() {
             <div className="space-y-3">
               {quickPickerType === 'year' && (
                 <div className="space-y-2">
-                  <label className="text-xs text-slate-400">Năm Dương Lịch (1900 - 2100):</label>
+                  <label className="text-xs text-slate-600 font-bold">Năm Dương Lịch (1900 - 2100):</label>
                   <input
                     type="number"
                     min="1900"
@@ -1436,7 +1438,7 @@ export function BaziEmpiricalChart() {
                       parts[0] = e.target.value;
                       setInputData(prev => ({ ...prev, date: parts.join('-') }));
                     }}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm font-bold text-white"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-bold text-slate-900"
                   />
                 </div>
               )}
@@ -1453,7 +1455,7 @@ export function BaziEmpiricalChart() {
                         setInputData(prev => ({ ...prev, date: parts.join('-') }));
                         setQuickPickerType(null);
                       }}
-                      className="p-2.5 rounded-lg bg-slate-800 hover:bg-amber-600 hover:text-slate-950 font-bold text-xs transition"
+                      className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs transition"
                     >
                       Tháng {m}
                     </button>
@@ -1473,7 +1475,7 @@ export function BaziEmpiricalChart() {
                         setInputData(prev => ({ ...prev, date: parts.join('-') }));
                         setQuickPickerType(null);
                       }}
-                      className="p-2 rounded-lg bg-slate-800 hover:bg-amber-600 hover:text-slate-950 font-bold text-xs transition"
+                      className="p-2 rounded-lg bg-slate-50 border border-slate-200 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs transition"
                     >
                       {d}
                     </button>
@@ -1504,7 +1506,7 @@ export function BaziEmpiricalChart() {
                         setInputData(prev => ({ ...prev, time: h.time }));
                         setQuickPickerType(null);
                       }}
-                      className="p-2 rounded-lg bg-slate-800 hover:bg-amber-600 hover:text-slate-950 font-bold text-xs transition text-center"
+                      className="p-2 rounded-lg bg-slate-50 border border-slate-200 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs transition text-center"
                     >
                       {h.label}
                     </button>
@@ -1513,11 +1515,11 @@ export function BaziEmpiricalChart() {
               )}
             </div>
 
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-end pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setQuickPickerType(null)}
-                className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 font-black text-slate-950 text-xs"
+                className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 font-black text-white text-xs shadow-sm"
               >
                 Xong
               </button>
@@ -1528,17 +1530,17 @@ export function BaziEmpiricalChart() {
 
       {/* CUSTOMIZER DRAWER */}
       {isCustomizerOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-end">
-          <div className="bg-slate-900 border-l border-amber-600/50 w-full max-w-sm h-full p-5 flex flex-col overflow-y-auto shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end">
+          <div className="bg-white border-l border-slate-200 w-full max-w-sm h-full p-5 flex flex-col overflow-y-auto shadow-2xl space-y-4 text-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div className="flex items-center gap-2">
-                <Sliders className="w-5 h-5 text-amber-400" />
-                <h3 className="text-base font-black text-amber-300 uppercase">Tùy Chỉnh Giao Diện</h3>
+                <Sliders className="w-5 h-5 text-amber-600" />
+                <h3 className="text-base font-black text-slate-900 uppercase">Tùy Chỉnh Giao Diện</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsCustomizerOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1546,42 +1548,42 @@ export function BaziEmpiricalChart() {
 
             <div className="space-y-4 text-xs">
               <div>
-                <label className="text-slate-300 font-bold block mb-1">Màu nền khung lá số:</label>
+                <label className="text-slate-700 font-bold block mb-1">Màu nền khung lá số:</label>
                 <div className="grid grid-cols-4 gap-2">
-                  {['#0f172a', '#1e1b4b', '#18181b', '#030712', '#2a1b18'].map(color => (
+                  {['#ffffff', '#f8fafc', '#fefce8', '#0f172a'].map(color => (
                     <button
                       key={color}
                       type="button"
                       onClick={() => updateDesignConfig({ chartBgColor: color })}
                       style={{ backgroundColor: color }}
-                      className={`h-8 rounded-lg border ${designConfig.chartBgColor === color ? 'border-amber-400 ring-2 ring-amber-400/50' : 'border-slate-700'}`}
+                      className={`h-8 rounded-lg border ${designConfig.chartBgColor === color ? 'border-amber-500 ring-2 ring-amber-400/50' : 'border-slate-300'}`}
                     />
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="text-slate-300 font-bold block mb-1">Cỡ chữ Can Chi Bát Tự:</label>
+                <label className="text-slate-700 font-bold block mb-1">Cỡ chữ Can Chi Bát Tự:</label>
                 <input
                   type="range"
                   min="26"
                   max="44"
                   value={designConfig.baziFontSize}
                   onChange={e => updateDesignConfig({ baziFontSize: Number(e.target.value) })}
-                  className="w-full accent-amber-500"
+                  className="w-full accent-amber-600"
                 />
-                <span className="text-slate-400 font-mono">{designConfig.baziFontSize}px</span>
+                <span className="text-slate-500 font-mono">{designConfig.baziFontSize}px</span>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-800">
+            <div className="pt-4 border-t border-slate-200">
               <button
                 type="button"
                 onClick={() => {
                   safeStorage.removeItem('bazi_empirical_design_config');
                   setDesignConfig({
-                    chartBgColor: '#0f172a',
-                    cardBgColor: '#1e293b',
+                    chartBgColor: '#ffffff',
+                    cardBgColor: '#ffffff',
                     accentColor: '#d97706',
                     goldBorderColor: '#b45309',
                     fontFamily: 'Inter',
@@ -1590,7 +1592,7 @@ export function BaziEmpiricalChart() {
                   });
                   showToast('Đã khôi phục thiết kế mặc định!');
                 }}
-                className="w-full py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold transition text-xs"
+                className="w-full py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition text-xs"
               >
                 Khôi phục mặc định
               </button>
@@ -1617,7 +1619,7 @@ function PillarCard({
   baziFontSize: number;
 }) {
   return (
-    <div className="p-3 sm:p-4 flex flex-col justify-between text-center bg-slate-900/40">
+    <div className="p-3 sm:p-4 flex flex-col justify-between text-center bg-[#1c2438]">
       {/* 1. Header Label & Ten God */}
       <div>
         <div className="text-[10px] sm:text-xs font-semibold uppercase text-slate-400 tracking-wider">
@@ -1689,7 +1691,7 @@ function PillarCard({
   );
 }
 
-// Sub-component: Extra Pillar Card in 7-Column Hoa Sơn Mode
+// Sub-component: Extra Pillar Card in 7-Column Lữ Phúc Mode
 function ExtraPillarCard({
   badge,
   title,
@@ -1712,14 +1714,14 @@ function ExtraPillarCard({
   baziFontSize: number;
 }) {
   return (
-    <div className="p-3 sm:p-4 flex flex-col justify-between text-center bg-indigo-950/20">
+    <div className="p-3 sm:p-4 flex flex-col justify-between text-center bg-[#251f47]">
       <div>
-        <div className="text-[10px] sm:text-xs font-black uppercase text-indigo-400 tracking-wider">
+        <div className="text-[10px] sm:text-xs font-black uppercase text-indigo-300 tracking-wider">
           {badge}
         </div>
         <div className="text-[10px] text-slate-400 mt-0.5">{title}</div>
         <div className="mt-1 h-6 flex items-center justify-center">
-          <span className="text-xs sm:text-sm font-black uppercase text-indigo-300">
+          <span className="text-xs sm:text-sm font-black uppercase text-indigo-200">
             {tenGod}
           </span>
         </div>
@@ -1747,7 +1749,7 @@ function ExtraPillarCard({
       </div>
 
       <div className="mt-2 pt-2 border-t border-slate-800">
-        <span className="text-xs font-bold text-slate-400">{stem} {branch}</span>
+        <span className="text-xs font-bold text-slate-300">{stem} {branch}</span>
       </div>
 
       <div className="mt-2 min-h-8 flex items-center justify-center">

@@ -9,8 +9,13 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 
 ## [Unreleased]
 
-### Added
-- **Danh Mục & Giao Diện Bát Tự Thực Nghiệm - Tứ Trụ Mệnh Bàn & Hoa Sơn (`[UI-BAZI-EMPIRICAL]`, `[PAGE-BAZI-EMPIRICAL]`, `empiricalEngine.ts`):**
+### Changed
+- **Đổi tên chế độ "Hoa Sơn" thành "Lữ Phúc" & Chuyển sang giao diện nền trắng (`[UI-BAZI-EMPIRICAL]`, `[PAGE-BAZI-EMPIRICAL]`):**
+  - **Đổi tên thương hiệu chế độ 7 cột:** Chuyển đổi toàn bộ nút chọn, tiêu đề chế độ và ghi chú từ "HOA SƠN" sang "LỮ PHÚC" ("LỮ PHÚC BÁT TỰ (TỨ TRỤ 7 CỘT)").
+  - **Giao diện nền trắng (White Theme):** Chuyển đổi toàn bộ nền trang, thanh công cụ điều khiển trên đỉnh, các ô nhập liệu, bảng dòng thời gian (Đại Vận, Lưu Niên, Tiểu Vận, 12 Tháng) và khung lá số chính sang nền trắng tinh tế (`#ffffff` / `bg-white`), tạo phong cách thanh lịch, sáng sủa và dễ đọc.
+  - **Tương thích ngược dữ liệu cấu hình:** Bổ sung cơ chế tự động chuyển đổi mã màu nền từ nền tối (`#0f172a`) sang nền trắng (`#ffffff`) cho người dùng đã từng lưu cấu hình trước đó.
+
+
   - **Mô-đun giao diện Bát Tự chuyên sâu theo Manh Phái:** Triển khai theo cấu trúc ứng dụng Bát Tự Thế Sơn / Tứ Trụ Mệnh Bàn và Hoa Sơn 7 cột với bố cục sang trọng, sắc nét.
   - **Đồng hồ thời gian thực tế (Live Clock Badge):** Huy hiệu màu hổ phách góc trên bên phải hiển thị thứ, ngày tháng năm, giờ phút giây với biểu tượng xoay chuyển động; nhấp vào tự động điền thời gian thực tế và an lá số ngay lập tức.
   - **Thẻ chọn nhanh Năm - Tháng - Ngày - Giờ - Giới tính:** Hiển thị trực quan Can Chi và Âm lịch tương ứng ngay trên từng thẻ, chuyển đổi linh hoạt giới tính Nam / Nữ.
