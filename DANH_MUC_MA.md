@@ -46,7 +46,7 @@ Khi cần bảo trì, sửa lỗi hoặc nâng cấp, bạn chỉ cần gửi y�
 | `[UI-BAZI-DAIVAN]` | **Khung hiển thị Đại Vận & Lưu Niên**| `src/components/bazi/MajorLuckSection.tsx`<br>`src/components/bazi/AnnualLuckSection.tsx` | Các thập kỷ đại vận và 10 năm lưu niên tương ứng. |
 | `[UI-BAZI-COLORS]` | **Màu sắc & Token Ngũ Hành Bát Tự** | `src/components/bazi/BaziChartColors.ts`<br>`src/components/bazi/FiveElementsLegend.tsx` | Bảng màu Kim (xám), Mộc (xanh lá), Thủy (xanh dương), Hỏa (đỏ), Thổ (vàng nâu). |
 | `[UI-BAZI-RESULT]` | **Khung bao kết quả & nút xuất PDF** | `src/components/bazi/BaziChartResult.tsx` | Nút lưu lá số vào tài khoản, tải ảnh PNG chất lượng cao, chia sẻ. |
-| `[UI-BAZI-EMPIRICAL]`| **Bát Tự Thực Nghiệm (Tứ Trụ Mệnh Bàn & Hoa Sơn)**| `src/components/bazi/BaziEmpiricalChart.tsx` | Giao diện Bát Tự Thực Nghiệm chuyên sâu theo Manh Phái (Tứ Trụ Mệnh Bàn & Hoa Sơn 7 cột, kho lưu trữ ghi chú 6 chủ đề, real-time clock, xuất ảnh). |
+| `[UI-BAZI-EMPIRICAL]`| **Bát Tự Thực Nghiệm (Tứ Trụ Mệnh Bàn & Lữ Phúc)**| `src/components/bazi/BaziEmpiricalChart.tsx` | Giao diện Bát Tự Thực Nghiệm chuyên sâu theo Manh Phái (Tứ Trụ Mệnh Bàn & Lữ Phúc 7 cột, kho lưu trữ ghi chú 6 chủ đề, real-time clock, xuất ảnh). |
 
 ### 2.2. Giao diện Tử Vi & Quẻ Dịch
 | Mã Danh Mục | Tên Thành Phần | Tệp Tin Phụ Trách | Chức Năng |
