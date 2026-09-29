@@ -343,8 +343,72 @@ export function BaziEmpiricalChart() {
     });
   };
 
-  // Quick Date Picker Dialog state
-  const [quickPickerType, setQuickPickerType] = useState<'year' | 'month' | 'day' | 'hour' | null>(null);
+  const dateInputRef = useRef<HTMLInputElement>(null);
+  const [isDatePickerModalOpen, setIsDatePickerModalOpen] = useState(false);
+
+  // 12 Canh Gio definitions
+  const CANH_GIO_OPTIONS = [
+    { label: 'Tý (23h - 01h)', branch: 'Tý', time: '23:30' },
+    { label: 'Sửu (01h - 03h)', branch: 'Sửu', time: '02:00' },
+    { label: 'Dần (03h - 05h)', branch: 'Dần', time: '04:00' },
+    { label: 'Mão (05h - 07h)', branch: 'Mão', time: '06:00' },
+    { label: 'Thìn (07h - 09h)', branch: 'Thìn', time: '08:00' },
+    { label: 'Tỵ (09h - 11h)', branch: 'Tỵ', time: '10:00' },
+    { label: 'Ngọ (11h - 13h)', branch: 'Ngọ', time: '12:00' },
+    { label: 'Mùi (13h - 15h)', branch: 'Mùi', time: '13:00' },
+    { label: 'Thân (15h - 17h)', branch: 'Thân', time: '16:00' },
+    { label: 'Dậu (17h - 19h)', branch: 'Dậu', time: '18:00' },
+    { label: 'Tuất (19h - 21h)', branch: 'Tuất', time: '20:00' },
+    { label: 'Hợi (21h - 23h)', branch: 'Hợi', time: '22:00' },
+  ];
+
+  // Helper to update any field with instant live sync
+  const updateField = (field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    setInputData(prev => ({ ...prev, [field]: value }));
+    setSelectedCycle(null);
+    setSelectedAnnualYear(null);
+  };
+
+  // Helper to step date (year, month, day)
+  const stepDate = (unit: 'year' | 'month' | 'day', amount: number) => {
+    const [y, m, d] = formData.date.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    if (unit === 'year') {
+      dateObj.setFullYear(dateObj.getFullYear() + amount);
+    } else if (unit === 'month') {
+      dateObj.setMonth(dateObj.getMonth() + amount);
+    } else if (unit === 'day') {
+      dateObj.setDate(dateObj.getDate() + amount);
+    }
+    const newY = dateObj.getFullYear();
+    const newM = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+    const newD = dateObj.getDate().toString().padStart(2, '0');
+    const newDateStr = `${newY}-${newM}-${newD}`;
+
+    updateField('date', newDateStr);
+  };
+
+  // Helper to step hour by 1 Canh Gio (2 hours)
+  const stepHour = (amount: number) => {
+    const [h] = formData.time.split(':').map(Number);
+    let currentIdx = CANH_GIO_OPTIONS.findIndex(cg => {
+      const cgH = parseInt(cg.time.split(':')[0], 10);
+      return Math.abs(cgH - h) <= 1;
+    });
+    if (currentIdx === -1) currentIdx = 7; // Default Mùi (13:00)
+    let nextIdx = (currentIdx + amount + 12) % 12;
+    updateField('time', CANH_GIO_OPTIONS[nextIdx].time);
+  };
+
+  // Helper to update date part from dropdowns
+  const updateDatePart = (part: 'year' | 'month' | 'day', value: number | string) => {
+    const parts = formData.date.split('-');
+    if (part === 'year') parts[0] = value.toString();
+    if (part === 'month') parts[1] = value.toString().padStart(2, '0');
+    if (part === 'day') parts[2] = value.toString().padStart(2, '0');
+    updateField('date', parts.join('-'));
+  };
 
   // Synchronize inputs & execute calculation
   const handleAnLaSo = (mode: 'bazi' | 'tutru') => {
@@ -704,56 +768,181 @@ export function BaziEmpiricalChart() {
         </div>
 
         {/* FAST SELECTOR CARDS (Năm - Tháng - Ngày - Giờ - Giới tính) */}
-        <div className="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2 items-center">
+        <div className="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2 items-stretch">
+          {/* Hidden Native Date Input for instant system picker */}
+          <input
+            type="date"
+            ref={dateInputRef}
+            value={formData.date}
+            onChange={e => {
+              if (e.target.value) {
+                updateField('date', e.target.value);
+              }
+            }}
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden="true"
+          />
+
           {/* 1. Năm Card */}
-          <div
-            onClick={() => setQuickPickerType('year')}
-            className="bg-white hover:bg-amber-50/60 border border-slate-200 hover:border-amber-400 p-2 rounded-lg cursor-pointer transition text-center shadow-xs"
-          >
-            <div className="text-xs sm:text-sm font-black text-slate-800">
-              Năm {inputDateMetadata?.y}
+          <div className="bg-white border border-slate-200 hover:border-amber-400 p-2 rounded-xl text-center shadow-xs transition flex flex-col justify-between group">
+            <div className="flex items-center justify-between gap-1">
+              <button
+                type="button"
+                onClick={() => stepDate('year', -1)}
+                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
+                title="Giảm 1 năm"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+              <div
+                onClick={() => setIsDatePickerModalOpen(true)}
+                className="cursor-pointer flex-1"
+                title="Nhấp để chọn ngày giờ sinh chi tiết"
+              >
+                <div className="text-xs sm:text-sm font-black text-slate-800 group-hover:text-amber-700 transition">
+                  Năm {inputDateMetadata?.y}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => stepDate('year', 1)}
+                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
+                title="Tăng 1 năm"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <div className="text-[11px] font-bold text-amber-700 mt-0.5">
+            <div
+              onClick={() => setIsDatePickerModalOpen(true)}
+              className="text-[11px] font-bold text-amber-700 mt-0.5 cursor-pointer"
+            >
               {inputDateMetadata?.yearCanChi}
             </div>
           </div>
 
           {/* 2. Tháng Card */}
-          <div
-            onClick={() => setQuickPickerType('month')}
-            className="bg-white hover:bg-amber-50/60 border border-slate-200 hover:border-amber-400 p-2 rounded-lg cursor-pointer transition text-center shadow-xs"
-          >
-            <div className="text-xs sm:text-sm font-black text-slate-800">
-              Tháng {inputDateMetadata?.m ? inputDateMetadata.m.toString().padStart(2, '0') : ''}
+          <div className="bg-white border border-slate-200 hover:border-amber-400 p-2 rounded-xl text-center shadow-xs transition flex flex-col justify-between group">
+            <div className="flex items-center justify-between gap-1">
+              <button
+                type="button"
+                onClick={() => stepDate('month', -1)}
+                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
+                title="Giảm 1 tháng"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+              <div
+                onClick={() => setIsDatePickerModalOpen(true)}
+                className="cursor-pointer flex-1"
+                title="Nhấp để chọn ngày giờ sinh chi tiết"
+              >
+                <div className="text-xs sm:text-sm font-black text-slate-800 group-hover:text-amber-700 transition">
+                  Tháng {inputDateMetadata?.m ? inputDateMetadata.m.toString().padStart(2, '0') : ''}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => stepDate('month', 1)}
+                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
+                title="Tăng 1 tháng"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <div className="text-[11px] font-bold text-amber-700 mt-0.5">
+            <div
+              onClick={() => setIsDatePickerModalOpen(true)}
+              className="text-[11px] font-bold text-amber-700 mt-0.5 cursor-pointer"
+            >
               {inputDateMetadata?.monthCanChi}
             </div>
           </div>
 
           {/* 3. Ngày Card */}
-          <div
-            onClick={() => setQuickPickerType('day')}
-            className="bg-white hover:bg-amber-50/60 border border-slate-200 hover:border-amber-400 p-2 rounded-lg cursor-pointer transition text-center shadow-xs"
-          >
-            <div className="text-xs sm:text-sm font-black text-slate-800 flex items-center justify-center gap-1">
-              <span>Ngày {inputDateMetadata?.d ? inputDateMetadata.d.toString().padStart(2, '0') : ''}</span>
-              <Calendar className="w-3 h-3 text-amber-600" />
+          <div className="bg-white border border-slate-200 hover:border-amber-400 p-2 rounded-xl text-center shadow-xs transition flex flex-col justify-between group">
+            <div className="flex items-center justify-between gap-1">
+              <button
+                type="button"
+                onClick={() => stepDate('day', -1)}
+                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
+                title="Giảm 1 ngày"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+              <div
+                onClick={() => setIsDatePickerModalOpen(true)}
+                className="cursor-pointer flex-1 flex items-center justify-center gap-1"
+                title="Nhấp để chọn ngày giờ sinh chi tiết"
+              >
+                <span className="text-xs sm:text-sm font-black text-slate-800 group-hover:text-amber-700 transition">
+                  Ngày {inputDateMetadata?.d ? inputDateMetadata.d.toString().padStart(2, '0') : ''}
+                </span>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    try {
+                      dateInputRef.current?.showPicker?.();
+                    } catch {
+                      setIsDatePickerModalOpen(true);
+                    }
+                  }}
+                  title="Mở lịch chọn nhanh"
+                  className="p-0.5 hover:bg-amber-100 rounded text-amber-600 transition"
+                >
+                  <Calendar className="w-3 h-3 text-amber-600" />
+                </button>
+              </div>
+              <button
+                type="button"
+                onClick={() => stepDate('day', 1)}
+                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
+                title="Tăng 1 ngày"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <div className="text-[11px] font-bold text-amber-700 mt-0.5">
+            <div
+              onClick={() => setIsDatePickerModalOpen(true)}
+              className="text-[11px] font-bold text-amber-700 mt-0.5 cursor-pointer truncate"
+            >
               {inputDateMetadata?.dayCanChi} (Â/{inputDateMetadata?.lunarDate?.split('-')[1]})
             </div>
           </div>
 
           {/* 4. Giờ Card */}
-          <div
-            onClick={() => setQuickPickerType('hour')}
-            className="bg-white hover:bg-amber-50/60 border border-slate-200 hover:border-amber-400 p-2 rounded-lg cursor-pointer transition text-center shadow-xs"
-          >
-            <div className="text-xs sm:text-sm font-black text-slate-800">
-              {inputData.time}
+          <div className="bg-white border border-slate-200 hover:border-amber-400 p-2 rounded-xl text-center shadow-xs transition flex flex-col justify-between group">
+            <div className="flex items-center justify-between gap-1">
+              <button
+                type="button"
+                onClick={() => stepHour(-1)}
+                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
+                title="Lùi 1 canh giờ (2 tiếng)"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+              <div
+                onClick={() => setIsDatePickerModalOpen(true)}
+                className="cursor-pointer flex-1"
+                title="Nhấp để chọn canh giờ sinh"
+              >
+                <div className="text-xs sm:text-sm font-black text-slate-800 group-hover:text-amber-700 transition">
+                  {formData.time}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => stepHour(1)}
+                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
+                title="Tiến 1 canh giờ (2 tiếng)"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <div className="text-[11px] font-bold text-amber-700 mt-0.5">
+            <div
+              onClick={() => setIsDatePickerModalOpen(true)}
+              className="text-[11px] font-bold text-amber-700 mt-0.5 cursor-pointer"
+            >
               {inputDateMetadata?.hourCanChi}
             </div>
           </div>
@@ -762,10 +951,10 @@ export function BaziEmpiricalChart() {
           <div className="col-span-2 sm:col-span-1 grid grid-cols-2 gap-1.5 h-full">
             <button
               type="button"
-              onClick={() => setInputData(prev => ({ ...prev, gender: 'male' }))}
-              className={`py-2 rounded-lg font-bold text-xs sm:text-sm transition flex items-center justify-center ${
-                inputData.gender === 'male'
-                  ? 'bg-amber-500 text-slate-950 font-black shadow-sm'
+              onClick={() => updateField('gender', 'male')}
+              className={`py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center cursor-pointer ${
+                formData.gender === 'male'
+                  ? 'bg-amber-500 text-slate-950 font-black shadow-sm ring-1 ring-amber-600'
                   : 'bg-white text-slate-700 border border-slate-200 hover:border-amber-400'
               }`}
             >
@@ -773,10 +962,10 @@ export function BaziEmpiricalChart() {
             </button>
             <button
               type="button"
-              onClick={() => setInputData(prev => ({ ...prev, gender: 'female' }))}
-              className={`py-2 rounded-lg font-bold text-xs sm:text-sm transition flex items-center justify-center ${
-                inputData.gender === 'female'
-                  ? 'bg-emerald-600 text-white font-black shadow-sm'
+              onClick={() => updateField('gender', 'female')}
+              className={`py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center cursor-pointer ${
+                formData.gender === 'female'
+                  ? 'bg-emerald-600 text-white font-black shadow-sm ring-1 ring-emerald-700'
                   : 'bg-white text-slate-700 border border-slate-200 hover:border-emerald-400'
               }`}
             >
@@ -791,10 +980,10 @@ export function BaziEmpiricalChart() {
           <div className="flex-1 w-full">
             <input
               type="text"
-              value={inputData.name}
-              onChange={e => setInputData(prev => ({ ...prev, name: e.target.value }))}
+              value={formData.name}
+              onChange={e => updateField('name', e.target.value)}
               placeholder="Nhập họ tên người lập lá số..."
-              className="w-full h-10 px-3 rounded-lg bg-white border border-slate-300 text-slate-900 text-xs sm:text-sm font-bold focus:outline-none focus:border-amber-500 transition shadow-2xs placeholder:text-slate-400"
+              className="w-full h-10 px-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs sm:text-sm font-bold focus:outline-none focus:border-amber-500 transition shadow-2xs placeholder:text-slate-400"
             />
           </div>
 
@@ -803,10 +992,13 @@ export function BaziEmpiricalChart() {
             {/* BÁT TỰ */}
             <button
               type="button"
-              onClick={() => handleAnLaSo('bazi')}
-              className={`flex-1 sm:flex-initial h-10 px-4 rounded-lg font-black text-xs uppercase tracking-wider transition shadow cursor-pointer ${
+              onClick={() => {
+                setActiveChartMode('bazi');
+                showToast('Đang xem chế độ BÁT TỰ (4 Cột)');
+              }}
+              className={`flex-1 sm:flex-initial h-10 px-4 rounded-xl font-black text-xs uppercase tracking-wider transition shadow cursor-pointer ${
                 activeChartMode === 'bazi'
-                  ? 'bg-emerald-700 text-white border border-emerald-600'
+                  ? 'bg-emerald-700 text-white border border-emerald-600 shadow-md ring-2 ring-emerald-500/30'
                   : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
               }`}
             >
@@ -816,10 +1008,13 @@ export function BaziEmpiricalChart() {
             {/* LỮ PHÚC (7 Columns - Trước đây là Hoa Sơn) */}
             <button
               type="button"
-              onClick={() => handleAnLaSo('tutru')}
-              className={`flex-1 sm:flex-initial h-10 px-4 rounded-lg font-black text-xs uppercase tracking-wider transition shadow cursor-pointer ${
+              onClick={() => {
+                setActiveChartMode('tutru');
+                showToast('Đang xem chế độ LỮ PHÚC (7 Cột)');
+              }}
+              className={`flex-1 sm:flex-initial h-10 px-4 rounded-xl font-black text-xs uppercase tracking-wider transition shadow cursor-pointer ${
                 activeChartMode === 'tutru'
-                  ? 'bg-indigo-600 text-white border border-indigo-500'
+                  ? 'bg-indigo-600 text-white border border-indigo-500 shadow-md ring-2 ring-indigo-500/30'
                   : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
               }`}
             >
@@ -832,7 +1027,7 @@ export function BaziEmpiricalChart() {
               onClick={() => downloadImage('png')}
               disabled={isExporting}
               title="Tải ảnh lá số PNG độ phân giải cao"
-              className="h-10 px-3 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold flex items-center justify-center transition shadow-2xs"
+              className="h-10 px-3 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold flex items-center justify-center transition shadow-2xs cursor-pointer"
             >
               <Download className="w-4 h-4 text-amber-600" />
             </button>
@@ -842,7 +1037,7 @@ export function BaziEmpiricalChart() {
               type="button"
               onClick={saveCurrentChart}
               title="Lưu vào Kho Lưu Trữ Mệnh Bàn"
-              className="h-10 px-3 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold flex items-center justify-center transition gap-1 shadow-2xs"
+              className="h-10 px-3 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold flex items-center justify-center transition gap-1 shadow-2xs cursor-pointer"
             >
               <Save className="w-4 h-4 text-emerald-600" />
               <span className="text-xs font-bold text-slate-800">LƯU</span>
@@ -854,11 +1049,12 @@ export function BaziEmpiricalChart() {
                 type="button"
                 onClick={handlePrevChart}
                 disabled={historyIndex <= 0}
-                className={`h-10 w-9 rounded-lg border flex items-center justify-center transition ${
+                className={`h-10 w-9 rounded-xl border flex items-center justify-center transition ${
                   historyIndex > 0
                     ? 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100 cursor-pointer shadow-2xs'
                     : 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-50'
                 }`}
+                title="Lá số trước"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -866,11 +1062,12 @@ export function BaziEmpiricalChart() {
                 type="button"
                 onClick={handleNextChart}
                 disabled={historyIndex >= chartHistory.length - 1}
-                className={`h-10 w-9 rounded-lg border flex items-center justify-center transition ${
+                className={`h-10 w-9 rounded-xl border flex items-center justify-center transition ${
                   historyIndex < chartHistory.length - 1
                     ? 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100 cursor-pointer shadow-2xs'
                     : 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-50'
                 }`}
+                title="Lá số kế tiếp"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -1406,125 +1603,233 @@ export function BaziEmpiricalChart() {
         </div>
       )}
 
-      {/* QUICK PICKER DIALOG (Năm, Tháng, Ngày, Giờ) */}
-      {quickPickerType && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3">
-          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
+      {/* UNIFIED ALL-IN-ONE DATE-TIME PICKER MODAL */}
+      {isDatePickerModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-5 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
+            {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-              <h3 className="text-base font-black text-slate-900 uppercase">
-                {quickPickerType === 'year' && 'Chọn Năm Sinh'}
-                {quickPickerType === 'month' && 'Chọn Tháng Sinh'}
-                {quickPickerType === 'day' && 'Chọn Ngày Sinh'}
-                {quickPickerType === 'hour' && 'Chọn Giờ Sinh'}
-              </h3>
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-amber-600" />
+                <h3 className="text-base font-black text-slate-900 uppercase">
+                  Chọn Ngày Giờ Sinh
+                </h3>
+              </div>
               <button
                 type="button"
-                onClick={() => setQuickPickerType(null)}
-                className="text-slate-400 hover:text-slate-700"
+                onClick={() => setIsDatePickerModalOpen(false)}
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Form controls */}
-            <div className="space-y-3">
-              {quickPickerType === 'year' && (
-                <div className="space-y-2">
-                  <label className="text-xs text-slate-600 font-bold">Năm Dương Lịch (1900 - 2100):</label>
+            {/* 1. Lịch Dương / Lịch Âm selector */}
+            <div className="flex items-center justify-center p-1 bg-slate-100 rounded-xl">
+              <button
+                type="button"
+                onClick={() => updateField('calendarType', 'solar')}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                  formData.calendarType === 'solar'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Dương Lịch
+              </button>
+              <button
+                type="button"
+                onClick={() => updateField('calendarType', 'lunar')}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                  formData.calendarType === 'lunar'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Âm Lịch
+              </button>
+            </div>
+
+            {/* 2. Ngày - Tháng - Năm controls */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-700 block">
+                Ngày, Tháng, Năm sinh:
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {/* Ngày */}
+                <div>
+                  <label className="text-[10px] text-slate-500 font-semibold block mb-0.5">Ngày</label>
+                  <select
+                    value={parseInt(formData.date.split('-')[2], 10)}
+                    onChange={e => updateDatePart('day', e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:border-amber-500 cursor-pointer"
+                  >
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
+                      <option key={d} value={d}>Ngày {d < 10 ? `0${d}` : d}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Tháng */}
+                <div>
+                  <label className="text-[10px] text-slate-500 font-semibold block mb-0.5">Tháng</label>
+                  <select
+                    value={parseInt(formData.date.split('-')[1], 10)}
+                    onChange={e => updateDatePart('month', e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:border-amber-500 cursor-pointer"
+                  >
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                      <option key={m} value={m}>Tháng {m < 10 ? `0${m}` : m}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Năm */}
+                <div>
+                  <label className="text-[10px] text-slate-500 font-semibold block mb-0.5">Năm</label>
                   <input
                     type="number"
                     min="1900"
                     max="2100"
-                    value={inputData.date.split('-')[0]}
-                    onChange={e => {
-                      const parts = inputData.date.split('-');
-                      parts[0] = e.target.value;
-                      setInputData(prev => ({ ...prev, date: parts.join('-') }));
-                    }}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-bold text-slate-900"
+                    value={formData.date.split('-')[0]}
+                    onChange={e => updateDatePart('year', e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:border-amber-500 text-center"
                   />
                 </div>
-              )}
+              </div>
 
-              {quickPickerType === 'month' && (
-                <div className="grid grid-cols-4 gap-2">
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => {
-                        const parts = inputData.date.split('-');
-                        parts[1] = m.toString().padStart(2, '0');
-                        setInputData(prev => ({ ...prev, date: parts.join('-') }));
-                        setQuickPickerType(null);
-                      }}
-                      className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs transition"
-                    >
-                      Tháng {m}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {quickPickerType === 'day' && (
-                <div className="grid grid-cols-7 gap-1.5 max-h-60 overflow-y-auto">
-                  {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
-                    <button
-                      key={d}
-                      type="button"
-                      onClick={() => {
-                        const parts = inputData.date.split('-');
-                        parts[2] = d.toString().padStart(2, '0');
-                        setInputData(prev => ({ ...prev, date: parts.join('-') }));
-                        setQuickPickerType(null);
-                      }}
-                      className="p-2 rounded-lg bg-slate-50 border border-slate-200 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs transition"
-                    >
-                      {d}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {quickPickerType === 'hour' && (
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { label: 'Tý (23h - 01h)', time: '23:30' },
-                    { label: 'Sửu (01h - 03h)', time: '02:00' },
-                    { label: 'Dần (03h - 05h)', time: '04:00' },
-                    { label: 'Mão (05h - 07h)', time: '06:00' },
-                    { label: 'Thìn (07h - 09h)', time: '08:00' },
-                    { label: 'Tỵ (09h - 11h)', time: '10:00' },
-                    { label: 'Ngọ (11h - 13h)', time: '12:00' },
-                    { label: 'Mùi (13h - 15h)', time: '13:00' },
-                    { label: 'Thân (15h - 17h)', time: '16:00' },
-                    { label: 'Dậu (17h - 19h)', time: '18:00' },
-                    { label: 'Tuất (19h - 21h)', time: '20:00' },
-                    { label: 'Hợi (21h - 23h)', time: '22:00' },
-                  ].map(h => (
-                    <button
-                      key={h.label}
-                      type="button"
-                      onClick={() => {
-                        setInputData(prev => ({ ...prev, time: h.time }));
-                        setQuickPickerType(null);
-                      }}
-                      className="p-2 rounded-lg bg-slate-50 border border-slate-200 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs transition text-center"
-                    >
-                      {h.label}
-                    </button>
-                  ))}
-                </div>
-              )}
+              {/* Quick decade jump chips */}
+              <div className="flex items-center gap-1.5 pt-1 flex-wrap">
+                <span className="text-[11px] text-slate-500 font-medium">Chọn nhanh:</span>
+                {[1970, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2020].map(y => (
+                  <button
+                    key={y}
+                    type="button"
+                    onClick={() => updateDatePart('year', y)}
+                    className={`px-2 py-0.5 rounded text-[11px] font-bold transition cursor-pointer ${
+                      Number(formData.date.split('-')[0]) === y
+                        ? 'bg-amber-500 text-slate-950 shadow-xs'
+                        : 'bg-slate-100 hover:bg-amber-100 hover:text-amber-900 text-slate-700'
+                    }`}
+                  >
+                    {y}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <div className="flex justify-end pt-2 border-t border-slate-100">
+            {/* 3. Giờ sinh (12 Canh Giờ) */}
+            <div className="space-y-2 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-700">
+                  Giờ sinh (Chọn Canh Giờ hoặc nhập chính xác):
+                </label>
+                <div className="flex items-center gap-1">
+                  <span className="text-[11px] text-slate-500">Giờ:Phút:</span>
+                  <input
+                    type="time"
+                    value={formData.time}
+                    onChange={e => updateField('time', e.target.value)}
+                    className="bg-slate-50 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
+                {CANH_GIO_OPTIONS.map(cg => {
+                  const [cgH] = cg.time.split(':').map(Number);
+                  const [curH] = formData.time.split(':').map(Number);
+                  const isSelected = Math.abs(cgH - curH) <= 1;
+                  return (
+                    <button
+                      key={cg.branch}
+                      type="button"
+                      onClick={() => updateField('time', cg.time)}
+                      className={`p-2 rounded-lg text-left transition border cursor-pointer ${
+                        isSelected
+                          ? 'bg-amber-50 border-amber-500 text-amber-950 font-bold ring-1 ring-amber-400'
+                          : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-800'
+                      }`}
+                    >
+                      <div className="text-xs font-black">{cg.label.split(' ')[0]}</div>
+                      <div className="text-[10px] text-slate-500">{cg.label.split('(')[1]?.replace(')', '')}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 4. Giới tính & Họ tên */}
+            <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Giới tính:</label>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => updateField('gender', 'male')}
+                    className={`py-2 rounded-lg font-bold text-xs transition cursor-pointer ${
+                      formData.gender === 'male'
+                        ? 'bg-amber-500 text-slate-950 font-black shadow-xs'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    }`}
+                  >
+                    Nam
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => updateField('gender', 'female')}
+                    className={`py-2 rounded-lg font-bold text-xs transition cursor-pointer ${
+                      formData.gender === 'female'
+                        ? 'bg-emerald-600 text-white font-black shadow-xs'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    }`}
+                  >
+                    Nữ
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Họ tên:</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={e => updateField('name', e.target.value)}
+                  placeholder="Họ tên..."
+                  className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-500"
+                />
+              </div>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="flex items-center justify-between pt-3 border-t border-slate-200">
               <button
                 type="button"
-                onClick={() => setQuickPickerType(null)}
-                className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 font-black text-white text-xs shadow-sm"
+                onClick={() => {
+                  const now = new Date();
+                  const y = now.getFullYear();
+                  const m = (now.getMonth() + 1).toString().padStart(2, '0');
+                  const d = now.getDate().toString().padStart(2, '0');
+                  const h = now.getHours().toString().padStart(2, '0');
+                  const min = now.getMinutes().toString().padStart(2, '0');
+                  setFormData(prev => ({ ...prev, date: `${y}-${m}-${d}`, time: `${h}:${min}` }));
+                  setInputData(prev => ({ ...prev, date: `${y}-${m}-${d}`, time: `${h}:${min}` }));
+                  showToast('Đã lấy thời gian hiện tại!');
+                }}
+                className="text-xs font-bold text-amber-700 hover:text-amber-800 underline cursor-pointer"
               >
-                Xong
+                Lấy thời gian hiện tại
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsDatePickerModalOpen(false);
+                  showToast('Đã áp dụng thông tin ngày giờ thành công!');
+                }}
+                className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-black shadow-md transition cursor-pointer"
+              >
+                Xác nhận & Xem Lá Số
               </button>
             </div>
           </div>

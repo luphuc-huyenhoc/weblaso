@@ -15,7 +15,12 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
   - **Giao diện nền trắng đồng bộ từ ngoài vào trong:** Chuyển đổi toàn bộ khung bảng 7 cột (Trụ Năm, Trụ Tháng, Trụ Ngày, Trụ Giờ, Đại Vận, Lưu Niên, Tiểu Vận) cùng cột nhãn dọc CÀN TẠO / KHÔN TẠO sang màu trắng tinh khôi (`bg-white` / viền `border-slate-200`).
   - **Cân đối chữ và khung hài hòa tuyệt đối:** Căn chỉnh chiều cao cố định từng khu vực (khối Thập Thần trên đỉnh, Can Chi cỡ lớn, hàng Tàng Can / Can Chi nhãn, hàng Thần Sát / Tràng Sinh, và chân bảng Nạp Âm) thẳng hàng ngang hoàn hảo trên toàn bộ 7 cột.
   - **Tối ưu độ tương phản ngũ hành trên nền trắng:** Nâng cấp bảng màu ngũ hành (Mộc xanh lục `#009e49`, Hỏa đỏ cờ `#dc2626`, Thổ vàng đất hổ phách `#b8860b`, Kim xám than chì titan `#52525b`, Thủy xanh lam `#1b73f8`) đạt chuẩn tương phản cao, chống lóa và cực kỳ dễ đọc.
-  - **Tương thích ngược dữ liệu cấu hình:** Bổ sung cơ chế tự động chuyển đổi mã màu nền từ nền tối (`#0f172a`) sang nền trắng (`#ffffff`) cho người dùng đã từng lưu cấu hình trước đó.
+  - **Cải tiến toàn diện bộ nhập liệu Bát Tự Thực Nghiệm dễ dàng và nhanh chóng:**
+    - **Nút tăng/giảm nhanh 1 chạm (`◀` và `▶`):** Tích hợp nút bước nhảy ngay trên từng thẻ Năm, Tháng, Ngày, Giờ (Giảm/Tăng 1 năm, 1 tháng, 1 ngày, hoặc 1 canh giờ = 2 tiếng) mà không cần mở popup.
+    - **Cập nhật và tính toán tức thì (Reactive Live Calculation):** Lá số tự động an lại và hiển thị tức thời ngay khi điều chỉnh ngày, giờ, giới tính hoặc họ tên.
+    - **Hợp nhất hộp thoại chọn ngày giờ (Unified Modal):** Thay thế 4 popup riêng lẻ bằng 1 modal duy nhất "CHỌN NGÀY GIỜ SINH" đầy đủ lựa chọn Dương/Âm lịch, chọn nhanh thập niên, lưới 12 Canh Giờ trực quan kèm ô nhập giờ:phút chính xác.
+    - **Tích hợp lịch chọn ngày hệ thống (HTML5 Date Picker):** Cho phép chạm vào biểu tượng lịch trên thẻ Ngày để mở giao diện cuộn lịch native của điện thoại hoặc trình duyệt.
+
 
 
   - **Mô-đun giao diện Bát Tự chuyên sâu theo Manh Phái:** Triển khai theo cấu trúc ứng dụng Bát Tự Thế Sơn / Tứ Trụ Mệnh Bàn và Hoa Sơn 7 cột với bố cục sang trọng, sắc nét.
