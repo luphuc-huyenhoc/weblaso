@@ -10,6 +10,12 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ## [Unreleased]
 
 ### Changed
+- **Tối ưu hiển thị responsive vừa khít màn hình điện thoại cho Bát Tự Thực Nghiệm (`[PAGE-BAZI-EMPIRICAL]`, `[UI-BAZI-EMPIRICAL]`):**
+  - **Khung 4 trụ vừa vặn 100% màn hình:** Loại bỏ ràng buộc chiều rộng cứng `min-w-[700px]` ở chế độ Bát Tự (4 Cột), thay bằng `w-full min-w-0` giúp toàn bộ 4 trụ (Năm, Tháng, Ngày, Giờ) cùng cột nhãn Càn Tạo/Khôn Tạo hiển thị trọn vẹn, không bị tràn viền hay mất Trụ Giờ sang phải.
+  - **Cỡ chữ linh hoạt theo độ rộng màn hình (Fluid Typography):** Áp dụng hàm `clamp(18px, 5.2vw, baziFontSize)` cho Can Chi cỡ lớn, kết hợp chữ số và nhãn co giãn tự nhiên (`text-[8.5px]` - `text-xs`) giúp chữ, số và khung đạt tỷ lệ hài hòa hoàn hảo trên mọi kích thước màn hình smartphone.
+  - **Triệt tiêu hiện tượng chữ đè nhau ở dòng Đại Vận (10 Năm):** Bổ sung thuộc tính `min-w-0 overflow-hidden`, thu gọn khoảng đệm thẻ `p-1 sm:p-2`, tinh chỉnh kích thước chữ Can Chi (`text-[11px] sm:text-sm`) và loại bỏ phóng to `scale-105` gây xô lệch viền, giúp các chu kỳ 10 năm (như `Nhâm Thân`, `Quý Dậu`, `Tân Mùi`) nằm ngay ngắn, rõ ràng, không bao giờ bị đè lấn sang thẻ bên cạnh.
+  - **Đồng bộ các lưới Lưu Niên, Tiểu Vận & Nguyệt Lệnh:** Căn chỉnh lưới 5 cột trên di động với khoảng cách `gap-1`, số năm, can chi và nạp âm tự động thu gọn vừa khít khung thẻ.
+  - **Cuộn mượt không bị che lấp bởi PWA Banner:** Thiết lập `scroll-mt-16 sm:scroll-mt-20` cho bảng mệnh bàn để khi bấm "MỞ LÁ SỐ", màn hình tự động cuộn xuống đúng tầm nhìn mà không bị che khuất bởi thanh cài đặt ứng dụng cố định ở đỉnh.
 - **Chuyển đổi khung nhập liệu Bát Tự Thực Nghiệm sang mẫu thẻ gỗ cổ truyền `[UI-BAZI-FORM]` (`[UI-BAZI-EMPIRICAL]`):**
   - **Khung thẻ gỗ sang trọng:** Thay thế thanh thẻ chọn nhanh và các ô bấm rời rạc bằng khung thẻ gỗ tối màu ấm áp (`bg-[#3e2c1f] text-[#ede3d5] rounded-[20px] sm:rounded-[32px] border-[#523c2d]/50 max-w-[760px] mx-auto`) đồng bộ với giao diện lập lá số kinh điển `[UI-BAZI-FORM]`.
   - **Bố cục các trường nhập liệu chuẩn hóa:**
