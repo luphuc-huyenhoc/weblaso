@@ -12,7 +12,9 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ### Changed
 - **Đổi tên chế độ "Hoa Sơn" thành "Lữ Phúc" & Chuyển sang giao diện nền trắng (`[UI-BAZI-EMPIRICAL]`, `[PAGE-BAZI-EMPIRICAL]`):**
   - **Đổi tên thương hiệu chế độ 7 cột:** Chuyển đổi toàn bộ nút chọn, tiêu đề chế độ và ghi chú từ "HOA SƠN" sang "LỮ PHÚC" ("LỮ PHÚC BÁT TỰ (TỨ TRỤ 7 CỘT)").
-  - **Giao diện nền trắng (White Theme):** Chuyển đổi toàn bộ nền trang, thanh công cụ điều khiển trên đỉnh, các ô nhập liệu, bảng dòng thời gian (Đại Vận, Lưu Niên, Tiểu Vận, 12 Tháng) và khung lá số chính sang nền trắng tinh tế (`#ffffff` / `bg-white`), tạo phong cách thanh lịch, sáng sủa và dễ đọc.
+  - **Giao diện nền trắng đồng bộ từ ngoài vào trong:** Chuyển đổi toàn bộ khung bảng 7 cột (Trụ Năm, Trụ Tháng, Trụ Ngày, Trụ Giờ, Đại Vận, Lưu Niên, Tiểu Vận) cùng cột nhãn dọc CÀN TẠO / KHÔN TẠO sang màu trắng tinh khôi (`bg-white` / viền `border-slate-200`).
+  - **Cân đối chữ và khung hài hòa tuyệt đối:** Căn chỉnh chiều cao cố định từng khu vực (khối Thập Thần trên đỉnh, Can Chi cỡ lớn, hàng Tàng Can / Can Chi nhãn, hàng Thần Sát / Tràng Sinh, và chân bảng Nạp Âm) thẳng hàng ngang hoàn hảo trên toàn bộ 7 cột.
+  - **Tối ưu độ tương phản ngũ hành trên nền trắng:** Nâng cấp bảng màu ngũ hành (Mộc xanh lục `#009e49`, Hỏa đỏ cờ `#dc2626`, Thổ vàng đất hổ phách `#b8860b`, Kim xám than chì titan `#52525b`, Thủy xanh lam `#1b73f8`) đạt chuẩn tương phản cao, chống lóa và cực kỳ dễ đọc.
   - **Tương thích ngược dữ liệu cấu hình:** Bổ sung cơ chế tự động chuyển đổi mã màu nền từ nền tối (`#0f172a`) sang nền trắng (`#ffffff`) cho người dùng đã từng lưu cấu hình trước đó.
 
 
