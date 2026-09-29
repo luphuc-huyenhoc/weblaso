@@ -10,6 +10,16 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ## [Unreleased]
 
 ### Changed
+- **Chuyển đổi khung nhập liệu Bát Tự Thực Nghiệm sang mẫu thẻ gỗ cổ truyền `[UI-BAZI-FORM]` (`[UI-BAZI-EMPIRICAL]`):**
+  - **Khung thẻ gỗ sang trọng:** Thay thế thanh thẻ chọn nhanh và các ô bấm rời rạc bằng khung thẻ gỗ tối màu ấm áp (`bg-[#3e2c1f] text-[#ede3d5] rounded-[20px] sm:rounded-[32px] border-[#523c2d]/50 max-w-[760px] mx-auto`) đồng bộ với giao diện lập lá số kinh điển `[UI-BAZI-FORM]`.
+  - **Bố cục các trường nhập liệu chuẩn hóa:**
+    - Hàng 1: Ô nhập Họ tên nền kem ngà `bg-[#f8f3ea]` với chữ tối màu sắc nét.
+    - Hàng 2: Bộ 3 menu thả xuống Ngày (01-31), Tháng (01-12), Năm (1900-2056) có biểu tượng `ChevronDown`.
+    - Hàng 3: Bộ 2 menu thả xuống Giờ (00-23), Phút (00-59) kèm chỉ báo Can Chi giờ sinh.
+    - Hàng 4: Menu Năm tính (1980-2080) và cặp nút chọn Giới tính tròn mạ vàng (Nam / Nữ).
+    - Hàng 5: Nút chuyển chế độ linh hoạt giữa **Bát Tự (4 Cột)** và **Lữ Phúc (7 Cột)**.
+  - **Nút hành động "MỞ LÁ SỐ" nổi bật:** Nút bấm lớn màu vàng hổ phách (`bg-[#d8a268] text-[#342013] font-bold tracking-wider uppercase`) tự động an lá số, thông báo xác nhận và cuộn mượt mà đến khu vực bảng mệnh bàn.
+  - **Duy trì trọn vẹn bộ công cụ chuyên sâu:** Giữ nguyên thanh công cụ tiện ích phía trên gồm Kho Lưu Trữ (kèm huy hiệu đếm số lượng), Lưu lá số, Tải ảnh PNG độ nét cao, Tùy biến Bát Tự, Mở lịch âm chi tiết, Đồng hồ thời gian thực và Bộ nút duyệt Lịch sử trước/sau.
 - **Đổi tên chế độ "Hoa Sơn" thành "Lữ Phúc" & Chuyển sang giao diện nền trắng (`[UI-BAZI-EMPIRICAL]`, `[PAGE-BAZI-EMPIRICAL]`):**
   - **Đổi tên thương hiệu chế độ 7 cột:** Chuyển đổi toàn bộ nút chọn, tiêu đề chế độ và ghi chú từ "HOA SƠN" sang "LỮ PHÚC" ("LỮ PHÚC BÁT TỰ (TỨ TRỤ 7 CỘT)").
   - **Giao diện nền trắng đồng bộ từ ngoài vào trong:** Chuyển đổi toàn bộ khung bảng 7 cột (Trụ Năm, Trụ Tháng, Trụ Ngày, Trụ Giờ, Đại Vận, Lưu Niên, Tiểu Vận) cùng cột nhãn dọc CÀN TẠO / KHÔN TẠO sang màu trắng tinh khôi (`bg-white` / viền `border-slate-200`).

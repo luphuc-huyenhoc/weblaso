@@ -39,7 +39,8 @@ import {
   Italic,
   List,
   Check,
-  Settings2
+  Settings2,
+  ChevronDown
 } from 'lucide-react';
 
 export interface NoteTopicItem {
@@ -370,6 +371,40 @@ export function BaziEmpiricalChart() {
     setSelectedAnnualYear(null);
   };
 
+  const yearsRange = useMemo(() => {
+    const list: number[] = [];
+    for (let y = 1900; y <= 2056; y++) list.push(y);
+    return list;
+  }, []);
+
+  const focusYearsRange = useMemo(() => {
+    const list: number[] = [];
+    for (let y = 1980; y <= 2080; y++) list.push(y);
+    return list;
+  }, []);
+
+  const [yearVal, monthVal, dayVal] = useMemo(() => {
+    const parts = (inputData.date || formData.date || '2003-12-01').split('-').map(Number);
+    return [parts[0] || 2003, parts[1] || 12, parts[2] || 1];
+  }, [inputData.date, formData.date]);
+
+  const [hourVal, minuteVal] = useMemo(() => {
+    const parts = (inputData.time || formData.time || '13:00').split(':').map(Number);
+    return [parts[0] ?? 13, parts[1] ?? 0];
+  }, [inputData.time, formData.time]);
+
+  const handleDateChange = (newY: number, newM: number, newD: number) => {
+    const maxDays = new Date(newY, newM, 0).getDate();
+    const safeDay = Math.min(newD, maxDays);
+    const formattedDate = `${newY}-${String(newM).padStart(2, '0')}-${String(safeDay).padStart(2, '0')}`;
+    updateField('date', formattedDate);
+  };
+
+  const handleTimeChange = (newH: number, newMin: number) => {
+    const formattedTime = `${String(newH).padStart(2, '0')}:${String(newMin).padStart(2, '0')}`;
+    updateField('time', formattedTime);
+  };
+
   // Helper to step date (year, month, day)
   const stepDate = (unit: 'year' | 'month' | 'day', amount: number) => {
     const [y, m, d] = formData.date.split('-').map(Number);
@@ -684,16 +719,16 @@ export function BaziEmpiricalChart() {
         </div>
       )}
 
-      {/* TOP CONTROL BAR (WHITE THEME) */}
-      <div className="max-w-[1400px] mx-auto mb-4 bg-slate-50 border border-slate-200/90 rounded-xl p-3 sm:p-4 shadow-sm">
+      {/* TOP UTILITY TOOLBAR */}
+      <div className="max-w-[1400px] mx-auto mb-5 bg-slate-50 border border-slate-200/90 rounded-2xl p-3 sm:p-4 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          {/* Left Buttons: Presets, Customizer, Archive */}
+          {/* Left Buttons: Presets, Customizer, Archive, Save, Download, Lunar */}
           <div className="flex items-center gap-2 flex-wrap">
             {/* Presets A & B */}
             <button
               type="button"
               onClick={() => showToast('Đã áp dụng cấu hình A!')}
-              className="px-3 py-1.5 rounded-full bg-white border border-amber-500/40 text-xs font-black text-amber-900 hover:bg-amber-50 transition shadow-2xs"
+              className="px-3 py-1.5 rounded-full bg-white border border-amber-500/40 text-xs font-black text-amber-900 hover:bg-amber-50 transition shadow-2xs cursor-pointer"
               title="Cấu hình Preset A"
             >
               A
@@ -701,7 +736,7 @@ export function BaziEmpiricalChart() {
             <button
               type="button"
               onClick={() => showToast('Đã áp dụng cấu hình B!')}
-              className="px-3 py-1.5 rounded-full bg-white border border-amber-500/40 text-xs font-black text-amber-900 hover:bg-amber-50 transition shadow-2xs"
+              className="px-3 py-1.5 rounded-full bg-white border border-amber-500/40 text-xs font-black text-amber-900 hover:bg-amber-50 transition shadow-2xs cursor-pointer"
               title="Cấu hình Preset B"
             >
               B
@@ -711,7 +746,7 @@ export function BaziEmpiricalChart() {
             <button
               type="button"
               onClick={() => setIsCustomizerOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-800 transition shadow-2xs"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-800 transition shadow-2xs cursor-pointer"
             >
               <Settings2 className="w-3.5 h-3.5 text-amber-600" />
               <span>BÁT TỰ</span>
@@ -721,7 +756,7 @@ export function BaziEmpiricalChart() {
             <button
               type="button"
               onClick={() => setIsArchiveModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-800 transition shadow-2xs"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-800 transition shadow-2xs cursor-pointer"
               title="Kho Lưu Trữ Mệnh Bàn"
             >
               <FolderOpen className="w-4 h-4 text-amber-600" />
@@ -730,10 +765,45 @@ export function BaziEmpiricalChart() {
                 {savedCharts.length}
               </span>
             </button>
+
+            {/* Lưu lá số */}
+            <button
+              type="button"
+              onClick={saveCurrentChart}
+              title="Lưu vào Kho Lưu Trữ Mệnh Bàn"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-800 transition shadow-2xs cursor-pointer"
+            >
+              <Save className="w-4 h-4 text-emerald-600" />
+              <span>LƯU</span>
+            </button>
+
+            {/* Tải ảnh PNG */}
+            <button
+              type="button"
+              onClick={() => downloadImage('png')}
+              disabled={isExporting}
+              title="Tải ảnh lá số PNG độ phân giải cao"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-800 transition shadow-2xs cursor-pointer"
+            >
+              <Download className="w-4 h-4 text-amber-600" />
+              <span>TẢI ẢNH</span>
+            </button>
+
+            {/* Lịch Âm Modal Trigger */}
+            <button
+              type="button"
+              onClick={() => setIsDatePickerModalOpen(true)}
+              title="Mở bảng chọn lịch âm chi tiết"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-800 transition shadow-2xs cursor-pointer"
+            >
+              <Calendar className="w-3.5 h-3.5 text-indigo-600" />
+              <span className="hidden sm:inline">LỊCH ÂM</span>
+            </button>
           </div>
 
-          {/* Right: Live Real-time Clock Pill */}
-          <div className="ml-auto">
+          {/* Right: Live Real-time Clock Pill & History navigation */}
+          <div className="flex items-center gap-2 ml-auto">
+            {/* Live Real-time Clock Pill */}
             <button
               type="button"
               onClick={() => {
@@ -752,304 +822,26 @@ export function BaziEmpiricalChart() {
                 showToast('Đã tự động an lá số theo thời gian thực tế!');
               }}
               title="Nhấp để tự động an lá số theo thời gian thực tế"
-              className="bg-gradient-to-r from-amber-950 via-amber-900 to-amber-950 text-white border border-amber-500/60 shadow-md hover:brightness-110 active:scale-95 transition-all px-3.5 py-1.5 rounded-full flex items-center gap-2.5 text-xs sm:text-[13px] whitespace-nowrap cursor-pointer"
+              className="bg-gradient-to-r from-amber-950 via-amber-900 to-amber-950 text-white border border-amber-500/60 shadow-md hover:brightness-110 active:scale-95 transition-all px-3 py-1.5 rounded-full flex items-center gap-2 text-xs whitespace-nowrap cursor-pointer"
             >
               <span className="font-black text-amber-300">{currentDayOfWeekStr}</span>
               <span className="inline-flex items-center gap-1 text-amber-100 font-medium">
                 <Calendar className="w-3.5 h-3.5 text-amber-300" />
                 <span>{currentDateFormatted}</span>
               </span>
-              <div className="inline-flex items-center gap-1.5 font-mono font-bold text-amber-100 bg-black/40 px-2 py-0.5 rounded-full ml-1">
+              <div className="inline-flex items-center gap-1 font-mono font-bold text-amber-100 bg-black/40 px-2 py-0.5 rounded-full">
                 <Clock className="w-3.5 h-3.5 text-amber-300 animate-spin" style={{ animationDuration: '8s' }} />
                 <span>{currentTimeFormatted}</span>
               </div>
             </button>
-          </div>
-        </div>
 
-        {/* FAST SELECTOR CARDS (Năm - Tháng - Ngày - Giờ - Giới tính) */}
-        <div className="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2 items-stretch">
-          {/* Hidden Native Date Input for instant system picker */}
-          <input
-            type="date"
-            ref={dateInputRef}
-            value={formData.date}
-            onChange={e => {
-              if (e.target.value) {
-                updateField('date', e.target.value);
-              }
-            }}
-            className="sr-only"
-            tabIndex={-1}
-            aria-hidden="true"
-          />
-
-          {/* 1. Năm Card */}
-          <div className="bg-white border border-slate-200 hover:border-amber-400 p-2 rounded-xl text-center shadow-xs transition flex flex-col justify-between group">
-            <div className="flex items-center justify-between gap-1">
-              <button
-                type="button"
-                onClick={() => stepDate('year', -1)}
-                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
-                title="Giảm 1 năm"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-              </button>
-              <div
-                onClick={() => setIsDatePickerModalOpen(true)}
-                className="cursor-pointer flex-1"
-                title="Nhấp để chọn ngày giờ sinh chi tiết"
-              >
-                <div className="text-xs sm:text-sm font-black text-slate-800 group-hover:text-amber-700 transition">
-                  Năm {inputDateMetadata?.y}
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => stepDate('year', 1)}
-                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
-                title="Tăng 1 năm"
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <div
-              onClick={() => setIsDatePickerModalOpen(true)}
-              className="text-[11px] font-bold text-amber-700 mt-0.5 cursor-pointer"
-            >
-              {inputDateMetadata?.yearCanChi}
-            </div>
-          </div>
-
-          {/* 2. Tháng Card */}
-          <div className="bg-white border border-slate-200 hover:border-amber-400 p-2 rounded-xl text-center shadow-xs transition flex flex-col justify-between group">
-            <div className="flex items-center justify-between gap-1">
-              <button
-                type="button"
-                onClick={() => stepDate('month', -1)}
-                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
-                title="Giảm 1 tháng"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-              </button>
-              <div
-                onClick={() => setIsDatePickerModalOpen(true)}
-                className="cursor-pointer flex-1"
-                title="Nhấp để chọn ngày giờ sinh chi tiết"
-              >
-                <div className="text-xs sm:text-sm font-black text-slate-800 group-hover:text-amber-700 transition">
-                  Tháng {inputDateMetadata?.m ? inputDateMetadata.m.toString().padStart(2, '0') : ''}
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => stepDate('month', 1)}
-                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
-                title="Tăng 1 tháng"
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <div
-              onClick={() => setIsDatePickerModalOpen(true)}
-              className="text-[11px] font-bold text-amber-700 mt-0.5 cursor-pointer"
-            >
-              {inputDateMetadata?.monthCanChi}
-            </div>
-          </div>
-
-          {/* 3. Ngày Card */}
-          <div className="bg-white border border-slate-200 hover:border-amber-400 p-2 rounded-xl text-center shadow-xs transition flex flex-col justify-between group">
-            <div className="flex items-center justify-between gap-1">
-              <button
-                type="button"
-                onClick={() => stepDate('day', -1)}
-                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
-                title="Giảm 1 ngày"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-              </button>
-              <div
-                onClick={() => setIsDatePickerModalOpen(true)}
-                className="cursor-pointer flex-1 flex items-center justify-center gap-1"
-                title="Nhấp để chọn ngày giờ sinh chi tiết"
-              >
-                <span className="text-xs sm:text-sm font-black text-slate-800 group-hover:text-amber-700 transition">
-                  Ngày {inputDateMetadata?.d ? inputDateMetadata.d.toString().padStart(2, '0') : ''}
-                </span>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    try {
-                      dateInputRef.current?.showPicker?.();
-                    } catch {
-                      setIsDatePickerModalOpen(true);
-                    }
-                  }}
-                  title="Mở lịch chọn nhanh"
-                  className="p-0.5 hover:bg-amber-100 rounded text-amber-600 transition"
-                >
-                  <Calendar className="w-3 h-3 text-amber-600" />
-                </button>
-              </div>
-              <button
-                type="button"
-                onClick={() => stepDate('day', 1)}
-                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
-                title="Tăng 1 ngày"
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <div
-              onClick={() => setIsDatePickerModalOpen(true)}
-              className="text-[11px] font-bold text-amber-700 mt-0.5 cursor-pointer truncate"
-            >
-              {inputDateMetadata?.dayCanChi} (Â/{inputDateMetadata?.lunarDate?.split('-')[1]})
-            </div>
-          </div>
-
-          {/* 4. Giờ Card */}
-          <div className="bg-white border border-slate-200 hover:border-amber-400 p-2 rounded-xl text-center shadow-xs transition flex flex-col justify-between group">
-            <div className="flex items-center justify-between gap-1">
-              <button
-                type="button"
-                onClick={() => stepHour(-1)}
-                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
-                title="Lùi 1 canh giờ (2 tiếng)"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-              </button>
-              <div
-                onClick={() => setIsDatePickerModalOpen(true)}
-                className="cursor-pointer flex-1"
-                title="Nhấp để chọn canh giờ sinh"
-              >
-                <div className="text-xs sm:text-sm font-black text-slate-800 group-hover:text-amber-700 transition">
-                  {formData.time}
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => stepHour(1)}
-                className="w-6 h-6 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 transition cursor-pointer"
-                title="Tiến 1 canh giờ (2 tiếng)"
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <div
-              onClick={() => setIsDatePickerModalOpen(true)}
-              className="text-[11px] font-bold text-amber-700 mt-0.5 cursor-pointer"
-            >
-              {inputDateMetadata?.hourCanChi}
-            </div>
-          </div>
-
-          {/* 5. Giới tính buttons */}
-          <div className="col-span-2 sm:col-span-1 grid grid-cols-2 gap-1.5 h-full">
-            <button
-              type="button"
-              onClick={() => updateField('gender', 'male')}
-              className={`py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center cursor-pointer ${
-                formData.gender === 'male'
-                  ? 'bg-amber-500 text-slate-950 font-black shadow-sm ring-1 ring-amber-600'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:border-amber-400'
-              }`}
-            >
-              Nam
-            </button>
-            <button
-              type="button"
-              onClick={() => updateField('gender', 'female')}
-              className={`py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center cursor-pointer ${
-                formData.gender === 'female'
-                  ? 'bg-emerald-600 text-white font-black shadow-sm ring-1 ring-emerald-700'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:border-emerald-400'
-              }`}
-            >
-              Nữ
-            </button>
-          </div>
-        </div>
-
-        {/* ACTION ROW (Họ tên > Bát Tự > Lữ Phúc > Tải > Lưu > Tiến Lùi) */}
-        <div className="mt-3 pt-3 border-t border-slate-200 flex flex-col sm:flex-row items-center gap-2">
-          {/* Name Input */}
-          <div className="flex-1 w-full">
-            <input
-              type="text"
-              value={formData.name}
-              onChange={e => updateField('name', e.target.value)}
-              placeholder="Nhập họ tên người lập lá số..."
-              className="w-full h-10 px-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs sm:text-sm font-bold focus:outline-none focus:border-amber-500 transition shadow-2xs placeholder:text-slate-400"
-            />
-          </div>
-
-          {/* Action Buttons Group */}
-          <div className="flex items-center gap-1.5 flex-wrap sm:flex-nowrap w-full sm:w-auto">
-            {/* BÁT TỰ */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveChartMode('bazi');
-                showToast('Đang xem chế độ BÁT TỰ (4 Cột)');
-              }}
-              className={`flex-1 sm:flex-initial h-10 px-4 rounded-xl font-black text-xs uppercase tracking-wider transition shadow cursor-pointer ${
-                activeChartMode === 'bazi'
-                  ? 'bg-emerald-700 text-white border border-emerald-600 shadow-md ring-2 ring-emerald-500/30'
-                  : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
-              }`}
-            >
-              BÁT TỰ
-            </button>
-
-            {/* LỮ PHÚC (7 Columns - Trước đây là Hoa Sơn) */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveChartMode('tutru');
-                showToast('Đang xem chế độ LỮ PHÚC (7 Cột)');
-              }}
-              className={`flex-1 sm:flex-initial h-10 px-4 rounded-xl font-black text-xs uppercase tracking-wider transition shadow cursor-pointer ${
-                activeChartMode === 'tutru'
-                  ? 'bg-indigo-600 text-white border border-indigo-500 shadow-md ring-2 ring-indigo-500/30'
-                  : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
-              }`}
-            >
-              LỮ PHÚC
-            </button>
-
-            {/* TẢI ẢNH */}
-            <button
-              type="button"
-              onClick={() => downloadImage('png')}
-              disabled={isExporting}
-              title="Tải ảnh lá số PNG độ phân giải cao"
-              className="h-10 px-3 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold flex items-center justify-center transition shadow-2xs cursor-pointer"
-            >
-              <Download className="w-4 h-4 text-amber-600" />
-            </button>
-
-            {/* LƯU LÁ SỐ */}
-            <button
-              type="button"
-              onClick={saveCurrentChart}
-              title="Lưu vào Kho Lưu Trữ Mệnh Bàn"
-              className="h-10 px-3 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold flex items-center justify-center transition gap-1 shadow-2xs cursor-pointer"
-            >
-              <Save className="w-4 h-4 text-emerald-600" />
-              <span className="text-xs font-bold text-slate-800">LƯU</span>
-            </button>
-
-            {/* TIẾN / LÙI LỊCH SỬ */}
+            {/* Tiến / Lùi lịch sử */}
             <div className="flex items-center gap-1">
               <button
                 type="button"
                 onClick={handlePrevChart}
                 disabled={historyIndex <= 0}
-                className={`h-10 w-9 rounded-xl border flex items-center justify-center transition ${
+                className={`h-8 w-8 rounded-lg border flex items-center justify-center transition ${
                   historyIndex > 0
                     ? 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100 cursor-pointer shadow-2xs'
                     : 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-50'
@@ -1062,7 +854,7 @@ export function BaziEmpiricalChart() {
                 type="button"
                 onClick={handleNextChart}
                 disabled={historyIndex >= chartHistory.length - 1}
-                className={`h-10 w-9 rounded-xl border flex items-center justify-center transition ${
+                className={`h-8 w-8 rounded-lg border flex items-center justify-center transition ${
                   historyIndex < chartHistory.length - 1
                     ? 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100 cursor-pointer shadow-2xs'
                     : 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-50'
@@ -1073,6 +865,291 @@ export function BaziEmpiricalChart() {
               </button>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* FORM NHẬP LIỆU BÁT TỰ (STYLE CỔ ĐIỂN GỖ [UI-BAZI-FORM]) */}
+      <div className="w-full max-w-[760px] mx-auto mb-8 px-1 sm:px-0">
+        <div className="bg-[#3e2c1f] text-[#ede3d5] rounded-[20px] sm:rounded-[32px] p-4 sm:p-10 md:p-12 shadow-[0_20px_50px_rgba(30,18,10,0.35)] border border-[#523c2d]/50 select-none">
+          {/* Header / Title */}
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl text-[#fdf7f0] font-semibold tracking-normal">
+              Lập lá số Bát Tự
+            </h2>
+            <div className="w-16 h-[2.5px] bg-[#9e7d58] mx-auto mt-2.5 sm:mt-3 rounded-full" />
+          </div>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleAnLaSo(activeChartMode);
+              chartRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            className="space-y-3.5 sm:space-y-5"
+          >
+            {/* Row 1: Họ tên */}
+            <div className="flex flex-row items-center gap-2 sm:gap-4">
+              <label
+                htmlFor="empiricalFullName"
+                className="w-16 sm:w-28 text-left font-medium text-[#ede3d5] text-xs sm:text-base flex-shrink-0"
+              >
+                Họ tên
+              </label>
+              <div className="flex-1">
+                <input
+                  id="empiricalFullName"
+                  type="text"
+                  value={inputData.name}
+                  onChange={(e) => updateField('name', e.target.value)}
+                  required
+                  maxLength={128}
+                  placeholder="NGUYỄN VĂN A"
+                  className="w-full h-10 sm:h-12 px-3 sm:px-4 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition placeholder:text-gray-400"
+                />
+              </div>
+            </div>
+
+            {/* Row 2: Ngày sinh */}
+            <div className="flex flex-row items-center gap-2 sm:gap-4">
+              <label
+                htmlFor="empiricalDay"
+                className="w-16 sm:w-28 text-left font-medium text-[#ede3d5] text-xs sm:text-base flex-shrink-0"
+              >
+                Ngày sinh
+              </label>
+              <div className="flex-1 grid grid-cols-3 gap-1.5 sm:gap-3.5">
+                {/* Ngày */}
+                <div className="relative">
+                  <select
+                    id="empiricalDay"
+                    value={dayVal}
+                    onChange={(e) => handleDateChange(yearVal, monthVal, parseInt(e.target.value, 10))}
+                    className="w-full h-10 sm:h-12 pl-2 sm:pl-3.5 pr-6 sm:pr-8 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
+                  >
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                      <option key={d} value={d}>
+                        {d < 10 ? `0${d}` : d}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2c1b12] absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
+                </div>
+
+                {/* Tháng */}
+                <div className="relative">
+                  <select
+                    id="empiricalMonth"
+                    value={monthVal}
+                    onChange={(e) => handleDateChange(yearVal, parseInt(e.target.value, 10), dayVal)}
+                    className="w-full h-10 sm:h-12 pl-2 sm:pl-3.5 pr-6 sm:pr-8 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
+                  >
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                      <option key={m} value={m}>
+                        {m < 10 ? `0${m}` : m}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2c1b12] absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
+                </div>
+
+                {/* Năm */}
+                <div className="relative">
+                  <select
+                    id="empiricalYear"
+                    value={yearVal}
+                    onChange={(e) => handleDateChange(parseInt(e.target.value, 10), monthVal, dayVal)}
+                    className="w-full h-10 sm:h-12 pl-2 sm:pl-3.5 pr-6 sm:pr-8 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
+                  >
+                    {yearsRange.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2c1b12] absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
+                </div>
+              </div>
+            </div>
+
+            {/* Row 3: Giờ sinh */}
+            <div className="flex flex-row items-center gap-2 sm:gap-4">
+              <label
+                htmlFor="empiricalHour"
+                className="w-16 sm:w-28 text-left font-medium text-[#ede3d5] text-xs sm:text-base flex-shrink-0"
+              >
+                Giờ sinh
+              </label>
+              <div className="flex-1 grid grid-cols-3 gap-1.5 sm:gap-3.5">
+                {/* Giờ */}
+                <div className="relative">
+                  <select
+                    id="empiricalHour"
+                    value={hourVal}
+                    onChange={(e) => handleTimeChange(parseInt(e.target.value, 10), minuteVal)}
+                    className="w-full h-10 sm:h-12 pl-2 sm:pl-3.5 pr-6 sm:pr-8 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
+                  >
+                    {Array.from({ length: 24 }, (_, i) => i).map((h) => (
+                      <option key={h} value={h}>
+                        {h < 10 ? `0${h}` : h}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2c1b12] absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
+                </div>
+
+                {/* Phút */}
+                <div className="relative">
+                  <select
+                    id="empiricalMinute"
+                    value={minuteVal}
+                    onChange={(e) => handleTimeChange(hourVal, parseInt(e.target.value, 10))}
+                    className="w-full h-10 sm:h-12 pl-2 sm:pl-3.5 pr-6 sm:pr-8 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
+                  >
+                    {Array.from({ length: 60 }, (_, i) => i).map((min) => (
+                      <option key={min} value={min}>
+                        {min < 10 ? `0${min}` : min}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2c1b12] absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
+                </div>
+
+                {/* 3rd Column: Thông tin Can Chi giờ */}
+                <div className="hidden sm:flex items-center text-xs text-[#c5b39e] italic pl-2">
+                  <span>{inputDateMetadata?.hourCanChi}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 4: Năm tính & Giới tính */}
+            <div className="flex flex-row items-center gap-2 sm:gap-4">
+              <label
+                htmlFor="empiricalFocusYear"
+                className="w-16 sm:w-28 text-left font-medium text-[#ede3d5] text-xs sm:text-base flex-shrink-0"
+              >
+                Năm tính
+              </label>
+              <div className="flex-1 grid grid-cols-3 gap-1.5 sm:gap-3.5 items-center">
+                {/* Column 1: Year select */}
+                <div className="relative">
+                  <select
+                    id="empiricalFocusYear"
+                    value={inputData.yearSelected || 2026}
+                    onChange={(e) => updateField('yearSelected', parseInt(e.target.value, 10))}
+                    className="w-full h-10 sm:h-12 pl-2 sm:pl-3.5 pr-6 sm:pr-8 bg-[#f8f3ea] text-[#2c1b12] text-xs sm:text-base font-normal rounded-xl border border-[#ded3c2]/60 appearance-none focus:outline-none focus:ring-2 focus:ring-[#d8a268] focus:bg-white transition cursor-pointer"
+                  >
+                    {focusYearsRange.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2c1b12] absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5]" />
+                </div>
+
+                {/* Columns 2 & 3: Giới tính Styled Radio Buttons */}
+                <div className="col-span-2 flex items-center justify-start sm:pl-4 space-x-2.5 sm:space-x-6">
+                  <span className="font-medium text-[#ede3d5] text-xs sm:text-base select-none whitespace-nowrap">
+                    Giới tính
+                  </span>
+
+                  {/* Radio Nam */}
+                  <button
+                    type="button"
+                    onClick={() => updateField('gender', 'male')}
+                    className="flex items-center space-x-1 sm:space-x-2 cursor-pointer group select-none focus:outline-none"
+                  >
+                    <span
+                      className={`w-4 h-4 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                        inputData.gender === 'male'
+                          ? 'border-[#d8a268] bg-[#3e2c1f]'
+                          : 'border-[#d8a268]/70 group-hover:border-[#d8a268]'
+                      }`}
+                    >
+                      {inputData.gender === 'male' && (
+                        <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#d8a268]" />
+                      )}
+                    </span>
+                    <span className="text-[#ede3d5] font-medium text-xs sm:text-base">
+                      Nam
+                    </span>
+                  </button>
+
+                  {/* Radio Nữ */}
+                  <button
+                    type="button"
+                    onClick={() => updateField('gender', 'female')}
+                    className="flex items-center space-x-1 sm:space-x-2 cursor-pointer group select-none focus:outline-none"
+                  >
+                    <span
+                      className={`w-4 h-4 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                        inputData.gender === 'female'
+                          ? 'border-[#d8a268] bg-[#3e2c1f]'
+                          : 'border-[#d8a268]/70 group-hover:border-[#d8a268]'
+                      }`}
+                    >
+                      {inputData.gender === 'female' && (
+                        <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#d8a268]" />
+                      )}
+                    </span>
+                    <span className="text-[#ede3d5] font-medium text-xs sm:text-base">
+                      Nữ
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 5: Chế độ lá số (Bát Tự 4 Cột vs Lữ Phúc 7 Cột) */}
+            <div className="flex flex-row items-center gap-2 sm:gap-4 pt-1">
+              <label className="w-16 sm:w-28 text-left font-medium text-[#ede3d5] text-xs sm:text-base flex-shrink-0">
+                Chế độ
+              </label>
+              <div className="flex-1 flex items-center gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveChartMode('bazi');
+                    showToast('Đang chọn chế độ Bát Tự (4 Cột)');
+                  }}
+                  className={`flex-1 h-10 px-3 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center cursor-pointer border ${
+                    activeChartMode === 'bazi'
+                      ? 'bg-[#d8a268] text-[#342013] border-[#d8a268] shadow-sm font-black'
+                      : 'bg-[#271a12] text-[#ede3d5]/80 border-[#523c2d] hover:text-[#ede3d5]'
+                  }`}
+                >
+                  Bát Tự (4 Cột)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveChartMode('tutru');
+                    showToast('Đang chọn chế độ Lữ Phúc (7 Cột)');
+                  }}
+                  className={`flex-1 h-10 px-3 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center cursor-pointer border ${
+                    activeChartMode === 'tutru'
+                      ? 'bg-[#d8a268] text-[#342013] border-[#d8a268] shadow-sm font-black'
+                      : 'bg-[#271a12] text-[#ede3d5]/80 border-[#523c2d] hover:text-[#ede3d5]'
+                  }`}
+                >
+                  Lữ Phúc (7 Cột)
+                </button>
+              </div>
+            </div>
+
+            {/* Submit Button "MỞ LÁ SỐ" */}
+            <button
+              type="submit"
+              className="w-full h-12 sm:h-14 mt-6 sm:mt-7 bg-[#d8a268] hover:bg-[#e0ae76] active:bg-[#cf995e] text-[#342013] font-bold text-base sm:text-lg tracking-wider uppercase rounded-xl sm:rounded-2xl transition-all shadow-md active:scale-[0.995] flex items-center justify-center cursor-pointer select-none"
+            >
+              MỞ LÁ SỐ
+            </button>
+          </form>
+
+          {/* Helper Note under Button */}
+          <p className="text-center text-[#c5b39e] italic text-xs sm:text-sm font-serif mt-3.5 sm:mt-4">
+            Không nhớ phút sinh? Từ 01–30 chọn 30; từ 31–59 chọn 59.
+          </p>
         </div>
       </div>
 
