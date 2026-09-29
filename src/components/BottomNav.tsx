@@ -130,6 +130,29 @@ export function BottomNav() {
 
             {/* Feature Groups */}
             <div className="space-y-4 text-xs">
+              {/* Group 0: Bát Tự Nâng Cao */}
+              <div>
+                <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block mb-2">
+                  Bát Tự Chuyên Sâu
+                </span>
+                <div className="grid grid-cols-1 gap-1.5">
+                  <Link
+                    href="/la-so-bat-tu/thuc-nghiem"
+                    onClick={() => setDrawerOpen(false)}
+                    className="flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 transition border border-amber-300/60 text-gray-900"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <Sparkles className="w-4 h-4 text-amber-600" />
+                      <div>
+                        <span className="font-bold block">Bát Tự Thực Nghiệm</span>
+                        <span className="text-[10px] text-amber-700">Tứ Trụ Mệnh Bàn & Hoa Sơn 7 cột</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-amber-600" />
+                  </Link>
+                </div>
+              </div>
+
               {/* Group 1: Lịch Âm Dương */}
               <div>
                 <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block mb-2">

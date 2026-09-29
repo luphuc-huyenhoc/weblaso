@@ -30,6 +30,7 @@
     "html-to-image": "^1.11.11",
     "jose": "^5.9.6",
     "lucide-react": "^0.475.0",
+    "lunar-javascript": "^1.7.7",
     "next": "^15.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

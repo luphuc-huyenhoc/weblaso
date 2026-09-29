@@ -10,6 +10,16 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ## [Unreleased]
 
 ### Added
+- **Danh Mục & Giao Diện Bát Tự Thực Nghiệm - Tứ Trụ Mệnh Bàn & Hoa Sơn (`[UI-BAZI-EMPIRICAL]`, `[PAGE-BAZI-EMPIRICAL]`, `empiricalEngine.ts`):**
+  - **Mô-đun giao diện Bát Tự chuyên sâu theo Manh Phái:** Triển khai theo cấu trúc ứng dụng Bát Tự Thế Sơn / Tứ Trụ Mệnh Bàn và Hoa Sơn 7 cột với bố cục sang trọng, sắc nét.
+  - **Đồng hồ thời gian thực tế (Live Clock Badge):** Huy hiệu màu hổ phách góc trên bên phải hiển thị thứ, ngày tháng năm, giờ phút giây với biểu tượng xoay chuyển động; nhấp vào tự động điền thời gian thực tế và an lá số ngay lập tức.
+  - **Thẻ chọn nhanh Năm - Tháng - Ngày - Giờ - Giới tính:** Hiển thị trực quan Can Chi và Âm lịch tương ứng ngay trên từng thẻ, chuyển đổi linh hoạt giới tính Nam / Nữ.
+  - **Hai chế độ linh hoạt BÁT TỰ & HOA SƠN:**
+    - Chế độ BÁT TỰ: Bàn đồ 4 trụ truyền thống (Cột Càn Tạo/Khôn Tạo, 4 trụ Năm - Tháng - Ngày - Giờ, Thập Thần, Can Chi cỡ chữ lớn với màu sắc ngũ hành chuẩn, Tàng Can, Thần Sát, Tràng Sinh và Nạp Âm).
+    - Chế độ HOA SƠN: Mở rộng trực tiếp thành 7 cột (4 trụ gốc + Cột 5 Đại Vận + Cột 6 Lưu Niên + Cột 7 Tiểu Vận) cùng các bảng dòng thời gian Đại Vận 10 năm, Lưu Niên, Tiểu Vận khởi từ Trụ Giờ và 12 Tháng Nguyệt Lệnh.
+  - **Kho Lưu Trữ Mệnh Bàn & Trình Biên Tập Ghi Chú 6 Chủ Đề:** Lưu trữ và quản lý lá số trong máy người dùng (tìm kiếm, sắp xếp theo tên/ngày); tích hợp trình biên tập ghi chú phân loại 6 chủ đề (*Mệnh, Nhân Mạch, Sự nghiệp, Tình cảm, Sức khoẻ, Vận trình*) hỗ trợ định dạng in đậm, in nghiêng, danh sách gạch đầu dòng.
+  - **Tải ảnh độ phân giải cao (Export PNG/JPEG):** Tải trực tiếp ảnh lá số chất lượng sắc nét về máy tính hoặc điện thoại.
+  - **Tích hợp đồng bộ điều hướng:** Bổ sung đường dẫn "Bát Tự thực nghiệm" vào danh mục Bát Tự tại `Navbar.tsx` và ngăn kéo menu di động `BottomNav.tsx`.
 - **Thuật Toán & Hiển Thị Hàng "Tiểu Vận" Khởi Từ Trụ Giờ (`[CORE-BAZI]`, `[UI-BAZI-GRID]`, `[UI-BAZI-DOCUMENT]`):**
   - **Thuật toán tính Tiểu Vận Bát Tự (`src/domain/bazi/minorLuck.ts`):** Lấy Trụ Giờ làm mốc khởi vận (Tuổi 0 = Trụ Giờ). Xác định chiều tính theo nguyên tắc kinh điển: Dương Nam / Âm Nữ đi Thuận (`+1`), Âm Nam / Dương Nữ đi Nghịch (`-1`). Với tuổi $n$: `canIndex = (canIndex + dir * n) % 10`, `chiIndex = (chiIndex + dir * n) % 12`. Sau đúng 60 năm chu kỳ Hoa Giáp, Tiểu Vận quay lại đúng Can Chi của Trụ Giờ gốc.
   - **Phân định Thập Thần của Tiểu Vận:** Tự động so sánh Thiên Can của Tiểu Vận với Nhật Can (Nhật Chủ) để xác định chính xác Thập Thần (Tỷ Kiên, Kiếp Tài, Thực Thần, Thương Quan, Thiên Tài, Chính Tài, Thất Sát, Chính Quan, Thiên Ấn, Chính Ấn).

@@ -16,6 +16,7 @@ export const MENU_ITEMS: MenuItem[] = [
     title: 'Lá số bát tự',
     href: '/la-so-bat-tu',
     children: [
+      { title: 'Bát Tự thực nghiệm', href: '/la-so-bat-tu/thuc-nghiem' },
       { title: 'Xem thời vận', href: '/la-so-bat-tu/xem-thoi-van' },
       { title: 'Xem vật phẩm cải vận', href: '/la-so-bat-tu/xem-vat-pham-cai-van' },
       { title: 'Tìm ngày sinh theo tứ trụ', href: '/la-so-bat-tu/tim-ngay-sinh-theo-tu-tru' },
