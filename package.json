@@ -15,6 +15,7 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
+    "admin:create": "tsx scripts/create-admin.ts",
     "cap:sync": "node scripts/generate-android-icons.js && npx cap sync android",
     "cap:open": "npx cap open android"
   },

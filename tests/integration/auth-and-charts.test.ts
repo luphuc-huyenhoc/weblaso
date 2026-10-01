@@ -90,4 +90,21 @@ describe('Auth & Versioned Chart Persistence Integration', () => {
     const afterDelete = await listUserCharts(testUserId);
     expect(afterDelete.some(c => c.id === saved.id)).toBe(false);
   });
+
+  it('promotes user to ADMIN role and verifies role-based flags', async () => {
+    const updated = await db.user.update({
+      where: { id: testUserId },
+      data: { role: Role.ADMIN },
+    });
+
+    expect(updated.role).toBe(Role.ADMIN);
+    expect(updated.role === 'ADMIN').toBe(true);
+
+    const userInDb = await db.user.findUnique({
+      where: { id: testUserId },
+      select: { role: true, isActive: true },
+    });
+    expect(userInDb?.role).toBe(Role.ADMIN);
+    expect(userInDb?.isActive).toBe(true);
+  });
 });

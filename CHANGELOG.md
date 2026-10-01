@@ -9,6 +9,22 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 
 ## [Unreleased]
 
+### Added
+- **Quản lý phân quyền Quản Trị Viên (Admin) và giới hạn quyền truy cập Bát Tự Thực Nghiệm (`[PAGE-BAZI-EMPIRICAL]`, `[CORE-AUTH]`):**
+  - **Công cụ CLI khởi tạo & thăng cấp tài khoản Admin (`scripts/create-admin.ts`, lệnh `npm run admin:create`):**
+    - Thiết lập script chuyên biệt cho phép tạo mới tài khoản Quản Trị Viên (`admin@luphuc.vn` / `Admin@123456`) hoặc thăng cấp tài khoản người dùng bất kỳ lên vai trò `Role.ADMIN` (`isActive: true`).
+    - Hỗ trợ linh hoạt truyền tham số dòng lệnh: `npx tsx scripts/create-admin.ts <email> <password> [fullName] [username]`.
+  - **Bảo mật Server Component Route Guard cho tuyến đường `/la-so-bat-tu/thuc-nghiem`:**
+    - Kiểm tra phiên làm việc trực tiếp tại server thông qua `getCurrentUser()`.
+    - Người dùng chưa đăng nhập hoặc khách vãng lai tự động được chuyển hướng sang `/tai-khoan/dang-nhap?redirect=/la-so-bat-tu/thuc-nghiem`.
+    - Người dùng thông thường (`role === 'USER'`) khi truy cập URL sẽ bị chặn với giao diện thông báo "Quyền Truy Cập Bị Giới Hạn" chuyên nghiệp, bảo mật tuyệt đối, không làm lộ dữ liệu.
+    - Chỉ tài khoản có quyền `role === 'ADMIN'` mới được phép mở và thao tác trên bàn đồ Bát Tự Thực Nghiệm.
+  - **Ẩn hoàn toàn menu điều hướng đối với tài khoản thường & khách chưa đăng nhập (`Navbar.tsx`, `BottomNav.tsx`):**
+    - Trên máy tính (`Navbar.tsx`): Mục "Bát Tự thực nghiệm" trong menu thả xuống "Lá số bát tự" chỉ hiển thị khi tài khoản đăng nhập là Admin; hoàn toàn ẩn đối với tài khoản thường và khách vãng lai.
+    - Trên điện thoại (`BottomNav.tsx`): Nhóm tính năng "Bát Tự Chuyên Sâu (Admin)" trong ngăn kéo menu chỉ xuất hiện khi phát hiện người dùng có quyền Admin.
+  - **Tối ưu hóa luồng đăng nhập tiếp nối (`src/app/tai-khoan/dang-nhap/page.tsx`):**
+    - Hỗ trợ tham số `redirect` sau khi đăng nhập thành công, tự động dẫn người dùng về lại trang đích ban đầu.
+
 ### Changed
 - **Tối ưu hiển thị vừa khít 100% màn hình điện thoại cho chế độ "Lữ Phúc 7 Cột" (`[PAGE-BAZI-EMPIRICAL]`, `[UI-BAZI-EMPIRICAL]`):**
   - **Không còn bị cắt hình 3 cột phụ:** Loại bỏ hoàn toàn giới hạn chiều rộng `min-w-[650px]`, chuyển sang `w-full min-w-0 grid-cols-7` giúp toàn bộ 7 cột (Trụ Năm, Trụ Tháng, Trụ Ngày, Trụ Giờ, Cột Đại Vận, Cột Lưu Niên, Cột Tiểu Vận) cùng cột nhãn Càn/Khôn hiển thị đồng loạt, trọn vẹn trong khung hình điện thoại mà không bị tràn mép hay che khuất.

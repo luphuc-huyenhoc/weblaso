@@ -72,11 +72,46 @@ export const MENU_ITEMS: MenuItem[] = [
   },
 ];
 
-export function Navbar() {
+export function Navbar({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [userIsAdmin, setUserIsAdmin] = useState(isAdmin);
+
+  useEffect(() => {
+    setUserIsAdmin(isAdmin);
+  }, [isAdmin]);
+
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.authenticated && data?.user?.role === 'ADMIN') {
+          setUserIsAdmin(true);
+        } else {
+          setUserIsAdmin(false);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const navRef = useRef<HTMLDivElement>(null);
+
+  const menuItems = React.useMemo(() => {
+    return MENU_ITEMS.map((item) => {
+      if (item.children) {
+        return {
+          ...item,
+          children: item.children.filter((child) => {
+            if (child.href === '/la-so-bat-tu/thuc-nghiem' && !userIsAdmin) {
+              return false;
+            }
+            return true;
+          }),
+        };
+      }
+      return item;
+    });
+  }, [userIsAdmin]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -140,7 +175,7 @@ export function Navbar() {
             <Home className="w-4 h-4" />
           </Link>
 
-          {MENU_ITEMS.map((item) => {
+          {menuItems.map((item) => {
             const hasChildren = item.children && item.children.length > 0;
             const active = isItemActive(item);
             const isOpen = activeDropdown === item.title;

@@ -29,7 +29,10 @@ export default function DangNhapPage() {
         throw new Error(data.message || 'Đăng nhập thất bại');
       }
 
-      router.push('/tai-khoan/la-so-da-luu');
+      const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+      const targetUrl = searchParams?.get('redirect') || '/tai-khoan/la-so-da-luu';
+
+      router.push(targetUrl);
       router.refresh();
     } catch (err: any) {
       setError(err.message || 'Có lỗi xảy ra');

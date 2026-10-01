@@ -42,6 +42,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const user = await getCurrentUser();
+  const isAdmin = user?.role === 'ADMIN';
 
   return (
     <html lang="vi">
@@ -50,11 +51,11 @@ export default async function RootLayout({
         <PWAInstallBanner />
         <div>
           <Header user={user ? { fullName: user.fullName, role: user.role } : null} />
-          <Navbar />
+          <Navbar isAdmin={isAdmin} />
           <main className="max-w-site mx-auto px-4 py-6 w-full">{children}</main>
         </div>
         <Footer />
-        <BottomNav />
+        <BottomNav isAdmin={isAdmin} />
       </body>
     </html>
   );
