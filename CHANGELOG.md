@@ -12,8 +12,10 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ### Added
 - **Quản lý phân quyền Quản Trị Viên (Admin) và giới hạn quyền truy cập Bát Tự Thực Nghiệm (`[PAGE-BAZI-EMPIRICAL]`, `[CORE-AUTH]`):**
   - **Công cụ CLI khởi tạo & thăng cấp tài khoản Admin (`scripts/create-admin.ts`, lệnh `npm run admin:create`):**
-    - Thiết lập script chuyên biệt cho phép tạo mới tài khoản Quản Trị Viên (`admin@luphuc.vn` / `Admin@123456`) hoặc thăng cấp tài khoản người dùng bất kỳ lên vai trò `Role.ADMIN` (`isActive: true`).
+    - Thiết lập script chuyên biệt cho phép tạo mới tài khoản Quản Trị Viên (`admin@luphuc.vn` / `username: admin` / mật khẩu `luphuc87`) hoặc thăng cấp tài khoản người dùng bất kỳ lên vai trò `Role.ADMIN` (`isActive: true`).
     - Hỗ trợ linh hoạt truyền tham số dòng lệnh: `npx tsx scripts/create-admin.ts <email> <password> [fullName] [username]`.
+  - **Hỗ trợ đăng nhập linh hoạt bằng Tên đăng nhập (Username) hoặc Email (`[API-AUTH-LOGIN]`, `[PAGE-AUTH-LOGIN]`):**
+    - API đăng nhập `/api/auth/login` và giao diện `/tai-khoan/dang-nhap` cho phép người dùng đăng nhập bằng cả tên tài khoản (ví dụ `admin`) hoặc địa chỉ email (`admin@luphuc.vn`).
   - **Bảo mật Server Component Route Guard cho tuyến đường `/la-so-bat-tu/thuc-nghiem`:**
     - Kiểm tra phiên làm việc trực tiếp tại server thông qua `getCurrentUser()`.
     - Người dùng chưa đăng nhập hoặc khách vãng lai tự động được chuyển hướng sang `/tai-khoan/dang-nhap?redirect=/la-so-bat-tu/thuc-nghiem`.

@@ -4,6 +4,7 @@ import { hashPassword, verifyPassword, hashToken } from '../../src/server/auth';
 import { saveUserChart, listUserCharts, deleteUserChart } from '../../src/server/charts';
 import { calculateBazi } from '../../src/domain/bazi';
 import { Role, ChartType } from '@prisma/client';
+import { POST as authLogin } from '../../src/app/api/auth/login/route';
 
 describe('Auth & Versioned Chart Persistence Integration', () => {
   const testEmail = `test_${Date.now()}@luphuc.vn`;
@@ -106,5 +107,29 @@ describe('Auth & Versioned Chart Persistence Integration', () => {
     });
     expect(userInDb?.role).toBe(Role.ADMIN);
     expect(userInDb?.isActive).toBe(true);
+  });
+
+  it('authenticates admin account using username "admin" or email "admin@luphuc.vn" with password "luphuc87"', async () => {
+    // 1. By username "admin"
+    const reqUser = new Request('http://localhost:3000/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'admin', password: 'luphuc87' }),
+    });
+    const resUser = await authLogin(reqUser);
+    expect(resUser.status).toBe(200);
+    const jsonUser = await resUser.json();
+    expect(jsonUser.user.role).toBe(Role.ADMIN);
+
+    // 2. By email "admin@luphuc.vn"
+    const reqEmail = new Request('http://localhost:3000/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'admin@luphuc.vn', password: 'luphuc87' }),
+    });
+    const resEmail = await authLogin(reqEmail);
+    expect(resEmail.status).toBe(200);
+    const jsonEmail = await resEmail.json();
+    expect(jsonEmail.user.role).toBe(Role.ADMIN);
   });
 });

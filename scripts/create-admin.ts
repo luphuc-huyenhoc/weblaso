@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   const args = process.argv.slice(2);
   const email = (args[0] || process.env.ADMIN_EMAIL || 'admin@luphuc.vn').trim().toLowerCase();
-  const password = (args[1] || process.env.ADMIN_PASSWORD || 'Admin@123456').trim();
+  const password = (args[1] || process.env.ADMIN_PASSWORD || 'luphuc87').trim();
   const fullName = (args[2] || process.env.ADMIN_FULLNAME || 'Quản Trị Viên Lữ Phúc').trim();
   const username = (args[3] || email.split('@')[0] || 'admin').trim().toLowerCase();
 
