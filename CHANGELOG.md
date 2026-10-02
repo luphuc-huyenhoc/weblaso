@@ -10,6 +10,17 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ## [Unreleased]
 
 ### Added
+- **Tích hợp Trí Tuệ Nhân Tạo (AI) luận giải lá số & Giới hạn độc quyền cho Thành Viên Trả Phí VIP (`[API-AI-INTERPRET]`, `[PAGE-PREMIUM]`):**
+  - **Kết nối mô hình AI Gemini (Google GenAI) chuyên sâu:**
+    - Xây dựng module phân tích mệnh lý tại server (`src/server/ai/interpretation.ts`) hỗ trợ Bát Tự (Tứ Trụ), Tử Vi Đẩu Số và Quẻ Dịch Lục Hào.
+    - Cấu hình linh hoạt qua biến môi trường `GEMINI_API_KEY` (và `GEMINI_MODEL="gemini-2.5-flash"`), tích hợp engine giải thuật dự phòng chuẩn mực Tử Bình - Lữ Phúc khi chưa gắn key.
+  - **Bảo mật phân quyền VIP 2 lớp nghiêm ngặt (Strict Entitlement Gating):**
+    - Phía máy chủ (`POST /api/ai/luan-giai`): Kiểm tra quyền `advanced_interpretation` qua `hasEntitlement(user, 'advanced_interpretation')`. Chỉ tài khoản có gói cước hiệu lực (`PRO_MONTHLY`, `PRO_ANNUAL`, `LIFETIME`) hoặc Quản trị viên (`ADMIN`) mới được gọi API. Khách vãng lai bị từ chối 401 Unauthorized, tài khoản thường bị chặn 403 Forbidden.
+    - Phía giao diện (`BaziChartResult`, `ZiweiChartResult`, `LucHaoPage`): Nút "Đọc luận giải AI" tích hợp huy hiệu VIP mạ vàng. Khi khách vãng lai hoặc tài khoản thường bấm vào, hệ thống tự động mở hộp thoại `VIPAccessModal` hướng dẫn nâng cấp gói VIP hoặc đăng nhập; chỉ thành viên VIP mới mở được `AIInterpretationModal`.
+  - **Giao diện bài luận giải AI cao cấp (`AIInterpretationModal`):**
+    - Trình bày trực quan với định dạng Markdown chuyên nghiệp: bản mệnh, tính cách, công danh sự nghiệp, tài bạch, tình duyên gia đạo, vận hạn và lời khuyên phong thủy bổ khuyết Dụng thần.
+    - Hỗ trợ gửi câu hỏi tương tác riêng với AI, sao chép văn bản một chạm và in báo cáo ra giấy.
+
 - **Quản lý phân quyền Quản Trị Viên (Admin) và giới hạn quyền truy cập Bát Tự Thực Nghiệm (`[PAGE-BAZI-EMPIRICAL]`, `[CORE-AUTH]`):**
   - **Công cụ CLI khởi tạo & thăng cấp tài khoản Admin (`scripts/create-admin.ts`, lệnh `npm run admin:create`):**
     - Thiết lập script chuyên biệt cho phép tạo mới tài khoản Quản Trị Viên (`admin@luphuc.vn` / `username: admin` / mật khẩu `luphuc87`) hoặc thăng cấp tài khoản người dùng bất kỳ lên vai trò `Role.ADMIN` (`isActive: true`).

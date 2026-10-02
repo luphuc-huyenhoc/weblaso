@@ -25,6 +25,7 @@
   "dependencies": {
     "@capacitor/android": "^8.5.2",
     "@capacitor/core": "^8.5.2",
+    "@google/genai": "^2.26.0",
     "@prisma/client": "^6.4.1",
     "bcryptjs": "^2.4.3",
     "clsx": "^2.1.1",

@@ -2,9 +2,12 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { BaziEnvelope } from '@/domain/bazi';
-import { Download, Printer, Bookmark, Check, AlertCircle, Copy, Eye, BookOpen, Loader2 } from 'lucide-react';
+import { Download, Printer, Bookmark, Check, AlertCircle, Copy, Eye, BookOpen, Loader2, Sparkles, Crown, Lock } from 'lucide-react';
 import { captureChartImage, copyChartImage, downloadChartImage } from '@/lib/chartExport';
 import { BaziChartDocument } from './BaziChartDocument';
+import { useAuth } from '@/lib/useAuth';
+import { VIPAccessModal } from '@/components/ai/VIPAccessModal';
+import { AIInterpretationModal } from '@/components/ai/AIInterpretationModal';
 
 export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
   const chartRef = useRef<HTMLDivElement>(null);
@@ -19,6 +22,18 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copying' | 'copied' | 'error'>('idle');
 
   const [showImageModal, setShowImageModal] = useState(false);
+  const [showVipModal, setShowVipModal] = useState(false);
+  const [showAiModal, setShowAiModal] = useState(false);
+
+  const { isVip, authenticated, user } = useAuth();
+
+  const handleOpenLuanGiai = () => {
+    if (isVip) {
+      setShowAiModal(true);
+    } else {
+      setShowVipModal(true);
+    }
+  };
 
   const { calculation: calc, interpretation: interp } = envelope;
 
@@ -303,15 +318,15 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
 
           <button
             type="button"
-            onClick={() => {
-              const el = document.getElementById('luan-giai');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="flex-1 sm:flex-initial bg-[#3b2d54] hover:bg-[#2c2140] text-purple-200 text-xs sm:text-sm font-bold px-3.5 py-2 rounded-lg shadow-2xs transition cursor-pointer text-center flex items-center justify-center gap-1.5"
-            title="Xem phần phân tích luận giải chi tiết"
+            onClick={handleOpenLuanGiai}
+            className="flex-1 sm:flex-initial bg-gradient-to-r from-[#3b2d54] to-[#241a35] hover:from-[#4c3b6d] hover:to-[#33254b] text-amber-200 text-xs sm:text-sm font-bold px-3.5 py-2 rounded-lg shadow-2xs transition cursor-pointer text-center flex items-center justify-center gap-1.5 border border-amber-500/40"
+            title="Đọc luận giải chuyên sâu bằng AI (Dành riêng cho thành viên VIP)"
           >
-            <BookOpen className="w-4 h-4 text-purple-300" />
-            <span>Đọc luận giải</span>
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <span>Đọc luận giải AI</span>
+            <span className="text-[10px] bg-amber-400 text-purple-950 font-black px-1.5 py-0.5 rounded-full uppercase ml-0.5">
+              VIP
+            </span>
           </button>
         </div>
 
@@ -377,14 +392,26 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
       </div>
 
       {/* Supplementary Astrological Interpretation & Remedies (Outside the printed document sheet) */}
-      <div className="no-print mt-8 space-y-4 bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-200 pb-3 gap-1">
-          <h3 className="text-sm sm:text-base font-bold text-[#112244] flex items-center space-x-2">
-            <span>Luận Giải Ngũ Hành & Phong Thủy Bổ Khuyết</span>
-          </h3>
-          <span className="text-[11px] sm:text-xs text-gray-500 font-medium">
-            Lá Số Bát Tự — Cải Vận Bổ Khuyết
-          </span>
+      <div id="luan-giai" className="no-print mt-8 space-y-4 bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-200 pb-3 gap-2">
+          <div>
+            <h3 className="text-sm sm:text-base font-bold text-[#112244] flex items-center space-x-2">
+              <span>Luận Giải Ngũ Hành & Phong Thủy Bổ Khuyết</span>
+            </h3>
+            <span className="text-[11px] text-gray-500 font-medium">
+              Lá Số Bát Tự — Cải Vận Bổ Khuyết Lữ Phúc
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleOpenLuanGiai}
+            className="self-start sm:self-auto inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-lg bg-gradient-to-r from-[#c8860a] to-[#9b6605] hover:from-[#d99210] hover:to-[#a86e06] text-white font-extrabold text-xs shadow-xs transition cursor-pointer"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Mở Báo Cáo Luận Giải AI</span>
+            <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-black">VIP</span>
+          </button>
         </div>
 
         {/* Five Elements Breakdown */}
@@ -459,6 +486,24 @@ export function BaziChartResult({ envelope }: { envelope: BaziEnvelope }) {
           <span className="font-semibold text-gray-700">Đại Vận & Lưu Niên Timeline</span>
         </div>
       </div>
+
+      {/* VIP Access Modal */}
+      <VIPAccessModal
+        isOpen={showVipModal}
+        onClose={() => setShowVipModal(false)}
+        authenticated={authenticated}
+        userEmail={user?.email}
+        chartTitle={`Lá số Bát Tự - ${calc.personal.fullName}`}
+      />
+
+      {/* AI Interpretation Modal */}
+      <AIInterpretationModal
+        isOpen={showAiModal}
+        onClose={() => setShowAiModal(false)}
+        chartType="BAZI"
+        chartData={envelope}
+        chartTitle={`Lá số Bát Tự - ${calc.personal.fullName}`}
+      />
     </div>
   );
 }

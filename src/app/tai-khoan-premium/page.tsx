@@ -121,6 +121,10 @@ export default function TaiKhoanPremiumPage() {
             <ul className="space-y-2.5 text-xs text-gray-700 pt-4 border-t">
               <li className="flex items-center space-x-2">
                 <Check className="w-4 h-4 text-[#c8860a] shrink-0" />
+                <span><strong>Mở khóa Luận giải AI chuyên sâu</strong> (Bát Tự, Tử Vi, Quẻ Dịch)</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <Check className="w-4 h-4 text-[#c8860a] shrink-0" />
                 <span><strong>Lưu trữ không giới hạn</strong> mọi lá số</span>
               </li>
               <li className="flex items-center space-x-2">
@@ -160,6 +164,10 @@ export default function TaiKhoanPremiumPage() {
             <p className="text-xs text-gray-500">Thanh toán 1 lần duy nhất, sở hữu mọi tính năng trọn đời.</p>
 
             <ul className="space-y-2.5 text-xs text-gray-700 pt-4 border-t">
+              <li className="flex items-center space-x-2">
+                <Check className="w-4 h-4 text-purple-600 shrink-0" />
+                <span><strong>Mở khóa Luận giải AI chuyên sâu trọn đời</strong></span>
+              </li>
               <li className="flex items-center space-x-2">
                 <Check className="w-4 h-4 text-purple-600 shrink-0" />
                 <span>Tất cả quyền lợi của gói Premium</span>

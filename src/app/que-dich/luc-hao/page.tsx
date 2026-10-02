@@ -6,7 +6,10 @@ import { LucHaoForm, LucHaoFormData } from '@/components/iching/LucHaoForm';
 import { LucHaoResultDocument } from '@/components/iching/LucHaoResultDocument';
 import { IChingInterpretation } from '@/components/iching/IChingInterpretation';
 import { captureChartImage, copyChartImage, downloadChartImage } from '@/lib/chartExport';
-import { Download, Printer, Bookmark, Loader2, Copy, Check, Eye, BookOpen } from 'lucide-react';
+import { Download, Printer, Bookmark, Loader2, Copy, Check, Eye, BookOpen, Sparkles, Crown } from 'lucide-react';
+import { useAuth } from '@/lib/useAuth';
+import { VIPAccessModal } from '@/components/ai/VIPAccessModal';
+import { AIInterpretationModal } from '@/components/ai/AIInterpretationModal';
 
 export default function LucHaoPage() {
   const [loading, setLoading] = useState(false);
@@ -21,6 +24,18 @@ export default function LucHaoPage() {
   const [isZoomFit, setIsZoomFit] = useState(true);
   const [showImageModal, setShowImageModal] = useState(false);
   const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
+  const [showVipModal, setShowVipModal] = useState(false);
+  const [showAiModal, setShowAiModal] = useState(false);
+
+  const { isVip, authenticated, user } = useAuth();
+
+  const handleOpenLuanGiai = () => {
+    if (isVip) {
+      setShowAiModal(true);
+    } else {
+      setShowVipModal(true);
+    }
+  };
 
   const chartRef = useRef<HTMLDivElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
@@ -214,17 +229,15 @@ export default function LucHaoPage() {
 
           {/* Action Toolbar Matching HocVienLySo boidich tools */}
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 py-2 no-print">
-            {/* 1. Đọc luận giải quẻ này (Chính) */}
+            {/* 1. Đọc luận giải AI quẻ này (VIP Gated) */}
             <button
               type="button"
-              onClick={() => {
-                const el = document.getElementById('luan-giai');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="inline-flex items-center space-x-1.5 bg-[#c8860a] hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow transition cursor-pointer"
+              onClick={handleOpenLuanGiai}
+              className="inline-flex items-center space-x-1.5 bg-gradient-to-r from-[#c8860a] to-[#9b6605] hover:from-[#d99210] hover:to-[#a86e06] text-white px-4 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow transition cursor-pointer"
             >
-              <BookOpen className="w-4 h-4" />
-              <span>Đọc luận giải quẻ này</span>
+              <Sparkles className="w-4 h-4" />
+              <span>Đọc luận giải AI</span>
+              <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-black">VIP</span>
             </button>
 
             {/* 2. Phóng to (Phụ) */}
@@ -368,6 +381,26 @@ export default function LucHaoPage() {
           {/* 3. Detailed Commentary (Luận giải) */}
           <IChingInterpretation envelope={result} />
         </div>
+      )}
+
+      {/* VIP Access Modal */}
+      <VIPAccessModal
+        isOpen={showVipModal}
+        onClose={() => setShowVipModal(false)}
+        authenticated={authenticated}
+        userEmail={user?.email}
+        chartTitle={`Quẻ Dịch Lục Hào - ${result?.calculation?.originalHexagram?.name || ''}`}
+      />
+
+      {/* AI Interpretation Modal */}
+      {result && (
+        <AIInterpretationModal
+          isOpen={showAiModal}
+          onClose={() => setShowAiModal(false)}
+          chartType="ICHING"
+          chartData={result}
+          chartTitle={`Quẻ Dịch Lục Hào - ${result.calculation.originalHexagram.name}`}
+        />
       )}
     </div>
   );

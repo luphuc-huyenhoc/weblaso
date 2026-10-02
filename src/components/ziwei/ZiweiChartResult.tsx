@@ -13,8 +13,12 @@ import {
   Eye,
   X,
   AlertCircle,
+  Crown,
 } from 'lucide-react';
 import { captureChartImage, copyChartImage, downloadChartImage } from '@/lib/chartExport';
+import { useAuth } from '@/lib/useAuth';
+import { VIPAccessModal } from '@/components/ai/VIPAccessModal';
+import { AIInterpretationModal } from '@/components/ai/AIInterpretationModal';
 
 interface ZiweiChartResultProps {
   envelope: ZiweiEnvelope;
@@ -30,6 +34,18 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [saveMessage, setSaveMessage] = useState('');
   const [showImageModal, setShowImageModal] = useState(false);
+  const [showVipModal, setShowVipModal] = useState(false);
+  const [showAiModal, setShowAiModal] = useState(false);
+
+  const { isVip, authenticated, user } = useAuth();
+
+  const handleOpenLuanGiai = () => {
+    if (isVip) {
+      setShowAiModal(true);
+    } else {
+      setShowVipModal(true);
+    }
+  };
 
   // Responsive zoom
   const [scale, setScale] = useState(1);
@@ -450,6 +466,20 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
             <Bookmark className="w-3.5 h-3.5 text-[#c8860a]" />
             <span>Lưu lá số</span>
           </button>
+
+          {/* Đọc luận giải AI (VIP Gated) */}
+          <button
+            type="button"
+            onClick={handleOpenLuanGiai}
+            className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-gradient-to-r from-[#3b2d54] to-[#241a35] hover:from-[#4c3b6d] hover:to-[#33254b] rounded text-xs font-bold text-amber-200 border border-amber-500/40 transition shadow-2xs cursor-pointer"
+            title="Đọc luận giải chuyên sâu bằng AI (Dành riêng cho thành viên VIP)"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>Đọc luận giải AI</span>
+            <span className="text-[10px] bg-amber-400 text-purple-950 font-black px-1.5 py-0.2 rounded-full uppercase ml-0.5">
+              VIP
+            </span>
+          </button>
         </div>
       </div>
 
@@ -723,6 +753,24 @@ export function ZiweiChartResult({ envelope }: ZiweiChartResultProps) {
           </div>
         </div>
       )}
+
+      {/* VIP Access Modal */}
+      <VIPAccessModal
+        isOpen={showVipModal}
+        onClose={() => setShowVipModal(false)}
+        authenticated={authenticated}
+        userEmail={user?.email}
+        chartTitle={`Lá số Tử Vi - ${personal.fullName}`}
+      />
+
+      {/* AI Interpretation Modal */}
+      <AIInterpretationModal
+        isOpen={showAiModal}
+        onClose={() => setShowAiModal(false)}
+        chartType="ZIWEI"
+        chartData={envelope}
+        chartTitle={`Lá số Tử Vi - ${personal.fullName}`}
+      />
     </div>
   );
 }

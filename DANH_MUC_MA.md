@@ -125,6 +125,7 @@ Khi cần bảo trì, sửa lỗi hoặc nâng cấp, bạn chỉ cần gửi y�
 | `[API-AUTH-REG]` | `POST /api/auth/register` | `src/app/api/auth/register/route.ts` | Đăng ký thành viên mới, mã hóa mật khẩu. |
 | `[API-CHARTS-CRUD]` | `GET/POST /api/charts` | `src/app/api/charts/route.ts` | Lưu lá số vào tài khoản hoặc tải danh sách lá số đã lưu. |
 | `[API-PAYMENT-HOOK]`| `POST /api/payments/webhook`| `src/app/api/payments/webhook/route.ts`| Xử lý webhook nâng cấp VIP tự động. |
+| `[API-AI-INTERPRET]` | `POST /api/ai/luan-giai` | `src/app/api/ai/luan-giai/route.ts` | Luận giải lá số chuyên sâu bằng AI (Chỉ dành cho thành viên VIP). |
 
 ---
 
