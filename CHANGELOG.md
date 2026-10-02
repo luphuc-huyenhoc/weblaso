@@ -10,6 +10,19 @@ và dự án này tuân thủ chuẩn đánh số phiên bản [Semantic Version
 ## [Unreleased]
 
 ### Added
+- **Chuẩn hóa Hồ Sơ Luận Giải AI theo mẫu File Word Tư Vấn Lữ Phúc & Tính năng Tải File Word (`.doc`) (`[UI-AI-MODAL]`, `[API-AI-INTERPRET]`):**
+  - **Chuẩn hóa định dạng hồ sơ theo văn bản tư vấn chuyên nghiệp Lữ Phúc:**
+    - Cấu trúc bài luận gồm 2 phần chuẩn mực:
+      - **Tiêu đề trang trọng:** *BẢN LUẬN GIẢI MỆNH LÝ & CẢI VẬN* (Sắc đỏ vương triều `#8B1C2D`) cùng phụ đề danh xưng học phái *Hệ Thống Phân Tích Mệnh Lý · Chuyên Sâu Bát Tự Lữ Phúc* (Sắc vàng hoàng kim `#A07832`).
+      - **Mục I. THÔNG TIN HỒ SƠ TƯ VẤN:** Bảng hồ sơ 2 cột với đường viền mạ cát `#E2D3C4`, nền hàng xen kẽ ngà voi `#FAF5F0`, thể hiện đầy đủ: *Họ và tên gia chủ*, *Ngày tháng năm sinh (Dương lịch & Âm lịch kèm giờ)*, *Tứ Trụ Can Chi (hoặc Lá số Tử Vi / Quẻ Chu Dịch)*, *Chuyên đề tư vấn* và *Đơn vị tư vấn: Lữ Phúc - Cải Vận Bổ Khuyết (Hotline: 037.44.36.921)*.
+      - **Mục II. NỘI DUNG PHÂN TÍCH & ĐỊNH HƯỚNG CẢI VẬN:** Các chương mục luận giải chuyên sâu (Tổng quan bản mệnh, Dụng Thần điều hỏa, Tài lộc & Sự nghiệp, Gia đạo & Phu thê, Sức khỏe vận hạn, Phương pháp cải vận bổ khuyết Lữ Phúc Pháp, và Giải đáp thắc mắc riêng).
+      - **Khối ký tên & Triện ấn Lữ Phúc Tổ Đường:** Góc phải trang trọng có đề danh xưng *LỮ PHÚC TỔ ĐƯỜNG*, khẩu quyết *Gieo Phúc — Gặt Phước*, *(Ký tên & Đóng dấu)* kèm hình con dấu triện đỏ truyền thống "GIEO PHÚC GẶT PHƯỚC - CẢI VẬN PHÁP ẤN".
+  - **Tính năng Xuất & Tải File Microsoft Word (`.doc`) trực tiếp:**
+    - Bổ sung nút **"Tải file Word (.doc)"** nổi bật tại thanh công cụ chân trang hộp thoại luận giải.
+    - Tạo tệp Word chuẩn XML (`application/msword;charset=utf-8` kèm UTF-8 BOM), căn chỉnh sẵn khổ giấy A4 (lề 2.0cm), font chữ *Times New Roman*, bảng biểu có viền và màu sắc đồng bộ y hệt mẫu Word thực tế, giúp người dùng hoặc chuyên gia có thể mở, chỉnh sửa và in ấn ngay trên Microsoft Word.
+  - **Cập nhật đồng bộ cả Prompt AI Gemini và Engine dự phòng:**
+    - Prompt Gemini (`buildAstrologicalPrompt`) và giải thuật luận giải dự phòng (`generateHeuristicInterpretation`) được định hình chặt chẽ để luôn trả về đúng 100% mẫu bảng biểu hồ sơ tư vấn này.
+
 - **Tích hợp Trí Tuệ Nhân Tạo (AI) luận giải lá số & Giới hạn độc quyền cho Thành Viên Trả Phí VIP (`[API-AI-INTERPRET]`, `[PAGE-PREMIUM]`):**
   - **Kết nối mô hình AI Gemini (Google GenAI) chuyên sâu:**
     - Xây dựng module phân tích mệnh lý tại server (`src/server/ai/interpretation.ts`) hỗ trợ Bát Tự (Tứ Trụ), Tử Vi Đẩu Số và Quẻ Dịch Lục Hào.
